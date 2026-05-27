@@ -1,6 +1,9 @@
 name: Daily News Spider
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: "0 14 * * *"
   workflow_dispatch:
