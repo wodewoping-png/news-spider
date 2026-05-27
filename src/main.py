@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import argparse
 import logging
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from .article_parser import fetch_and_parse_article
 from .http_client import DEFAULT_USER_AGENT, HttpClient
@@ -10,6 +12,14 @@ from .load_sources import default_sources_path, load_sources
 from .rss_discovery import discover_feed, fetch_feed_entries
 from .scrapers import get_scraper_class
 from .storage import append_jsonl, export_csv, load_existing_urls
+
+
+DEFAULT_CSV_TIMEZONE = "Asia/Shanghai"
+
+
+def default_csv_path(now: datetime | None = None) -> Path:
+    run_date = (now or datetime.now(ZoneInfo(DEFAULT_CSV_TIMEZONE))).strftime("%Y-%m-%d")
+    return Path("data") / f"articles-{run_date}.csv"
 
 
 def setup_logging(log_dir: Path) -> Path:
@@ -30,7 +40,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Daily web-news crawler")
     parser.add_argument("--sources", type=Path, default=default_sources_path())
     parser.add_argument("--output", type=Path, default=Path("data/articles.jsonl"))
-    parser.add_argument("--csv", type=Path, default=Path("data/articles.csv"))
+    parser.add_argument("--csv", type=Path, default=default_csv_path())
     parser.add_argument("--logs", type=Path, default=Path("logs"))
     parser.add_argument("--limit-per-source", type=int, default=20)
     parser.add_argument("--sleep", type=float, default=1.5)

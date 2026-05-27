@@ -8,7 +8,7 @@
 
 ## 采集字段
 
-每篇新闻保存到 `data/articles.jsonl`，并同步导出 `data/articles.csv`：
+每篇新闻保存到 `data/articles.jsonl`，并同步导出带运行日期的 CSV，例如 `data/articles-2026-05-27.csv`：
 
 - `title`: 新闻标题
 - `published_at`: 发布日期
@@ -60,7 +60,7 @@ python -m src.main --ignore-robots
 
 workflow 文件位于 `.github/workflows/daily-news.yml`。
 
-- 每天 UTC 22:00 自动运行一次，约等于北京时间 06:00。
+- 每天 UTC 13:50 自动运行一次，约等于北京时间 21:50。
 - 支持在 GitHub 页面手动点击 `workflow_dispatch` 运行。
 - 运行后会上传 `data/` 和 `logs/` 为 artifact。
 - 如果 `data/` 或 `logs/` 有变化，会自动提交回仓库。
@@ -77,7 +77,7 @@ workflow 文件位于 `.github/workflows/daily-news.yml`。
 6. RSS 可用时，读取 RSS 的标题、日期、URL，再进入文章页解析正文。
 7. RSS 不可用时，调用 `src/scrapers/` 中对应来源 scraper。
 8. 以 URL 去重，不重复保存已存在文章。
-9. 输出 `data/articles.jsonl` 和 `data/articles.csv`。
+9. 输出 `data/articles.jsonl` 和带运行日期的 CSV，例如 `data/articles-2026-05-27.csv`。
 
 ## 新增一个网站 scraper
 
