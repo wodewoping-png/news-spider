@@ -60,7 +60,7 @@ python -m src.main --ignore-robots
 
 workflow 文件位于 `.github/workflows/daily-news.yml`。
 
-- 每天 UTC 13:50 自动运行一次，约等于北京时间 21:50。
+- 每天 UTC 14:00 自动运行一次，约等于北京时间 22:00。
 - 支持在 GitHub 页面手动点击 `workflow_dispatch` 运行。
 - 运行后会上传 `data/` 和 `logs/` 为 artifact。
 - 如果 `data/` 或 `logs/` 有变化，会自动提交回仓库。
