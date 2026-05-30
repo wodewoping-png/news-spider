@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 from zoneinfo import ZoneInfo
 
@@ -22,9 +22,13 @@ def local_today(timezone_name: str = DEFAULT_TIMEZONE) -> date:
     return datetime.now(ZoneInfo(timezone_name)).date()
 
 
+def local_yesterday(timezone_name: str = DEFAULT_TIMEZONE) -> date:
+    return local_today(timezone_name) - timedelta(days=1)
+
+
 def parse_target_date(value: str | None, timezone_name: str = DEFAULT_TIMEZONE) -> date:
     if not value:
-        return local_today(timezone_name)
+        return local_yesterday(timezone_name)
     return datetime.strptime(value, "%Y-%m-%d").date()
 
 
