@@ -59,9 +59,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ignore-robots", action="store_true")
     parser.add_argument(
         "--target-date",
-        help="Only keep articles published on this date (YYYY-MM-DD). Default: today in Asia/Shanghai.",
+        help="Only keep articles published on this date (YYYY-MM-DD). Default: yesterday in Asia/Shanghai.",
     )
-    parser.add_argument("--date-filter", choices=("today", "all"), default="today")
+    parser.add_argument(
+        "--date-filter",
+        choices=("today", "all"),
+        default="today",
+        help="'today' keeps only the target date; default target date is yesterday. Use 'all' to export all dates.",
+    )
     return parser.parse_args()
 
 
