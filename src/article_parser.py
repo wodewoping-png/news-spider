@@ -39,6 +39,12 @@ ARTICLE_SELECTORS = (
     "main",
 )
 
+STRICT_SOURCE_ARTICLE_SELECTORS = {
+    "新华网科技": (
+        ".main-left.left",
+    ),
+}
+
 SOURCE_ARTICLE_SELECTORS = {
     "electrive": (
         ".entry-content",
@@ -240,7 +246,12 @@ def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
             tag.decompose()
 
     candidates: list[tuple[int, str]] = []
-    selectors = SOURCE_ARTICLE_SELECTORS.get(source_name.strip().lower(), ()) + ARTICLE_SELECTORS
+    source_key = source_name.strip().lower()
+    strict_selectors = STRICT_SOURCE_ARTICLE_SELECTORS.get(source_key, ())
+    source_selectors = SOURCE_ARTICLE_SELECTORS.get(source_key, ())
+    # A strict selector defines a hard content boundary. Mixing generic selectors
+    # back in can select a larger page wrapper and pull in sidebars.
+    selectors = strict_selectors or (source_selectors + ARTICLE_SELECTORS)
     for selector in selectors:
         for node in soup.select(selector):
             text = extract_node_body_text(node)
@@ -248,6 +259,8 @@ def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
                 candidates.append((score_body_candidate(node, text), text))
     if candidates:
         return trim_body_noise(max(candidates, key=lambda item: item[0])[1])
+    if strict_selectors:
+        return ""
     return trim_body_noise(clean_text(soup.get_text("\n", strip=True)))
 
 
