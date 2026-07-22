@@ -5,6 +5,7 @@ import json
 from datetime import date
 from pathlib import Path
 from typing import Iterable
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from .date_utils import DEFAULT_TIMEZONE, article_date
 
@@ -20,6 +21,38 @@ FIELDNAMES = (
     "crawled_at",
 )
 
+TRACKING_QUERY_KEYS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
+
+
+def canonicalize_url(url: str) -> str:
+    """Build a stable comparison key without changing the stored URL."""
+    value = (url or "").strip()
+    if not value:
+        return ""
+    parsed = urlsplit(value)
+    if not parsed.netloc:
+        return value.rstrip("/")
+    hostname = (parsed.hostname or "").lower()
+    if hostname.startswith("www."):
+        hostname = hostname[4:]
+    port = parsed.port
+    if port and not (
+        (parsed.scheme == "http" and port == 80)
+        or (parsed.scheme == "https" and port == 443)
+    ):
+        hostname = f"{hostname}:{port}"
+    query = urlencode(
+        sorted(
+            (key, val)
+            for key, val in parse_qsl(parsed.query, keep_blank_values=True)
+            if not key.lower().startswith("utm_")
+            and key.lower() not in TRACKING_QUERY_KEYS
+        )
+    )
+    path = parsed.path.rstrip("/") or "/"
+    scheme = "https" if parsed.scheme.lower() in {"http", "https"} else parsed.scheme.lower()
+    return urlunsplit((scheme, hostname, path, query, ""))
+
 
 def load_existing_urls(jsonl_path: Path) -> set[str]:
     urls: set[str] = set()
@@ -34,7 +67,7 @@ def load_existing_urls(jsonl_path: Path) -> set[str]:
             except json.JSONDecodeError:
                 continue
             if item.get("url"):
-                urls.add(item["url"])
+                urls.add(canonicalize_url(item["url"]))
     return urls
 
 

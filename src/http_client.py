@@ -113,9 +113,21 @@ class HttpClient:
 
         if not response.encoding or response.encoding.lower() == "iso-8859-1":
             response.encoding = response.apparent_encoding
+        response_text = response.text
+        stripped_text = response_text.strip()
+        if not stripped_text:
+            logging.warning("Empty response body: %s", response.url)
+            return None
+        lowered_probe = stripped_text[:2000].lower()
+        if (
+            "<h1>404 not found</h1>" in lowered_probe
+            or "页面不存在" in stripped_text[:2000]
+        ):
+            logging.warning("Soft 404 response: %s", response.url)
+            return None
         return FetchResult(
             url=response.url,
-            text=response.text,
+            text=response_text,
             status_code=response.status_code,
             content_type=content_type,
         )

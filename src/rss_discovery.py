@@ -95,8 +95,13 @@ def discover_feed(client: HttpClient, page_url: str) -> Optional[str]:
     return None
 
 
-def fetch_feed_entries(client: HttpClient, feed_url: str, limit: int = 20) -> Iterable[FeedEntry]:
+def fetch_feed_entries(
+    client: HttpClient,
+    feed_url: str,
+    limit: int | None = 100,
+) -> Iterable[FeedEntry]:
     result = client.get(feed_url)
     if not result:
         return []
-    return parse_feed(result.text)[:limit]
+    entries = parse_feed(result.text)
+    return entries if limit is None else entries[:limit]

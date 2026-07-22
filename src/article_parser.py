@@ -46,6 +46,9 @@ STRICT_SOURCE_ARTICLE_SELECTORS = {
 }
 
 SOURCE_ARTICLE_SELECTORS = {
+    "4c offshore": (
+        "#NewsContent",
+    ),
     "electrive": (
         ".entry-content",
         ".post-content",
@@ -150,6 +153,24 @@ NON_BODY_LINE_RE = re.compile(
 
 STANDALONE_DOMAIN_RE = re.compile(r"^(?:[a-z0-9-]+\.)+[a-z]{2,}(?:/\S*)?$", re.I)
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w.-]+\.[a-z]{2,}", re.I)
+LABELED_DATE_RE = re.compile(
+    r"(?:发布时间|发布日期|发稿时间|更新时间|日期)\s*[:：]\s*"
+    r"(20\d{2}[年/\-.]\d{1,2}[月/\-.]\d{1,2}日?"
+    r"(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?)"
+)
+DATE_VALUE_RE = re.compile(
+    r"(20\d{2}[-/.]\d{1,2}[-/.]\d{1,2}"
+    r"(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?)"
+)
+DATE_CONTAINER_SELECTORS = (
+    ".time-source-address",
+    ".article-time",
+    ".publish-time",
+    ".publish-date",
+    ".pubtime",
+    ".date",
+    ".time",
+)
 
 MIN_PARAGRAPH_LENGTH = 12
 BODY_END_LINE_KEYWORDS = (
@@ -227,17 +248,39 @@ def extract_date(soup: BeautifulSoup) -> str:
                 value = node.get("datePublished") or node.get("dateCreated") or node.get("dateModified")
                 if value:
                     return str(value).strip()
+    labeled_date = LABELED_DATE_RE.search(soup.get_text(" ", strip=True))
+    if labeled_date:
+        return labeled_date.group(1).strip()
+    published_date_node = soup.find(
+        id=re.compile(r"(?:published|publish).*date", re.I)
+    )
+    if published_date_node:
+        value = published_date_node.get_text(" ", strip=True)
+        if re.fullmatch(r"\d{1,2}/\d{1,2}/20\d{2}", value):
+            return value
+    for selector in DATE_CONTAINER_SELECTORS:
+        for node in soup.select(selector):
+            date_value = DATE_VALUE_RE.search(node.get_text(" ", strip=True))
+            if date_value:
+                return date_value.group(1).strip()
     return ""
 
 
 def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
+    source_key = source_name.strip().lower()
+    strict_selectors = STRICT_SOURCE_ARTICLE_SELECTORS.get(source_key, ())
+    source_selectors = SOURCE_ARTICLE_SELECTORS.get(source_key, ())
+    guarded_selectors = strict_selectors + source_selectors + ARTICLE_SELECTORS
+    guarded_query = ",".join(guarded_selectors)
     for selector in REMOVE_SELECTORS:
         for tag in soup.select(selector):
+            if tag.select_one(guarded_query):
+                continue
             tag.decompose()
     for tag in list(soup.find_all(True)):
         if not getattr(tag, "attrs", None):
             continue
-        if tag.select_one(",".join(ARTICLE_SELECTORS)):
+        if tag.select_one(guarded_query):
             continue
         class_id = " ".join(tag.get("class") or [])
         if tag.get("id"):
@@ -246,9 +289,6 @@ def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
             tag.decompose()
 
     candidates: list[tuple[int, str]] = []
-    source_key = source_name.strip().lower()
-    strict_selectors = STRICT_SOURCE_ARTICLE_SELECTORS.get(source_key, ())
-    source_selectors = SOURCE_ARTICLE_SELECTORS.get(source_key, ())
     # A strict selector defines a hard content boundary. Mixing generic selectors
     # back in can select a larger page wrapper and pull in sidebars.
     selectors = strict_selectors or (source_selectors + ARTICLE_SELECTORS)

@@ -39,6 +39,15 @@ jobs:
         run: |
           python -m src.main --sources sources.xlsx
 
+      - name: Publish channel audit summary
+        if: always()
+        run: |
+          if [ -f logs/audit-report.md ]; then
+            cat logs/audit-report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Channel audit report unavailable" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Upload data and logs artifact
         uses: actions/upload-artifact@v6
         with:
