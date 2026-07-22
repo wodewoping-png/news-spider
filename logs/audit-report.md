@@ -1,48 +1,35 @@
 # 新闻渠道自主审查报告
 
-- 审查日期：2026-07-19
+- 审查日期：2026-07-21
 - 整体状态：warning
-- 收集总量：11 篇
-- 正文可用：9 篇（82%）
-- 有产出渠道：3/37
-- 7 日总量中位数：52.00
+- 收集总量：116 篇
+- 正文可用：103 篇（89%）
+- 有产出渠道：21/37
+- 7 日总量中位数：49.00
 
 ## 整体异常
 
-总量仅为 7 日中位数的 0.21 倍；27/37 个活跃渠道当天为 0
+总量较 7 日中位数增至 2.37 倍；11/37 个活跃渠道当天为 0
 
 ## 渠道异常
 
 | 级别 | 渠道 | 今日 | 前次 | 7日中位数 | 连续为0 | 异常说明 |
 |---|---|---:|---:|---:|---:|---|
-| critical | Battery Tech Online | 0 | 2 | 2.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | ESS News | 0 | 6 | 5.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | Electrek | 0 | 2 | 6.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | IT之家 | 0 | 20 | 20.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | MIT Technology Review | 0 | 3 | 2.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | Renewables Now | 0 | 2 | 2.50 | 1 | 日更渠道从有产出降为 0 |
-| critical | electrive | 0 | 3 | 2.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | interesting engineering | 0 | 9 | 9.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | pv magazine | 0 | 6 | 6.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 中国电力新闻网-新能源 | 0 | 4 | 4.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 中国电力新闻网-科技 | 0 | 6 | 3.50 | 1 | 日更渠道从有产出降为 0 |
-| critical | 新华网科技 | 0 | 9 | 6.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 索比光伏 | 0 | 1 | 1.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 索比光伏-综合新闻 | 0 | 8 | 4.50 | 1 | 日更渠道从有产出降为 0 |
-| warning | 4C Offshore | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | H2 View | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | Informationsdienst Wissenschaft-idw | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | MIT Technology Review Climate | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | perovskite-info | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | pv magazine C&I PV | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | the information | 2 | 6 | 6.00 | 0 | 仅为 7 日中位数的 0.33 倍；正文可用率仅 0% |
-| warning | 中国新能源网-新闻 | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | 中国核电信息网-国内 | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | 中国核电信息网-国际 | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | 全球风电网 | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | 国际太阳能光伏网 | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | 新能源网 | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
-| warning | 科学网新闻 | 0 | - | - | 1 | 日更渠道当天没有收集到文章 |
+| critical | Renewables Now | 6 | - | 1.00 | 0 | 较 7 日中位数增至 6.00 倍 |
+| critical | pv magazine | 0 | - | 4.00 | 1 | 日更渠道从有产出降为 0 |
+| warning | Ammonia Energy Association | 3 | 1 | 1.00 | 0 | 正文可用率仅 0% |
+| warning | H2 View | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | IT之家 | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | Informationsdienst Wissenschaft-idw | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | MIT Technology Review Climate | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | interesting engineering | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | perovskite-info | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | pv magazine C&I PV | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | the information | 7 | 8 | 6.00 | 0 | 正文可用率仅 0% |
+| warning | 中国新能源网-新闻 | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | 全球风电网 | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | 新能源网 | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | 索比光伏-综合新闻 | 10 | 8 | 3.00 | 0 | 较 7 日中位数增至 3.33 倍 |
 
 ## 判定口径
 
