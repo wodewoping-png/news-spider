@@ -97,3 +97,17 @@ def iter_active_sources(sources: Iterable[Source]) -> Iterable[Source]:
     for source in sources:
         if source.skip_reason is None:
             yield source
+
+
+def expects_daily_output(frequency: str) -> bool:
+    normalized = (frequency or "").strip().lower()
+    low_frequency_markers = (
+        "\u5468",
+        "\u6708",
+        "\u5b63\u5ea6",
+        "\u4f4e\u9891",
+        "weekly",
+        "monthly",
+        "quarterly",
+    )
+    return not any(marker in normalized for marker in low_frequency_markers)
