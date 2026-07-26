@@ -6,6 +6,7 @@ from urllib.parse import urldefrag, urljoin, urlparse
 
 from bs4 import BeautifulSoup
 
+from ..http_client import SCIENCENET_BROWSER_USER_AGENT
 from .generic import GenericListingScraper
 
 
@@ -13,11 +14,7 @@ class ScienceNetScraper(GenericListingScraper):
     """Handle ScienceNet's ASP.NET listings and .shtm article URLs."""
 
     article_path_re = re.compile(r"^/htmlnews/20\d{2}/\d{1,2}/\d+\.shtm$", re.I)
-    browser_user_agent = (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/138.0 Safari/537.36"
-    )
+    browser_user_agent = SCIENCENET_BROWSER_USER_AGENT
 
     def scrape(
         self,

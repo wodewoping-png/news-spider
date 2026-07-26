@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 
 from src.article_parser import parse_article_html
 from src.date_utils import date_from_url, default_target_date, parse_target_date
-from src.http_client import FetchResult
+from src.http_client import FetchResult, request_headers_for_url
 from src.load_sources import Source
 from src.main import default_csv_path, expects_daily_output
 from src.scrapers.generic import GenericListingScraper
@@ -62,6 +62,13 @@ class DateAndUrlTests(unittest.TestCase):
         path = default_csv_path(target_date=date(2026, 7, 12))
         self.assertEqual(str(path).replace("\\", "/"), "data/articles-2026-07-13.csv")
 
+    def test_sciencenet_uses_browser_user_agent_by_default(self):
+        headers = request_headers_for_url("https://www.sciencenet.cn/xml/news-0.aspx?news=0")
+        self.assertIn("Mozilla/5.0", headers["User-Agent"])
+        self.assertEqual(
+            request_headers_for_url("https://www.sciencenet.cn/", "custom-agent"), {}
+        )
+
     def test_low_frequency_source_is_not_expected_daily(self):
         self.assertFalse(expects_daily_output("\u6bcf\u5468"))
         self.assertFalse(expects_daily_output("Monthly"))
@@ -114,6 +121,13 @@ class ListingScraperTests(unittest.TestCase):
             source,
         )
         self.assertEqual(article["published_at"], "2026/7/22 18:30:21")
+
+    def test_sciencenet_ignores_placeholder_canonical_url(self):
+        source = make_source("ScienceNet", "https://news.sciencenet.cn/")
+        url = "https://news.sciencenet.cn/htmlnews/2026/7/568672.shtm"
+        html = '<meta property="og:url" content="[path]"><title>ScienceNet article</title>'
+        article = parse_article_html(html, url, source)
+        self.assertEqual(article["url"], url)
 
     def test_xinhua_prefers_chronological_content_list(self):
         source = make_source("新华网科技", "https://www.news.cn/tech/index.html")

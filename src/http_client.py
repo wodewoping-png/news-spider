@@ -16,6 +16,24 @@ DEFAULT_USER_AGENT = (
     "DailyNewsSpider/0.1 "
     "(respectful research crawler; contact: update-user-agent-in-config)"
 )
+SCIENCENET_BROWSER_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/138.0 Safari/537.36"
+)
+
+
+def request_headers_for_url(
+    url: str,
+    user_agent: str = DEFAULT_USER_AGENT,
+) -> dict[str, str]:
+    """Return narrow site-specific headers when the default crawler UA is blocked."""
+    if user_agent != DEFAULT_USER_AGENT:
+        return {}
+    hostname = (urlparse(url).hostname or "").lower()
+    if hostname == "sciencenet.cn" or hostname.endswith(".sciencenet.cn"):
+        return {"User-Agent": SCIENCENET_BROWSER_USER_AGENT}
+    return {}
 
 
 @dataclass
@@ -45,7 +63,11 @@ class RobotsCache:
             robots_url = urlunparse((parsed.scheme, parsed.netloc, "/robots.txt", "", "", ""))
             parser.set_url(robots_url)
             try:
-                response = self.session.get(robots_url, timeout=self.timeout)
+                response = self.session.get(
+                    robots_url,
+                    timeout=self.timeout,
+                    headers=request_headers_for_url(robots_url, self.user_agent),
+                )
                 if response.status_code >= 400:
                     logging.warning("robots.txt unavailable for %s: HTTP %s", root, response.status_code)
                     parser.parse([])
@@ -100,7 +122,11 @@ class HttpClient:
 
         time.sleep(self.sleep_seconds)
         try:
-            response = self.session.get(url, timeout=self.timeout)
+            response = self.session.get(
+                url,
+                timeout=self.timeout,
+                headers=request_headers_for_url(url, self.user_agent),
+            )
             response.raise_for_status()
         except requests.RequestException as exc:
             logging.warning("Fetch failed: %s (%s)", url, exc)

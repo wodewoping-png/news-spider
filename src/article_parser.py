@@ -4,7 +4,7 @@ import json
 import re
 from datetime import datetime, timezone
 from typing import Optional
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 
@@ -206,6 +206,17 @@ def first_meta(soup: BeautifulSoup, names: tuple[str, ...]) -> str:
             return tag["content"].strip()
     return ""
 
+def resolve_canonical_url(url: str, candidate: str) -> str:
+    if not candidate:
+        return url
+    candidate = candidate.strip()
+    if re.search(r"\[[^\]]+\]|\{\{?.+?\}?\}", candidate):
+        return url
+    resolved = urljoin(url, candidate)
+    parsed = urlparse(resolved)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return url
+    return resolved
 
 def extract_title(soup: BeautifulSoup) -> str:
     meta_title = first_meta(soup, ("og:title", "twitter:title"))
@@ -363,10 +374,10 @@ def trim_body_noise(text: str) -> str:
 
 def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional[str] = None) -> dict:
     soup = BeautifulSoup(html, "html.parser")
-    canonical = first_meta(soup, ("og:url",)) or url
+    canonical = resolve_canonical_url(url, first_meta(soup, ("og:url",)))
     link = soup.find("link", rel=lambda value: value and "canonical" in value)
     if link and link.get("href"):
-        canonical = urljoin(url, link["href"])
+        canonical = resolve_canonical_url(url, link["href"])
     requested_url_date = date_from_url(url)
     canonical_url_date = date_from_url(canonical)
     if requested_url_date and canonical_url_date and requested_url_date != canonical_url_date:
