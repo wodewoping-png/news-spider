@@ -1,45 +1,30 @@
 # 新闻渠道自主审查报告
 
-- 审查日期：2026-07-25
-- 整体状态：warning
-- 收集总量：37 篇
-- 正文可用：32 篇（86%）
-- 有产出渠道：6/37
-- 7 日总量中位数：84.00
-
-## 整体异常
-
-总量仅为 7 日中位数的 0.44 倍；24/37 个活跃渠道当天为 0
+- 审查日期：2026-07-27
+- 整体状态：normal
+- 收集总量：169 篇
+- 正文可用：165 篇（98%）
+- 有产出渠道：22/34
+- 7 日总量中位数：92.00
 
 ## 渠道异常
 
 | 级别 | 渠道 | 今日 | 前次 | 7日中位数 | 连续为0 | 异常说明 |
 |---|---|---:|---:|---:|---:|---|
-| critical | 4C Offshore | 0 | 1 | 5.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | Battery Tech Online | 0 | 1 | 1.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | ESS News | 0 | 5 | 3.50 | 1 | 日更渠道从有产出降为 0 |
-| critical | H2 View | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | IT之家 | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | Informationsdienst Wissenschaft-idw | 0 | - | 0.00 | 2 | 日更渠道当天没有收集到文章；已连续 2 天为 0 |
-| critical | MIT Technology Review | 0 | 1 | 2.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | MIT Technology Review Climate | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | Renewables Now | 0 | 4 | 4.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | electrive | 0 | 1 | 1.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | interesting engineering | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | perovskite-info | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | pv magazine | 0 | 10 | 0.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | pv magazine C&I PV | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | 中国新能源网-新闻 | 0 | 8 | 0.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 中国电力新闻网-新能源 | 0 | - | 0.00 | 4 | 日更渠道当天没有收集到文章；已连续 4 天为 0 |
-| critical | 中国电力新闻网-科技 | 0 | 1 | 1.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 全球风电网 | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | 国际太阳能光伏网 | 0 | - | 0.00 | 2 | 日更渠道当天没有收集到文章；已连续 2 天为 0 |
-| critical | 新华网科技 | 0 | 9 | 6.50 | 1 | 日更渠道从有产出降为 0 |
-| critical | 新能源网 | 0 | - | 0.00 | 5 | 日更渠道当天没有收集到文章；已连续 5 天为 0 |
-| critical | 科学网新闻 | 0 | - | 0.00 | 4 | 日更渠道当天没有收集到文章；已连续 4 天为 0 |
-| critical | 索比光伏 | 0 | 1 | 1.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 索比光伏-综合新闻 | 0 | 19 | 10.50 | 1 | 日更渠道从有产出降为 0 |
-| warning | the information | 5 | 13 | 7.00 | 0 | 正文可用率仅 0% |
+| critical | Renewables Now | 19 | - | 4.00 | 0 | 较 7 日中位数增至 4.75 倍 |
+| critical | Supply Chain Digital | 0 | 1 | 3.00 | 1 | 日更渠道从有产出降为 0 |
+| warning | Informationsdienst Wissenschaft-idw | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | pv magazine C&I PV | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+
+## 自反馈恢复队列
+
+| 状态 | 缺失日期 | 渠道 | 原因判断 | 人工备注 |
+|---|---|---|---|---|
+| pending_confirmation | 2026-07-27 | Informationsdienst Wissenschaft-idw | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
+| pending_confirmation | 2026-07-27 | Supply Chain Digital | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
+| pending_confirmation | 2026-07-27 | pv magazine C&I PV | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
+
+处理方式：修复渠道后运行 `python -m src.recovery confirm --source "渠道名" --note "修复说明"`；后续任务会自动补抓所有已确认的原日期缺口。
 
 ## 判定口径
 
