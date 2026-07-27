@@ -9,7 +9,7 @@ from statistics import median
 from zoneinfo import ZoneInfo
 
 from .date_utils import DEFAULT_TIMEZONE, article_date
-from .load_sources import expects_daily_output
+from .load_sources import expects_output_on_date
 from .storage import canonicalize_url
 
 
@@ -200,7 +200,15 @@ def _zero_streak(current: dict, prior: list[dict], target: date) -> int:
     }
     streak = 1
     cursor = target - timedelta(days=1)
-    while cursor in by_date and _as_int(by_date[cursor].get("article_count")) == 0:
+    current_frequency = str(current.get("frequency") or "")
+    while cursor in by_date:
+        row = by_date[cursor]
+        frequency = str(row.get("frequency") or current_frequency)
+        if not expects_output_on_date(frequency, cursor):
+            cursor -= timedelta(days=1)
+            continue
+        if _as_int(row.get("article_count")) != 0:
+            break
         streak += 1
         cursor -= timedelta(days=1)
     return streak
@@ -430,7 +438,9 @@ def run_daily_audit(
             "date": day,
             "source": source,
             "frequency": frequency,
-            "expected_daily": str(expects_daily_output(frequency)).lower(),
+            "expected_daily": str(
+                expects_output_on_date(frequency, date.fromisoformat(day))
+            ).lower(),
             "crawl_status": "historical",
             **counts,
             "usable_rate": f"{_rate(counts['usable_articles'], counts['article_count']):.4f}",
@@ -456,7 +466,7 @@ def run_daily_audit(
             "date": target_key,
             "source": source,
             "frequency": frequency,
-            "expected_daily": str(expects_daily_output(frequency)).lower(),
+            "expected_daily": str(expects_output_on_date(frequency, target_date)).lower(),
             "crawl_status": crawl_status,
             "candidates_seen": record.get("candidates_seen", 0),
             "pages_fetched": record.get("pages_fetched", 0),

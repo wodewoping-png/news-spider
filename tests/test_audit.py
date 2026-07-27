@@ -133,6 +133,28 @@ class DailyAuditTests(unittest.TestCase):
             )
             self.assertEqual(daily["crawl_status"], "already_collected")
 
+    def test_workday_source_is_not_zero_anomaly_on_weekend(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            data = root / "articles.jsonl"
+            logs = root / "logs"
+            rows = [
+                *(article("2026-07-23", "Weekday", index) for index in range(2)),
+                *(article("2026-07-24", "Weekday", index) for index in range(3)),
+            ]
+            self.write_articles(data, rows)
+
+            report = run_daily_audit(
+                data,
+                logs,
+                date(2026, 7, 25),
+                [health("Weekday", "idle", "工作日")],
+            )
+
+            by_source = {row["source"]: row for row in report["anomalies"]}
+            self.assertNotIn("Weekday", by_source)
+            self.assertEqual(report["overall"]["zero_sources"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -230,6 +230,17 @@ def extract_title(soup: BeautifulSoup) -> str:
     return ""
 
 
+def _iter_json_objects(value):
+    if isinstance(value, dict):
+        yield value
+        for child in value.values():
+            if isinstance(child, (dict, list)):
+                yield from _iter_json_objects(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _iter_json_objects(child)
+
+
 def extract_date(soup: BeautifulSoup) -> str:
     meta_date = first_meta(
         soup,
@@ -253,8 +264,7 @@ def extract_date(soup: BeautifulSoup) -> str:
             data = json.loads(script.string or "")
         except json.JSONDecodeError:
             continue
-        nodes = data if isinstance(data, list) else [data]
-        for node in nodes:
+        for node in _iter_json_objects(data):
             if isinstance(node, dict):
                 value = node.get("datePublished") or node.get("dateCreated") or node.get("dateModified")
                 if value:

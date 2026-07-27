@@ -20,6 +20,7 @@ class FeedEntry:
     title: str
     url: str
     published_at: str
+    summary: str = ""
 
 
 def _site_root(url: str) -> str:
@@ -51,6 +52,25 @@ def _candidate_urls(page_url: str, html: str) -> list[str]:
     return unique
 
 
+def _public_excerpt(entry) -> str:
+    raw_values = [
+        entry.get("summary"),
+        entry.get("description"),
+    ]
+    for content_item in entry.get("content") or []:
+        if isinstance(content_item, dict):
+            raw_values.append(content_item.get("value"))
+
+    excerpts = []
+    for value in raw_values:
+        if not value:
+            continue
+        text = " ".join(BeautifulSoup(str(value), "html.parser").stripped_strings)
+        if text:
+            excerpts.append(text)
+    return max(excerpts, key=len, default="")
+
+
 def parse_feed(text: str) -> list[FeedEntry]:
     feed = feedparser.parse(text)
     entries: list[FeedEntry] = []
@@ -68,6 +88,7 @@ def parse_feed(text: str) -> list[FeedEntry]:
                     or entry.get("created")
                     or ""
                 ).strip(),
+                summary=_public_excerpt(entry),
             )
         )
     return entries

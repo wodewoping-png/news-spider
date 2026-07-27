@@ -18,7 +18,9 @@ from .pv_magazine import PVMagazineScraper
 from .science_net import ScienceNetScraper
 from .supply_chain_digital import SupplyChainDigitalScraper
 from .volta import VoltaFoundationScraper
+from .renewables_now import RenewablesNowScraper
 from .xinhua_tech import XinhuaTechScraper
+from .tgs4c import TGS4COffshoreScraper
 
 
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
@@ -29,6 +31,9 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "supply chain digital": SupplyChainDigitalScraper,
     "electrek": ElectrekScraper,
     "pv magazine": PVMagazineScraper,
+    "pv magazine c&i pv": PVMagazineScraper,
+    "renewables now": RenewablesNowScraper,
+    "4c offshore": TGS4COffshoreScraper,
     "科学网新闻": ScienceNetScraper,
     "新华网科技": XinhuaTechScraper,
     "h2 view": H2ViewScraper,

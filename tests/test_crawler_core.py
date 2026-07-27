@@ -8,10 +8,12 @@ from zoneinfo import ZoneInfo
 from src.article_parser import parse_article_html
 from src.date_utils import date_from_url, default_target_date, parse_target_date
 from src.http_client import FetchResult, request_headers_for_url
-from src.load_sources import Source
-from src.main import default_csv_path, expects_daily_output
+from src.load_sources import Source, expects_output_on_date
+from src.main import default_csv_path, enrich_from_rss_entry, expects_daily_output
+from src.rss_discovery import parse_feed
 from src.scrapers.generic import GenericListingScraper
 from src.scrapers.multi_page import H2ViewScraper
+from src.scrapers.renewables_now import RenewablesNowScraper
 from src.scrapers.science_net import ScienceNetScraper
 from src.scrapers.xinhua_tech import XinhuaTechScraper
 from src.storage import canonicalize_url
@@ -73,6 +75,25 @@ class DateAndUrlTests(unittest.TestCase):
         self.assertFalse(expects_daily_output("\u6bcf\u5468"))
         self.assertFalse(expects_daily_output("Monthly"))
         self.assertTrue(expects_daily_output("\u6bcf\u65e5"))
+
+    def test_weekday_source_is_not_expected_on_weekend(self):
+        self.assertTrue(expects_output_on_date("\u5de5\u4f5c\u65e5", date(2026, 7, 24)))
+        self.assertFalse(expects_output_on_date("\u5de5\u4f5c\u65e5", date(2026, 7, 25)))
+        self.assertFalse(expects_output_on_date("\u4f4e\u9891", date(2026, 7, 24)))
+
+    def test_configured_rss_stops_at_chinese_punctuation(self):
+        source = Source(
+            name="feed",
+            media_type="",
+            domain="",
+            sub_domain="",
+            frequency="",
+            description="",
+            note="RSS: https://example.com/feed；正文使用公开摘要",
+            url="https://example.com/",
+        )
+        self.assertEqual(source.configured_rss_url, "https://example.com/feed")
+
 
     def test_compact_xinhua_date_is_read_from_url(self):
         url = "https://www.news.cn/tech/20260720/abc/c.html"
@@ -222,6 +243,67 @@ class ListingScraperTests(unittest.TestCase):
         urls = H2ViewScraper(client, source).discover_article_urls(20)
         self.assertEqual(len(urls), 1)
         self.assertIn("2250675.article", urls[0])
+
+    def test_nested_json_ld_publish_date_is_parsed(self):
+        source = make_source("perovskite-info", "https://www.perovskite-info.com/")
+        html = """
+        <script type="application/ld+json">
+          {"@graph":[{"@type":"NewsArticle","datePublished":"2026-07-27T06:00:00+0300"}]}
+        </script>
+        <article><h1>Perovskite milestone</h1><p>Long enough public article body text for parsing.</p></article>
+        """
+        article = parse_article_html(html, source.url, source)
+        self.assertEqual(article["published_at"], "2026-07-27T06:00:00+0300")
+
+    def test_rss_public_excerpt_is_parsed(self):
+        feed = """
+        <rss><channel><item>
+          <title>Public headline</title>
+          <link>https://example.com/article</link>
+          <pubDate>Mon, 27 Jul 2026 08:00:00 GMT</pubDate>
+          <description><![CDATA[<p>Public RSS summary with useful context.</p>]]></description>
+        </item></channel></rss>
+        """
+        entries = parse_feed(feed)
+        self.assertEqual(entries[0].summary, "Public RSS summary with useful context.")
+
+    def test_rss_public_excerpt_replaces_short_paywall_body(self):
+        feed = """
+        <rss><channel><item>
+          <title>Public headline</title>
+          <link>https://example.com/article</link>
+          <description><![CDATA[
+            <p>This public RSS excerpt contains substantially more useful context
+            than the short subscription prompt returned by the article page.</p>
+          ]]></description>
+        </item></channel></rss>
+        """
+        entry = parse_feed(feed)[0]
+        source = make_source("The Information", "https://www.theinformation.com/")
+        paywall_article = {
+            "title": "",
+            "published_at": "",
+            "content": "Subscribe to unlock",
+            "url": entry.url,
+        }
+        with patch("src.main.fetch_and_parse_article", return_value=paywall_article):
+            article = enrich_from_rss_entry(None, source, entry)
+        self.assertIn("substantially more useful context", article["content"])
+
+    def test_renewables_now_filters_navigation_links(self):
+        source = make_source("Renewables Now", "https://renewablesnow.com/news/")
+        html = """
+        <a href="/news/solar/">Solar sector</a>
+        <a href="/advanced-search/">Advanced search</a>
+        <a href="/news/real-project-headline-1298706/">Real article</a>
+        <a href="/news/archive/">Archive</a>
+        """
+        client = StaticClient({source.url: html})
+        urls = RenewablesNowScraper(client, source).discover_article_urls(20)
+        self.assertEqual(
+            urls,
+            ["https://renewablesnow.com/news/real-project-headline-1298706/"],
+        )
 
 
 if __name__ == "__main__":
