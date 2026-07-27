@@ -111,6 +111,16 @@ def parse_args() -> argparse.Namespace:
             "'today' keeps only the target date; use 'all' to export all dates."
         ),
     )
+    parser.add_argument(
+        "--only-source",
+        action="append",
+        help="Only crawl the exact source name; may be repeated (used by recovery jobs).",
+    )
+    parser.add_argument(
+        "--skip-audit",
+        action="store_true",
+        help="Skip daily statistics/audit update (used by isolated historical recovery jobs).",
+    )
     return parser.parse_args()
 
 
@@ -164,6 +174,14 @@ def main() -> int:
     )
 
     sources = load_sources(args.sources)
+    if args.only_source:
+        requested_sources = set(args.only_source)
+        sources = [source for source in sources if source.name in requested_sources]
+        found_sources = {source.name for source in sources}
+        missing_sources = sorted(requested_sources - found_sources)
+        if missing_sources:
+            logging.error("Requested sources not found: %s", missing_sources)
+            return 2
     existing_urls = load_existing_urls(args.output)
     client = HttpClient(
         user_agent=args.user_agent,
@@ -329,26 +347,29 @@ def main() -> int:
     export_target_date = target_date if args.date_filter == "today" else None
     export_csv(args.output, args.csv, export_target_date, DEFAULT_CSV_TIMEZONE)
     health_path = write_health_report(args.logs, target_date, health_records)
-    audit_report = run_daily_audit(
-        args.output,
-        args.logs,
-        target_date,
-        health_records,
-        min_content_chars=args.min_content_chars,
-        timezone_name=DEFAULT_CSV_TIMEZONE,
-    )
+    audit_report = None
+    if not args.skip_audit:
+        audit_report = run_daily_audit(
+            args.output,
+            args.logs,
+            target_date,
+            health_records,
+            min_content_chars=args.min_content_chars,
+            timezone_name=DEFAULT_CSV_TIMEZONE,
+        )
     logging.info("Run complete. New articles: %s", total_new)
     logging.info("Channel health report: %s", health_path)
-    logging.info(
-        "Daily audit: status=%s, anomalies=%s",
-        audit_report["overall"]["anomaly_level"],
-        len(audit_report["anomalies"]),
-    )
-    if audit_report["overall"]["anomaly_level"] != "normal":
-        logging.warning(
-            "Daily collection anomaly: %s",
-            audit_report["overall"]["anomaly_reason"],
+    if audit_report:
+        logging.info(
+            "Daily audit: status=%s, anomalies=%s",
+            audit_report["overall"]["anomaly_level"],
+            len(audit_report["anomalies"]),
         )
+        if audit_report["overall"]["anomaly_level"] != "normal":
+            logging.warning(
+                "Daily collection anomaly: %s",
+                audit_report["overall"]["anomaly_reason"],
+            )
     logging.info("Skipped sources: %s", skipped_sources)
     logging.info("Failed sources: %s", failed_sources)
     logging.info("Degraded sources: %s", degraded_sources)
