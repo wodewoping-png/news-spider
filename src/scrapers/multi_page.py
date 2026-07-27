@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import re
+
 from dataclasses import replace
 from datetime import date
+from urllib.parse import urlparse
 
 from .generic import GenericListingScraper
 
@@ -68,6 +71,14 @@ class H2ViewScraper(MultiPageListingScraper):
     additional_listing_urls = (
         "https://www.gasworld.com/h2-view/latest-news/",
     )
+    article_path_re = re.compile(
+        r"^/(?:story|feature)/[^?#]+/\d+\.article/?$",
+        re.I,
+    )
+
+    def discover_article_urls(self, limit: int) -> list[str]:
+        urls = super().discover_article_urls(limit * 4)
+        return [url for url in urls if self.article_path_re.match(urlparse(url).path)][:limit]
 
 
 class SolarInEnScraper(MultiPageListingScraper):

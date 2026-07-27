@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from datetime import date
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Optional
@@ -51,7 +52,10 @@ class Source:
 
     @property
     def configured_rss_url(self) -> str:
-        match = re.search(r"(?:RSS|rss)\s*[:：]\s*(https?://\S+)", self.note)
+        match = re.search(
+            r"(?:RSS|rss)\s*[:\uFF1A]\s*(https?://[^\s\u3002\uFF1B;,\uFF0C]+)",
+            self.note,
+        )
         if not match:
             return ""
         return match.group(1).rstrip("。；;，,")
@@ -111,3 +115,14 @@ def expects_daily_output(frequency: str) -> bool:
         "quarterly",
     )
     return not any(marker in normalized for marker in low_frequency_markers)
+
+
+def expects_output_on_date(frequency: str, target_date: date) -> bool:
+    """Return whether a source is expected to publish on the target date."""
+    if not expects_daily_output(frequency):
+        return False
+    normalized = (frequency or "").strip().lower()
+    weekday_markers = ("\u5de5\u4f5c\u65e5", "weekday", "business day")
+    if any(marker in normalized for marker in weekday_markers):
+        return target_date.weekday() < 5
+    return True
