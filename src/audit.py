@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 from .date_utils import DEFAULT_TIMEZONE, article_date
 from .load_sources import expects_output_on_date
+from .recovery import sync_recovery_queue
 from .storage import canonicalize_url
 
 
@@ -339,6 +340,7 @@ def _markdown_report(
     summary: dict,
     current_rows: list[dict],
     min_content_chars: int,
+    recovery_incidents: list[dict] | None = None,
 ) -> str:
     abnormal = [
         row for row in current_rows if row.get("anomaly_level") != "normal"
@@ -382,6 +384,42 @@ def _markdown_report(
             )
     else:
         result.append("| normal | — | — | — | — | — | 本次未发现异常 |")
+    open_incidents = [
+        item
+        for item in (recovery_incidents or [])
+        if item.get("status")
+        in {"pending_confirmation", "confirmed", "recovering", "recovery_failed"}
+    ]
+    result.extend(
+        [
+            "",
+            "## 自反馈恢复队列",
+            "",
+            "| 状态 | 缺失日期 | 渠道 | 原因判断 | 人工备注 |",
+            "|---|---|---|---|---|",
+        ]
+    )
+    if open_incidents:
+        for item in open_incidents:
+            source = str(item.get("source") or "").replace("|", "\\|")
+            diagnosis = str(
+                item.get("diagnosis") or item.get("last_error") or ""
+            ).replace("|", "\\|")
+            note = str(item.get("confirmation_note") or "-").replace("|", "\\|")
+            result.append(
+                f"| {item.get('status')} | {item.get('date')} | {source} | "
+                f"{diagnosis} | {note} |"
+            )
+    else:
+        result.append("| — | — | — | 当前没有待处理的渠道缺口 | — |")
+    result.extend(
+        [
+            "",
+            "处理方式：修复渠道后运行 "
+            "`python -m src.recovery confirm --source \"渠道名\" --note \"修复说明\"`；"
+            "后续任务会自动补抓所有已确认的原日期缺口。",
+        ]
+    )
     result.extend(
         [
             "",
@@ -414,6 +452,7 @@ def run_daily_audit(
     summary_path = logs_dir / "daily-collection-summary.csv"
     json_path = logs_dir / "audit-report.json"
     markdown_path = logs_dir / "audit-report.md"
+    recovery_path = logs_dir / "recovery-queue.json"
     generated_at = datetime.now(ZoneInfo(timezone_name)).isoformat()
     target_key = target_date.isoformat()
     inventory = _inventory(jsonl_path, min_content_chars, timezone_name)
@@ -431,21 +470,41 @@ def run_daily_audit(
     }
     for (day, source), counts in inventory.items():
         key = (day, source)
-        if key in by_key and by_key[key].get("crawl_status") != "historical":
-            continue
         frequency = frequency_by_source.get(source, "")
-        by_key[key] = {
-            "date": day,
-            "source": source,
-            "frequency": frequency,
-            "expected_daily": str(
-                expects_output_on_date(frequency, date.fromisoformat(day))
-            ).lower(),
-            "crawl_status": "historical",
-            **counts,
-            "usable_rate": f"{_rate(counts['usable_articles'], counts['article_count']):.4f}",
-            "updated_at": generated_at,
-        }
+        existing_row = by_key.get(key)
+        effective_frequency = frequency or str(
+            existing_row.get("frequency") if existing_row else ""
+        )
+        expected_on_date = str(
+            expects_output_on_date(effective_frequency, date.fromisoformat(day))
+        ).lower()
+        if existing_row:
+            existing_row.update(
+                {
+                    **counts,
+                    "frequency": effective_frequency,
+                    "expected_daily": expected_on_date,
+                    "crawl_status": (
+                        "recovered"
+                        if existing_row.get("crawl_status") in {"zero", "failed"}
+                        and counts["article_count"] > 0
+                        else existing_row.get("crawl_status")
+                    ),
+                    "usable_rate": f"{_rate(counts['usable_articles'], counts['article_count']):.4f}",
+                    "updated_at": generated_at,
+                }
+            )
+        else:
+            by_key[key] = {
+                "date": day,
+                "source": source,
+                "frequency": effective_frequency,
+                "expected_daily": expected_on_date,
+                "crawl_status": "historical",
+                **counts,
+                "usable_rate": f"{_rate(counts['usable_articles'], counts['article_count']):.4f}",
+                "updated_at": generated_at,
+            }
 
     for record in health_records:
         source = str(record.get("source") or "")
@@ -485,6 +544,17 @@ def run_daily_audit(
         _source_metrics(row, channel_rows, target_date)
     _write_csv(channel_path, CHANNEL_FIELDS, channel_rows)
     _write_volume_matrix(volume_path, channel_rows)
+    recovery_rows = current_rows + [
+        row
+        for row in channel_rows
+        if row not in current_rows and row.get("crawl_status") == "recovered"
+    ]
+    recovery_queue = sync_recovery_queue(
+        recovery_path,
+        recovery_rows,
+        health_records,
+        generated_at=generated_at,
+    )
 
     summaries = _read_csv(summary_path)
     inventory_dates = {day for day, _source in inventory}
@@ -570,6 +640,21 @@ def run_daily_audit(
             "channel_daily_volume": str(volume_path),
             "daily_collection_summary": str(summary_path),
             "markdown_report": str(markdown_path),
+            "recovery_queue": str(recovery_path),
+        },
+        "recovery": {
+            "pending_confirmation": sum(
+                item.get("status") == "pending_confirmation"
+                for item in recovery_queue["incidents"]
+            ),
+            "confirmed": sum(
+                item.get("status") == "confirmed"
+                for item in recovery_queue["incidents"]
+            ),
+            "recovery_failed": sum(
+                item.get("status") == "recovery_failed"
+                for item in recovery_queue["incidents"]
+            ),
         },
     }
     json_path.write_text(
@@ -582,6 +667,7 @@ def run_daily_audit(
             current_summary,
             current_rows,
             min_content_chars,
+            recovery_queue["incidents"],
         ),
         encoding="utf-8",
     )

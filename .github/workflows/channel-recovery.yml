@@ -1,14 +1,23 @@
-name: Daily News Spider
+name: Channel Recovery
 
 on:
-  schedule:
-    # 06:00 Asia/Shanghai: collect the complete previous local calendar day.
-    - cron: "0 22 * * *"
   workflow_dispatch:
     inputs:
-      target_date:
-        description: "Optional publication date to collect (YYYY-MM-DD)"
-        required: false
+      source:
+        description: "Exact channel/source name"
+        required: true
+        type: string
+      action:
+        description: "Confirm fixed channel for recovery, or ignore the incident"
+        required: true
+        default: confirm
+        type: choice
+        options:
+          - confirm
+          - ignore
+      note:
+        description: "Human confirmation / repair note"
+        required: true
         type: string
 
 concurrency:
@@ -19,7 +28,7 @@ permissions:
   contents: write
 
 jobs:
-  crawl:
+  recover:
     runs-on: ubuntu-latest
     env:
       PYTHONUTF8: "1"
@@ -41,31 +50,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Backfill previously confirmed channel gaps
-        continue-on-error: true
+      - name: Record human decision
+        env:
+          RECOVERY_ACTION: ${{ inputs.action }}
+          RECOVERY_SOURCE: ${{ inputs.source }}
+          RECOVERY_NOTE: ${{ inputs.note }}
+        run: |
+          python -m src.recovery "$RECOVERY_ACTION" \
+            --source "$RECOVERY_SOURCE" \
+            --note "$RECOVERY_NOTE"
+
+      - name: Backfill confirmed gaps
+        if: inputs.action == 'confirm'
         run: |
           python -m src.recovery run --sources sources.xlsx
 
-      - name: Run crawler
-        env:
-          TARGET_DATE: ${{ inputs.target_date }}
-        run: |
-          args=(--sources sources.xlsx)
-          if [ -n "$TARGET_DATE" ]; then
-            args+=(--target-date "$TARGET_DATE")
-          fi
-          python -m src.main "${args[@]}"
-
-      - name: Publish channel audit summary
-        if: always()
-        run: |
-          if [ -f logs/audit-report.md ]; then
-            cat logs/audit-report.md >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "## Channel audit report unavailable" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-      - name: Send DingTalk channel alert
+      - name: Send DingTalk recovery result
         if: always()
         continue-on-error: true
         env:
@@ -76,16 +76,8 @@ jobs:
         run: |
           python -m src.notifications
 
-      - name: Upload data and logs artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: news-spider-output
-          path: |
-            data/
-            logs/
-          if-no-files-found: warn
-
-      - name: Commit data and logs
+      - name: Commit recovery result
+        if: always()
         run: |
           branch="${GITHUB_REF_NAME:-$(git branch --show-current)}"
           if [ -z "$branch" ]; then
@@ -95,14 +87,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A data logs
           if git diff --cached --quiet; then
-            echo "No data/log changes to commit."
+            echo "No recovery changes to commit."
           else
-            git commit -m "chore: update crawled news data"
+            git commit -m "chore: recover missing channel data"
             git pull --rebase --autostash origin "$branch"
             git push origin "HEAD:$branch"
           fi
-
-      - name: Alert on uncollected channels
-        if: always()
-        run: |
-          python -m src.recovery check

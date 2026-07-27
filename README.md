@@ -94,6 +94,14 @@ workflow 文件位于 `.github/workflows/daily-news.yml`。
 - `logs/daily-collection-summary.csv`：每天一行，包含整体文章量、有产出渠道数、零产出渠道数、失败渠道数和整体异常。
 - `logs/audit-report.json`：便于其他程序读取的本次异常清单。
 - `logs/audit-report.md`：便于人工阅读的本次中文审查报告，并会显示在 GitHub Actions 任务摘要中。
+- `logs/recovery-queue.json`：按渠道和缺失日期保存告警、异常原因、人工确认及自动补抓状态。
+
+完整的异常确认、修复和历史补抓操作见
+[`CHANNEL_RECOVERY.md`](CHANNEL_RECOVERY.md)。每日工作流会先补抓已人工确认的历史缺口，
+再运行当天抓取；仍有未确认或补抓失败的渠道时会通过 GitHub Actions 标红告警。
+
+钉钉群机器人推送已经接入每日抓取和人工补抓工作流。Webhook、加签密钥及安全关键词的
+配置步骤见 [`DINGTALK_SETUP.md`](DINGTALK_SETUP.md)；未配置凭据时会自动跳过推送。
 
 默认判定口径：
 
