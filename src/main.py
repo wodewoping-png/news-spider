@@ -17,7 +17,12 @@ from .date_utils import (
     parse_target_date,
 )
 from .http_client import DEFAULT_USER_AGENT, HttpClient
-from .load_sources import default_sources_path, expects_daily_output, load_sources
+from .load_sources import (
+    default_sources_path,
+    expects_daily_output,
+    expects_output_on_date,
+    load_sources,
+)
 from .rss_discovery import discover_feed, fetch_feed_entries
 from .scrapers import get_scraper_class
 from .storage import (
@@ -31,6 +36,8 @@ from .storage import (
 DEFAULT_CSV_TIMEZONE = DEFAULT_TIMEZONE
 RSS_DISCOVERY_DISABLED_SOURCES = {
     "volta foundation",
+    "perovskite-info",
+    "pv magazine c&i pv",
     "科学网新闻",
     "新华网科技",
     "h2 view",
@@ -132,6 +139,9 @@ def enrich_from_rss_entry(client: HttpClient, source, entry) -> dict | None:
         article["title"] = entry.title
     if entry.published_at and not article.get("published_at"):
         article["published_at"] = entry.published_at
+    public_excerpt = (entry.summary or "").strip()
+    if public_excerpt and len(public_excerpt) > len(str(article.get("content") or "").strip()):
+        article["content"] = public_excerpt
     article["url"] = article.get("url") or entry.url
     return article
 
@@ -223,11 +233,13 @@ def main() -> int:
             feed_url = source.configured_rss_url
             if not feed_url and source_key not in RSS_DISCOVERY_DISABLED_SOURCES:
                 feed_url = discover_feed(client, source.url)
+            entries = []
             if feed_url:
-                crawl_mode = "rss"
                 if source.configured_rss_url:
                     logging.info("Using configured RSS for %s: %s", source.name, feed_url)
                 entries = list(fetch_feed_entries(client, feed_url, candidate_limit))
+            if entries:
+                crawl_mode = "rss"
                 candidates_seen = len(entries)
                 for entry in entries:
                     if len(new_articles) >= args.limit_per_source:
@@ -260,6 +272,11 @@ def main() -> int:
                         new_articles.append(article)
                         existing_urls.add(article_key)
             else:
+                if feed_url:
+                    logging.warning(
+                        "RSS unavailable or empty for %s; falling back to listing scraper",
+                        source.name,
+                    )
                 scraper_class = get_scraper_class(source.name)
                 scraper = scraper_class(client, source)
                 scrape_target = target_date if args.date_filter == "today" else None
@@ -308,9 +325,9 @@ def main() -> int:
             len(str(article.get("content") or "").strip()) >= args.min_content_chars
             for article in new_articles
         )
-        if count == 0 and not expects_daily_output(source.frequency):
+        if count == 0 and not expects_output_on_date(source.frequency, target_date):
             status = "idle"
-            reason = "no target-date articles were expected from this low-frequency source"
+            reason = "no target-date articles were expected for this source schedule"
         elif count == 0:
             status = "zero"
             reason = "no target-date articles were collected"
