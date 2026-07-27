@@ -2,8 +2,14 @@ name: Daily News Spider
 
 on:
   schedule:
-    - cron: "0 14 * * *"
+    # 06:00 Asia/Shanghai: collect the complete previous local calendar day.
+    - cron: "0 22 * * *"
   workflow_dispatch:
+    inputs:
+      target_date:
+        description: "Optional publication date to collect (YYYY-MM-DD)"
+        required: false
+        type: string
 
 concurrency:
   group: daily-news-spider-${{ github.ref }}
@@ -36,8 +42,14 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run crawler
+        env:
+          TARGET_DATE: ${{ inputs.target_date }}
         run: |
-          python -m src.main --sources sources.xlsx
+          args=(--sources sources.xlsx)
+          if [ -n "$TARGET_DATE" ]; then
+            args+=(--target-date "$TARGET_DATE")
+          fi
+          python -m src.main "${args[@]}"
 
       - name: Publish channel audit summary
         if: always()
