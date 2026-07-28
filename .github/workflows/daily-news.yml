@@ -10,6 +10,11 @@ on:
         description: "Optional publication date to collect (YYYY-MM-DD)"
         required: false
         type: string
+      dingtalk_test:
+        description: "Send a DingTalk connection test without running the crawler"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: news-spider-data-${{ github.ref }}
@@ -37,16 +42,19 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Backfill previously confirmed channel gaps
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         continue-on-error: true
         run: |
           python -m src.recovery run --sources sources.xlsx
 
       - name: Run crawler
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         env:
           TARGET_DATE: ${{ inputs.target_date }}
         run: |
@@ -57,7 +65,7 @@ jobs:
           python -m src.main "${args[@]}"
 
       - name: Publish channel audit summary
-        if: always()
+        if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true) }}
         run: |
           if [ -f logs/audit-report.md ]; then
             cat logs/audit-report.md >> "$GITHUB_STEP_SUMMARY"
@@ -66,17 +74,28 @@ jobs:
           fi
 
       - name: Send DingTalk channel alert
-        if: always()
+        if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true) }}
         continue-on-error: true
         env:
           DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
-          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD }}
+          DINGTALK_KEYWORD: ${{ secrets.DINGTALK_KEYWORD }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           python -m src.notifications
 
+      - name: Test DingTalk notification
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dingtalk_test == true }}
+        env:
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DINGTALK_KEYWORD: ${{ secrets.DINGTALK_KEYWORD }}
+          ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python -m src.notifications --test
+
       - name: Upload data and logs artifact
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         uses: actions/upload-artifact@v6
         with:
           name: news-spider-output
@@ -86,6 +105,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Commit data and logs
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         run: |
           branch="${GITHUB_REF_NAME:-$(git branch --show-current)}"
           if [ -z "$branch" ]; then
@@ -103,6 +123,6 @@ jobs:
           fi
 
       - name: Report uncollected channels
-        if: always()
+        if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true) }}
         run: |
           python -m src.recovery check --warn-only
