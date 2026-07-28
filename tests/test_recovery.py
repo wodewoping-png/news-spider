@@ -4,11 +4,14 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from src.recovery import (
     diagnose_incident,
     load_queue,
+    main,
     run_confirmed_recoveries,
+    save_queue,
     sync_recovery_queue,
     update_incidents,
 )
@@ -154,6 +157,36 @@ class RecoveryQueueTests(unittest.TestCase):
 
             self.assertEqual(processed[0]["status"], "recovery_failed")
             self.assertIn("退出码", processed[0]["last_error"])
+
+    def test_warn_only_check_reports_incidents_without_failing(self):
+        with tempfile.TemporaryDirectory() as temp:
+            queue = Path(temp) / "recovery-queue.json"
+            save_queue(
+                queue,
+                {
+                    "incidents": [
+                        {
+                            "date": "2026-07-27",
+                            "source": "Unavailable source",
+                            "status": "pending_confirmation",
+                            "diagnosis": "HTTP 503",
+                        }
+                    ]
+                },
+            )
+            argv = [
+                "recovery",
+                "--queue",
+                str(queue),
+                "check",
+                "--warn-only",
+            ]
+            with patch("sys.argv", argv), patch("builtins.print") as output:
+                result = main()
+
+            self.assertEqual(result, 0)
+            self.assertIn("::warning", output.call_args.args[0])
+            self.assertIn("Unavailable source", output.call_args.args[0])
 
 
 if __name__ == "__main__":

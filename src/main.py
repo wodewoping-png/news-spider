@@ -164,6 +164,29 @@ def write_health_report(
     return report_path
 
 
+def append_source_error(
+    logs_dir: Path,
+    target_date: date,
+    source,
+    exc: BaseException,
+) -> dict:
+    """Persist one source-level failure for later repair without stopping the run."""
+    occurred_at = datetime.now(ZoneInfo(DEFAULT_CSV_TIMEZONE)).isoformat()
+    record = {
+        "occurred_at": occurred_at,
+        "target_date": target_date.isoformat(),
+        "source": source.name,
+        "url": source.url,
+        "error_type": type(exc).__name__,
+        "error": str(exc),
+    }
+    error_path = logs_dir / "source-errors.jsonl"
+    error_path.parent.mkdir(parents=True, exist_ok=True)
+    with error_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    return record
+
+
 def main() -> int:
     args = parse_args()
     setup_logging(args.logs)
@@ -304,13 +327,17 @@ def main() -> int:
                         existing_urls.add(url_key)
         except Exception as exc:  # Keep one bad source from stopping the daily run.
             logging.exception("Source failed: %s", source.name)
-            failed_sources.append((source.name, str(exc)))
+            failure = append_source_error(args.logs, target_date, source, exc)
+            failed_sources.append((source.name, failure["error"]))
             health_records.append(
                 {
                     "source": source.name,
+                    "url": source.url,
                     "frequency": source.frequency,
                     "status": "failed",
-                    "reason": str(exc),
+                    "reason": failure["error"],
+                    "failed_at": failure["occurred_at"],
+                    "error_type": failure["error_type"],
                     "crawl_mode": crawl_mode,
                     "candidates_seen": candidates_seen,
                     "pages_fetched": pages_fetched,

@@ -403,6 +403,11 @@ def parse_args() -> argparse.Namespace:
         action="append",
         default=["pending_confirmation", "recovery_failed"],
     )
+    check_parser.add_argument(
+        "--warn-only",
+        action="store_true",
+        help="将待处理条目标记为 GitHub Actions warning，并始终返回成功",
+    )
     return parser.parse_args()
 
 
@@ -450,8 +455,9 @@ def main() -> int:
                 f"{item.get('date')} {item.get('source')}: "
                 f"{item.get('diagnosis') or item.get('last_error') or '渠道未抓取'}"
             )
-            print(f"::error title=渠道抓取异常::{message}")
-        return 1 if incidents else 0
+            annotation = "warning" if args.warn_only else "error"
+            print(f"::{annotation} title=渠道抓取异常::{message}")
+        return 0 if args.warn_only else (1 if incidents else 0)
     return 2
 
 

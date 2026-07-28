@@ -102,7 +102,7 @@ jobs:
             git push origin "HEAD:$branch"
           fi
 
-      - name: Alert on uncollected channels
+      - name: Report uncollected channels
         if: always()
         run: |
-          python -m src.recovery check
+          python -m src.recovery check --warn-only
