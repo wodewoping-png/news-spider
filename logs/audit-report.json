@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-07-28T07:22:33.731289+08:00",
+  "generated_at": "2026-07-28T19:27:12.219999+08:00",
   "target_date": "2026-07-27",
   "overall": {
     "date": "2026-07-27",
-    "total_articles": 169,
-    "unique_articles": 169,
-    "usable_articles": 165,
+    "total_articles": 179,
+    "unique_articles": 179,
+    "usable_articles": 174,
     "sources_configured": 47,
     "sources_active": 34,
-    "sources_with_articles": 22,
-    "healthy_sources": 19,
-    "zero_sources": 3,
+    "sources_with_articles": 23,
+    "healthy_sources": 22,
+    "zero_sources": 2,
     "idle_sources": 9,
     "failed_sources": 0,
-    "updated_at": "2026-07-28T07:22:33.731289+08:00",
-    "usable_rate": "0.9763",
+    "updated_at": "2026-07-28T19:27:12.219999+08:00",
+    "usable_rate": "0.9721",
     "baseline_median_7d": "92.00",
-    "ratio_to_baseline": "1.84",
+    "ratio_to_baseline": "1.95",
     "anomaly_level": "normal",
     "anomaly_codes": "",
     "anomaly_reason": ""
@@ -24,32 +24,10 @@
   "anomalies": [
     {
       "date": "2026-07-27",
-      "source": "Informationsdienst Wissenschaft-idw",
-      "frequency": "工作日",
-      "expected_daily": "true",
-      "crawl_status": "zero",
-      "candidates_seen": 0,
-      "pages_fetched": 0,
-      "article_count": 0,
-      "unique_articles": 0,
-      "duplicate_articles": 0,
-      "usable_articles": 0,
-      "usable_rate": "0.0000",
-      "previous_count": 0,
-      "baseline_median_7d": "0.00",
-      "ratio_to_baseline": "",
-      "zero_streak_days": 1,
-      "anomaly_level": "warning",
-      "anomaly_codes": "no_output",
-      "anomaly_reason": "日更渠道当天没有收集到文章",
-      "updated_at": "2026-07-28T07:22:33.731289+08:00"
-    },
-    {
-      "date": "2026-07-27",
       "source": "Renewables Now",
       "frequency": "工作日",
       "expected_daily": "true",
-      "crawl_status": "healthy",
+      "crawl_status": "already_collected",
       "candidates_seen": 26,
       "pages_fetched": 26,
       "article_count": 19,
@@ -64,7 +42,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "surge_2x",
       "anomaly_reason": "较 7 日中位数增至 4.75 倍",
-      "updated_at": "2026-07-28T07:22:33.731289+08:00"
+      "updated_at": "2026-07-28T19:27:12.219999+08:00"
     },
     {
       "date": "2026-07-27",
@@ -73,7 +51,7 @@
       "expected_daily": "true",
       "crawl_status": "zero",
       "candidates_seen": 19,
-      "pages_fetched": 13,
+      "pages_fetched": 14,
       "article_count": 0,
       "unique_articles": 0,
       "duplicate_articles": 0,
@@ -86,7 +64,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero",
       "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-07-28T07:22:33.731289+08:00"
+      "updated_at": "2026-07-28T19:27:12.219999+08:00"
     },
     {
       "date": "2026-07-27",
@@ -108,7 +86,29 @@
       "anomaly_level": "warning",
       "anomaly_codes": "no_output",
       "anomaly_reason": "日更渠道当天没有收集到文章",
-      "updated_at": "2026-07-28T07:22:33.731289+08:00"
+      "updated_at": "2026-07-28T19:27:12.219999+08:00"
+    },
+    {
+      "date": "2026-07-27",
+      "source": "索比光伏-综合新闻",
+      "frequency": "工作日",
+      "expected_daily": "true",
+      "crawl_status": "degraded",
+      "candidates_seen": 100,
+      "pages_fetched": 19,
+      "article_count": 27,
+      "unique_articles": 27,
+      "duplicate_articles": 0,
+      "usable_articles": 25,
+      "usable_rate": "0.9259",
+      "previous_count": 0,
+      "baseline_median_7d": "10.50",
+      "ratio_to_baseline": "2.57",
+      "zero_streak_days": 0,
+      "anomaly_level": "warning",
+      "anomaly_codes": "surge_2x",
+      "anomaly_reason": "较 7 日中位数增至 2.57 倍",
+      "updated_at": "2026-07-28T19:27:12.219999+08:00"
     }
   ],
   "paths": {
@@ -119,7 +119,7 @@
     "recovery_queue": "logs/recovery-queue.json"
   },
   "recovery": {
-    "pending_confirmation": 3,
+    "pending_confirmation": 2,
     "confirmed": 0,
     "recovery_failed": 0
   }

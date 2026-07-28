@@ -2,9 +2,9 @@
 
 - 审查日期：2026-07-27
 - 整体状态：normal
-- 收集总量：169 篇
-- 正文可用：165 篇（98%）
-- 有产出渠道：22/34
+- 收集总量：179 篇
+- 正文可用：174 篇（97%）
+- 有产出渠道：23/34
 - 7 日总量中位数：92.00
 
 ## 渠道异常
@@ -13,14 +13,13 @@
 |---|---|---:|---:|---:|---:|---|
 | critical | Renewables Now | 19 | - | 4.00 | 0 | 较 7 日中位数增至 4.75 倍 |
 | critical | Supply Chain Digital | 0 | 1 | 3.00 | 1 | 日更渠道从有产出降为 0 |
-| warning | Informationsdienst Wissenschaft-idw | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
 | warning | pv magazine C&I PV | 0 | - | 0.00 | 1 | 日更渠道当天没有收集到文章 |
+| warning | 索比光伏-综合新闻 | 27 | - | 10.50 | 0 | 较 7 日中位数增至 2.57 倍 |
 
 ## 自反馈恢复队列
 
 | 状态 | 缺失日期 | 渠道 | 原因判断 | 人工备注 |
 |---|---|---|---|---|
-| pending_confirmation | 2026-07-27 | Informationsdienst Wissenschaft-idw | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-07-27 | Supply Chain Digital | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
 | pending_confirmation | 2026-07-27 | pv magazine C&I PV | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
 
