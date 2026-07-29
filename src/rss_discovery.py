@@ -21,6 +21,7 @@ class FeedEntry:
     url: str
     published_at: str
     summary: str = ""
+    content_is_full: bool = False
 
 
 def _site_root(url: str) -> str:
@@ -52,23 +53,27 @@ def _candidate_urls(page_url: str, html: str) -> list[str]:
     return unique
 
 
-def _public_excerpt(entry) -> str:
-    raw_values = [
+def _entry_text(entry) -> tuple[str, bool]:
+    excerpt_values = [
         entry.get("summary"),
         entry.get("description"),
     ]
+    full_values = []
     for content_item in entry.get("content") or []:
         if isinstance(content_item, dict):
-            raw_values.append(content_item.get("value"))
+            full_values.append(content_item.get("value"))
 
-    excerpts = []
-    for value in raw_values:
+    candidates: list[tuple[str, bool]] = []
+    for value, is_full in [
+        *((value, False) for value in excerpt_values),
+        *((value, True) for value in full_values),
+    ]:
         if not value:
             continue
         text = " ".join(BeautifulSoup(str(value), "html.parser").stripped_strings)
         if text:
-            excerpts.append(text)
-    return max(excerpts, key=len, default="")
+            candidates.append((text, is_full))
+    return max(candidates, key=lambda item: len(item[0]), default=("", False))
 
 
 def parse_feed(text: str) -> list[FeedEntry]:
@@ -78,6 +83,7 @@ def parse_feed(text: str) -> list[FeedEntry]:
         url = entry.get("link", "")
         if not url:
             continue
+        entry_text, content_is_full = _entry_text(entry)
         entries.append(
             FeedEntry(
                 title=entry.get("title", "").strip(),
@@ -88,7 +94,8 @@ def parse_feed(text: str) -> list[FeedEntry]:
                     or entry.get("created")
                     or ""
                 ).strip(),
-                summary=_public_excerpt(entry),
+                summary=entry_text,
+                content_is_full=content_is_full,
             )
         )
     return entries

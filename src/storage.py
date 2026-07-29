@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Iterable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from .content_quality import content_rank
 from .date_utils import DEFAULT_TIMEZONE, article_date
 
 
@@ -14,6 +15,9 @@ FIELDNAMES = (
     "title",
     "published_at",
     "content",
+    "content_status",
+    "content_issue",
+    "content_extraction",
     "url",
     "source_name",
     "domain",
@@ -91,6 +95,43 @@ def load_existing_content_lengths(jsonl_path: Path) -> dict[str, int]:
     return lengths
 
 
+def load_existing_content_quality(jsonl_path: Path) -> dict[str, dict]:
+    quality: dict[str, dict] = {}
+    if not jsonl_path.exists():
+        return quality
+    with jsonl_path.open("r", encoding="utf-8") as file:
+        for line in file:
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            url_key = canonicalize_url(str(item.get("url") or ""))
+            if not url_key:
+                continue
+            current = quality.get(url_key)
+            if current is None or is_better_article(item, current):
+                quality[url_key] = item
+    return quality
+
+
+def is_better_article(candidate: dict, existing: dict) -> bool:
+    candidate_status = content_rank(str(candidate.get("content_status") or ""))
+    existing_status = content_rank(str(existing.get("content_status") or ""))
+    candidate_length = len(str(candidate.get("content") or "").strip())
+    existing_length = len(str(existing.get("content") or "").strip())
+    if candidate_status == 3 and existing_status != 3:
+        return True
+    if existing_status == 3 and candidate_status != 3:
+        return False
+    if candidate_status == 0:
+        return False
+    if existing_status == 0:
+        return True
+    return candidate_length > existing_length
+
+
 def append_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> int:
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
@@ -111,9 +152,7 @@ def upsert_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> tuple[int, int]:
             continue
         normalized = {key: article.get(key, "") for key in FIELDNAMES}
         current = incoming.get(url_key)
-        if current is None or len(str(normalized["content"]).strip()) > len(
-            str(current.get("content") or "").strip()
-        ):
+        if current is None or is_better_article(normalized, current):
             incoming[url_key] = normalized
     if not incoming:
         return 0, 0
@@ -136,9 +175,7 @@ def upsert_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> tuple[int, int]:
                 candidate = incoming.get(url_key)
                 if candidate is not None and url_key not in seen:
                     seen.add(url_key)
-                    if len(str(candidate.get("content") or "").strip()) > len(
-                        str(existing.get("content") or "").strip()
-                    ):
+                    if is_better_article(candidate, existing):
                         output_lines.append(
                             json.dumps(candidate, ensure_ascii=False)
                         )

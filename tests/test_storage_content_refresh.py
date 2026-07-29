@@ -52,6 +52,48 @@ class StorageContentRefreshTests(unittest.TestCase):
             saved = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(len(saved["content"]), 800)
 
+    def test_verified_full_content_replaces_longer_incomplete_excerpt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "articles.jsonl"
+            original = article("https://example.com/story", "x" * 1200)
+            original["content_status"] = "incomplete"
+            original["content_issue"] = "rss_excerpt_only"
+            path.write_text(
+                json.dumps(original, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            replacement = article("https://example.com/story", "y" * 900)
+            replacement["content_status"] = "full"
+            replacement["content_issue"] = ""
+
+            added, updated = upsert_jsonl(path, [replacement])
+            saved = json.loads(path.read_text(encoding="utf-8"))
+
+            self.assertEqual((added, updated), (0, 1))
+            self.assertEqual(saved["content_status"], "full")
+            self.assertEqual(len(saved["content"]), 900)
+
+    def test_short_incomplete_result_does_not_replace_long_legacy_record(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "articles.jsonl"
+            original = article("https://example.com/story", "x" * 1200)
+            path.write_text(
+                json.dumps(original, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            replacement = article(
+                "https://example.com/story",
+                "Subscribe to unlock",
+            )
+            replacement["content_status"] = "incomplete"
+            replacement["content_issue"] = "paywall_or_login_wall"
+
+            added, updated = upsert_jsonl(path, [replacement])
+            saved = json.loads(path.read_text(encoding="utf-8"))
+
+            self.assertEqual((added, updated), (0, 0))
+            self.assertEqual(len(saved["content"]), 1200)
+
     def test_new_url_is_appended_without_duplicate(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "articles.jsonl"

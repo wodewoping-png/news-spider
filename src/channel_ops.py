@@ -56,6 +56,7 @@ OPS_FIELDS = (
     "new_articles",
     "refreshed_articles",
     "usable_articles",
+    "incomplete_articles",
     "short_articles",
     "min_content_chars",
     "content_chars_min",
@@ -358,8 +359,8 @@ def _report_markdown(report: dict) -> str:
         "",
         "## 需要处理的渠道",
         "",
-        "| 渠道 | 最近目标日期 | 状态 | 正文中位字符 | 短正文 | 连续异常 | 待补日期数 | 原因 | 下一步 |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: | --- | --- |",
+        "| 渠道 | 最近目标日期 | 状态 | 正文中位字符 | 不完整正文 | 短正文 | 连续异常 | 待补日期数 | 原因 | 下一步 |",
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     actionable = [
         row for row in report["channels"] if str(row.get("next_action")) != "none"
@@ -368,13 +369,14 @@ def _report_markdown(report: dict) -> str:
         for row in actionable:
             reason = _safe_text(row.get("last_error")).replace("|", "\\|")
             rows.append(
-                "| {source} | {date} | {status} | {median_chars} | {short} | "
+                "| {source} | {date} | {status} | {median_chars} | {incomplete} | {short} | "
                 "{streak} | {incidents} | "
                 "{reason} | {action} |".format(
                     source=str(row.get("source") or "").replace("|", "\\|"),
                     date=row.get("last_target_date") or "-",
                     status=row.get("last_status") or "-",
                     median_chars=row.get("content_chars_median") or 0,
+                    incomplete=row.get("incomplete_articles") or 0,
                     short=row.get("short_articles") or 0,
                     streak=row.get("consecutive_unhealthy") or 0,
                     incidents=row.get("open_incidents") or 0,
@@ -383,7 +385,7 @@ def _report_markdown(report: dict) -> str:
                 )
             )
     else:
-        rows.append("| - | - | healthy | 0 | 0 | 0 | 0 | 无待处理异常 | none |")
+        rows.append("| - | - | healthy | 0 | 0 | 0 | 0 | 0 | 无待处理异常 | none |")
     rows.extend(
         [
             "",
@@ -524,6 +526,9 @@ def reconcile(
                         record.get("refreshed_articles")
                     ),
                     "usable_articles": _as_int(record.get("usable_articles")),
+                    "incomplete_articles": _as_int(
+                        record.get("incomplete_articles")
+                    ),
                     "short_articles": _as_int(record.get("short_articles")),
                     "min_content_chars": _as_int(record.get("min_content_chars")),
                     "content_chars_min": _as_int(record.get("content_chars_min")),
@@ -557,6 +562,9 @@ def reconcile(
                         record.get("refreshed_articles")
                     ),
                     "usable_articles": _as_int(record.get("usable_articles")),
+                    "incomplete_articles": _as_int(
+                        record.get("incomplete_articles")
+                    ),
                     "short_articles": _as_int(record.get("short_articles")),
                     "min_content_chars": _as_int(record.get("min_content_chars")),
                     "content_chars_min": _as_int(record.get("content_chars_min")),

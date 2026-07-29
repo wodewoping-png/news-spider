@@ -7,7 +7,9 @@ from typing import Optional
 from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
+from trafilatura import extract as extract_full_text
 
+from .content_quality import assess_content
 from .date_utils import date_from_url
 from .http_client import HttpClient
 from .load_sources import Source
@@ -411,6 +413,23 @@ def extract_structured_body(soup: BeautifulSoup) -> str:
     return max(candidates, key=len, default="")
 
 
+def extract_trafilatura_body(html: str, url: str = "") -> str:
+    """Extract the complete main text with recall favored over brevity."""
+    try:
+        text = extract_full_text(
+            html,
+            url=url or None,
+            output_format="txt",
+            favor_recall=True,
+            include_comments=False,
+            include_tables=True,
+            deduplicate=False,
+        )
+    except Exception:
+        return ""
+    return trim_body_noise(clean_text(text or ""))
+
+
 def is_body_line(text: str) -> bool:
     if len(text) < MIN_PARAGRAPH_LENGTH:
         return False
@@ -462,11 +481,28 @@ def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional
 
     url_date = date_from_url(canonical) or date_from_url(url)
     published_at = url_date.isoformat() if url_date else extract_date(soup)
+    title = extract_title(soup)
+
+    selector_body = extract_body(soup, source.name)
+    full_text_body = extract_trafilatura_body(html, canonical)
+    if len(full_text_body) > len(selector_body):
+        content = full_text_body
+        extraction_method = "trafilatura_full_text"
+    else:
+        content = selector_body
+        extraction_method = "dom_or_structured_full_text"
+    content_status, content_issue = assess_content(
+        content,
+        extraction_method=extraction_method,
+    )
 
     return {
-        "title": extract_title(soup),
+        "title": title,
         "published_at": published_at,
-        "content": extract_body(soup, source.name),
+        "content": content,
+        "content_status": content_status,
+        "content_issue": content_issue,
+        "content_extraction": extraction_method,
         "url": canonical,
         "source_name": source.name,
         "domain": source.domain,

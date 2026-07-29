@@ -85,7 +85,7 @@ class SourceFailureContinuityTests(unittest.TestCase):
                 patch("src.main.parse_args", return_value=args),
                 patch("src.main.setup_logging", side_effect=fake_setup_logging),
                 patch("src.main.load_sources", return_value=sources),
-                patch("src.main.load_existing_urls", return_value=set()),
+                patch("src.main.load_existing_content_quality", return_value={}),
                 patch("src.main.HttpClient", return_value=object()),
                 patch("src.main.discover_feed", return_value=None),
                 patch("src.main.get_scraper_class", return_value=FakeScraper),

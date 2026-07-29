@@ -164,10 +164,12 @@ class DailyAuditTests(unittest.TestCase):
                 {
                     **article("2026-07-28", "Daily", 1),
                     "content": "x" * 120,
+                    "content_status": "full",
                 },
                 {
                     **article("2026-07-28", "Daily", 2),
                     "content": "x" * 800,
+                    "content_status": "full",
                 },
             ]
             self.write_articles(data, rows)
@@ -189,6 +191,8 @@ class DailyAuditTests(unittest.TestCase):
                 for row in saved
                 if row["date"] == "2026-07-28" and row["source"] == "Daily"
             )
+            self.assertEqual(daily["usable_articles"], "2")
+            self.assertEqual(daily["incomplete_articles"], "0")
             self.assertEqual(daily["short_articles"], "1")
             self.assertEqual(daily["content_chars_min"], "120")
             self.assertEqual(daily["content_chars_median"], "460")

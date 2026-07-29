@@ -8,6 +8,7 @@ from pathlib import Path
 from statistics import median
 from zoneinfo import ZoneInfo
 
+from .content_quality import FULL_CONTENT_STATUS, assess_content
 from .date_utils import DEFAULT_TIMEZONE, article_date
 from .load_sources import expects_output_on_date
 from .recovery import sync_recovery_queue
@@ -27,6 +28,7 @@ CHANNEL_FIELDS = (
     "duplicate_articles",
     "usable_articles",
     "usable_rate",
+    "incomplete_articles",
     "short_articles",
     "content_chars_min",
     "content_chars_median",
@@ -142,6 +144,7 @@ def _inventory(
         lambda: {
             "article_count": 0,
             "usable_articles": 0,
+            "incomplete_articles": 0,
             "urls": set(),
             "content_lengths": [],
         }
@@ -164,8 +167,13 @@ def _inventory(
             bucket["article_count"] += 1
             content_length = len(str(item.get("content") or "").strip())
             bucket["content_lengths"].append(content_length)
-            if content_length >= min_content_chars:
+            content_status = str(item.get("content_status") or "").lower()
+            if not content_status:
+                content_status, _ = assess_content(str(item.get("content") or ""))
+            if content_status == FULL_CONTENT_STATUS:
                 bucket["usable_articles"] += 1
+            else:
+                bucket["incomplete_articles"] += 1
             url_key = canonicalize_url(str(item.get("url") or ""))
             if url_key:
                 bucket["urls"].add(url_key)
@@ -181,7 +189,10 @@ def _inventory(
             "unique_articles": unique,
             "duplicate_articles": max(total - unique, 0),
             "usable_articles": usable,
-            "short_articles": max(total - usable, 0),
+            "incomplete_articles": value["incomplete_articles"],
+            "short_articles": sum(
+                length < min_content_chars for length in content_lengths
+            ),
             "content_chars_min": min(content_lengths, default=0),
             "content_chars_median": (
                 int(median(content_lengths)) if content_lengths else 0
@@ -535,6 +546,7 @@ def run_daily_audit(
                 "unique_articles": 0,
                 "duplicate_articles": 0,
                 "usable_articles": 0,
+                "incomplete_articles": 0,
                 "short_articles": 0,
                 "content_chars_min": 0,
                 "content_chars_median": 0,

@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 from .article_parser import fetch_and_parse_article, utc_now_iso
 from .audit import run_daily_audit
+from .content_quality import FULL_CONTENT_STATUS, assess_content
 from .date_utils import (
     DEFAULT_TIMEZONE,
     ensure_published_at,
@@ -30,8 +31,8 @@ from .scrapers import get_scraper_class
 from .storage import (
     canonicalize_url,
     export_csv,
-    load_existing_content_lengths,
-    load_existing_urls,
+    is_better_article,
+    load_existing_content_quality,
     upsert_jsonl,
 )
 
@@ -109,7 +110,7 @@ def parse_args() -> argparse.Namespace:
         "--min-content-chars",
         type=int,
         default=DEFAULT_MIN_CONTENT_CHARS,
-        help="Content shorter than this is reported as degraded.",
+        help="Record the number of unusually short articles; completeness is assessed separately.",
     )
     parser.add_argument(
         "--target-date",
@@ -139,15 +140,33 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def enrich_from_rss_entry(client: HttpClient, source, entry) -> dict | None:
+def enrich_from_rss_entry(
+    client: HttpClient,
+    source,
+    entry,
+    *,
+    feed_declared_full: bool = False,
+) -> dict | None:
     article = fetch_and_parse_article(client, entry.url, source)
+    feed_declared_full = bool(
+        feed_declared_full or getattr(entry, "content_is_full", False)
+    )
+    feed_method = "rss_full_content" if feed_declared_full else "rss_excerpt"
     if not article:
         if not entry.summary:
             return None
+        content_status, content_issue = assess_content(
+            entry.summary,
+            extraction_method=feed_method,
+            declared_full=feed_declared_full,
+        )
         article = {
             "title": entry.title,
             "published_at": entry.published_at,
             "content": entry.summary,
+            "content_status": content_status,
+            "content_issue": content_issue,
+            "content_extraction": feed_method,
             "url": entry.url,
             "source_name": source.name,
             "domain": source.domain,
@@ -159,10 +178,41 @@ def enrich_from_rss_entry(client: HttpClient, source, entry) -> dict | None:
     if entry.published_at and not article.get("published_at"):
         article["published_at"] = entry.published_at
     public_excerpt = (entry.summary or "").strip()
-    if public_excerpt and len(public_excerpt) > len(str(article.get("content") or "").strip()):
+    current_status, _ = assess_content(
+        str(article.get("content") or ""),
+        extraction_method=str(article.get("content_extraction") or "page_full_text"),
+    )
+    if public_excerpt and (
+        feed_declared_full
+        or current_status != FULL_CONTENT_STATUS
+    ) and len(public_excerpt) > len(str(article.get("content") or "").strip()):
         article["content"] = public_excerpt
+        article["content_extraction"] = feed_method
+    article["content_status"], article["content_issue"] = assess_content(
+        str(article.get("content") or ""),
+        extraction_method=str(article.get("content_extraction") or "page_full_text"),
+        declared_full=(
+            feed_declared_full
+            and article.get("content_extraction") == feed_method
+        ),
+    )
     article["url"] = article.get("url") or entry.url
     return article
+
+
+def ensure_content_quality(
+    article: dict,
+    *,
+    default_extraction: str = "scraper_full_text",
+) -> None:
+    extraction_method = str(
+        article.get("content_extraction") or default_extraction
+    )
+    article["content_extraction"] = extraction_method
+    article["content_status"], article["content_issue"] = assess_content(
+        str(article.get("content") or ""),
+        extraction_method=extraction_method,
+    )
 
 
 def resolve_feed_access(
@@ -262,8 +312,8 @@ def main() -> int:
         if missing_sources:
             logging.error("Requested sources not found: %s", missing_sources)
             return 2
-    existing_urls = load_existing_urls(args.output)
-    existing_content_lengths = load_existing_content_lengths(args.output)
+    existing_quality = load_existing_content_quality(args.output)
+    existing_urls = set(existing_quality)
     client = HttpClient(
         user_agent=args.user_agent,
         timeout=args.timeout,
@@ -343,8 +393,13 @@ def main() -> int:
                     entry_key = canonicalize_url(entry.url)
                     if (
                         entry_key in existing_urls
-                        and existing_content_lengths.get(entry_key, 0)
-                        >= args.min_content_chars
+                        and str(
+                            existing_quality.get(entry_key, {}).get(
+                                "content_status"
+                            )
+                            or ""
+                        ).lower()
+                        == FULL_CONTENT_STATUS
                     ):
                         continue
                     if entry.published_at and args.date_filter == "today":
@@ -356,17 +411,21 @@ def main() -> int:
                                 entry.published_at,
                             )
                             continue
-                    article = enrich_from_rss_entry(client, source, entry)
+                    article = enrich_from_rss_entry(
+                        client,
+                        source,
+                        entry,
+                        feed_declared_full=(
+                            feed_crawl_mode == "rss_authenticated"
+                        ),
+                    )
                     pages_fetched += 1
                     article_key = canonicalize_url(article.get("url", "")) if article else ""
                     if article and article_key:
-                        content_length = len(
-                            str(article.get("content") or "").strip()
-                        )
-                        previous_length = existing_content_lengths.get(article_key)
-                        if (
-                            previous_length is not None
-                            and content_length <= previous_length
+                        previous_article = existing_quality.get(article_key)
+                        if previous_article is not None and not is_better_article(
+                            article,
+                            previous_article,
                         ):
                             continue
                         ensure_published_at(article)
@@ -380,7 +439,7 @@ def main() -> int:
                         normalize_published_at(article, DEFAULT_CSV_TIMEZONE)
                         new_articles.append(article)
                         existing_urls.add(article_key)
-                        existing_content_lengths[article_key] = content_length
+                        existing_quality[article_key] = article
             else:
                 if feed_url:
                     logging.warning(
@@ -398,16 +457,14 @@ def main() -> int:
                 candidates_seen = getattr(scraper, "last_candidate_count", len(scraped_articles))
                 pages_fetched = getattr(scraper, "last_fetched_count", len(scraped_articles))
                 for article in scraped_articles:
+                    ensure_content_quality(article)
                     url = article.get("url")
                     url_key = canonicalize_url(url or "")
                     if url and url_key:
-                        content_length = len(
-                            str(article.get("content") or "").strip()
-                        )
-                        previous_length = existing_content_lengths.get(url_key)
-                        if (
-                            previous_length is not None
-                            and content_length <= previous_length
+                        previous_article = existing_quality.get(url_key)
+                        if previous_article is not None and not is_better_article(
+                            article,
+                            previous_article,
                         ):
                             continue
                         ensure_published_at(article)
@@ -421,7 +478,7 @@ def main() -> int:
                         normalize_published_at(article, DEFAULT_CSV_TIMEZONE)
                         new_articles.append(article)
                         existing_urls.add(url_key)
-                        existing_content_lengths[url_key] = content_length
+                        existing_quality[url_key] = article
         except Exception as exc:  # Keep one bad source from stopping the daily run.
             logging.exception("Source failed: %s", source.name)
             failure = append_source_error(args.logs, target_date, source, exc)
@@ -452,20 +509,24 @@ def main() -> int:
             for article in new_articles
         ]
         usable_count = sum(
-            length >= args.min_content_chars for length in content_lengths
+            str(article.get("content_status") or "").lower()
+            == FULL_CONTENT_STATUS
+            for article in new_articles
         )
-        short_count = max(changed_count - usable_count, 0)
+        incomplete_count = max(changed_count - usable_count, 0)
+        short_count = sum(
+            length < args.min_content_chars for length in content_lengths
+        )
         if changed_count == 0 and not expects_output_on_date(source.frequency, target_date):
             status = "idle"
             reason = "no target-date articles were expected for this source schedule"
         elif changed_count == 0:
             status = "zero"
             reason = "no target-date articles were collected"
-        elif usable_count < changed_count:
+        elif incomplete_count:
             status = "degraded"
             reason = (
-                f"{short_count} articles have content shorter than "
-                f"{args.min_content_chars} chars"
+                f"{incomplete_count} articles were not verified as full text"
             )
         else:
             status = "healthy"
@@ -485,6 +546,7 @@ def main() -> int:
                 "new_articles": added_count,
                 "refreshed_articles": refreshed_count,
                 "usable_articles": usable_count,
+                "incomplete_articles": incomplete_count,
                 "short_articles": short_count,
                 "min_content_chars": args.min_content_chars,
                 "content_chars_min": min(content_lengths, default=0),

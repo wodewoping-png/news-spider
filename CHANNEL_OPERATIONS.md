@@ -56,7 +56,7 @@ python -m src.channel_ops cycle \
 | 文件 | 用途 |
 | --- | --- |
 | `logs/channel-operations.jsonl` | 不可变的逐次抓取事件，便于追溯某渠道何时、为何失败 |
-| `logs/channel-operations.csv` | 每个渠道当前状态，含短正文数和正文最小/中位/最大字符数 |
+| `logs/channel-operations.csv` | 每个渠道当前状态，含不完整正文数、短正文数和正文最小/中位/最大字符数 |
 | `logs/channel-ops-state.json` | 幂等状态、最近成功时间和连续异常次数 |
 | `logs/channel-ops-report.json` | 供自动化读取的当前总览 |
 | `logs/channel-ops-report.md` | GitHub Actions 中展示的中文运维总览 |
@@ -137,9 +137,10 @@ python -m src.channel_ops resolve ignore \
 补抓只运行对应渠道和缺失日期。找到文章后自动标记 `recovered` 并发送恢复通知；仍为空或
 再次报错则标记 `recovery_failed`，不会无限重试。
 
-正文默认少于 500 字即进入质量告警。再次运行同一日期时，已有短正文会重新抓取；仅当
-新的正文更长时才更新原记录。正文提取范围包括普通段落、列表、表格、引用、图注和
-JSON-LD `articleBody`，避免只保存页面摘要。
+500 字只作为短正文观察线，不作为全文判定。正文完整性会独立检查付费墙、登录墙、
+RSS 摘要与末尾省略；未验证为全文的记录会进入质量告警。再次运行同一日期时，这些记录
+会重新抓取。正文提取范围包括普通段落、列表、表格、引用、图注、JSON-LD `articleBody`
+和高召回全文算法；已验证全文优先于未验证摘要，因此不会降低已有数据质量。
 
 GitHub Actions 的 **Channel Recovery** 提供相同操作，不需要在命令行执行。
 

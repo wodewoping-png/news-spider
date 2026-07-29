@@ -307,6 +307,21 @@ class ListingScraperTests(unittest.TestCase):
         self.assertIn("First material project milestone", article["content"])
         self.assertIn("North region reaches 850 MW", article["content"])
         self.assertIn("Detailed project location caption", article["content"])
+        self.assertEqual(article["content_status"], "full")
+
+    def test_paywall_prompt_is_not_reported_as_full_content(self):
+        source = make_source("example", "https://example.com/")
+        html = """
+        <article>
+          <h1>Subscriber story</h1>
+          <p>Subscribe to unlock this article and continue reading.</p>
+        </article>
+        """
+
+        article = parse_article_html(html, source.url, source)
+
+        self.assertEqual(article["content_status"], "incomplete")
+        self.assertEqual(article["content_issue"], "paywall_or_login_wall")
 
     def test_default_content_quality_threshold_is_expanded(self):
         self.assertEqual(DEFAULT_MIN_CONTENT_CHARS, 500)
@@ -345,6 +360,7 @@ class ListingScraperTests(unittest.TestCase):
         with patch("src.main.fetch_and_parse_article", return_value=paywall_article):
             article = enrich_from_rss_entry(None, source, entry)
         self.assertIn("substantially more useful context", article["content"])
+        self.assertEqual(article["content_status"], "incomplete")
 
     def test_rss_content_is_used_when_article_page_cannot_be_parsed(self):
         feed = """
@@ -361,11 +377,37 @@ class ListingScraperTests(unittest.TestCase):
         entry = parse_feed(feed)[0]
         source = make_source("The Information", "https://www.theinformation.com/")
         with patch("src.main.fetch_and_parse_article", return_value=None):
-            article = enrich_from_rss_entry(None, source, entry)
+            article = enrich_from_rss_entry(
+                None,
+                source,
+                entry,
+                feed_declared_full=True,
+            )
 
         self.assertEqual(article["title"], "Subscriber headline")
         self.assertIn("Authenticated subscriber feed content", article["content"])
         self.assertEqual(article["source_name"], "The Information")
+        self.assertEqual(article["content_status"], "full")
+
+    def test_content_encoded_feed_entry_is_declared_full(self):
+        feed = """
+        <rss xmlns:content="http://purl.org/rss/1.0/modules/content/">
+          <channel><item>
+            <title>Full feed story</title>
+            <link>https://example.com/full-feed-story</link>
+            <description>Short summary.</description>
+            <content:encoded><![CDATA[
+              <p>First complete paragraph from the publisher.</p>
+              <p>Second complete paragraph with the conclusion.</p>
+            ]]></content:encoded>
+          </item></channel>
+        </rss>
+        """
+
+        entry = parse_feed(feed)[0]
+
+        self.assertTrue(entry.content_is_full)
+        self.assertIn("Second complete paragraph", entry.summary)
 
     def test_the_information_uses_official_subscriber_feed_with_both_secrets(self):
         feed_url, auth, required, crawl_mode = resolve_feed_access(
