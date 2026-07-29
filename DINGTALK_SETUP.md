@@ -61,7 +61,7 @@ Settings → Secrets and variables → Actions
 $env:DINGTALK_WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=..."
 $env:DINGTALK_SECRET = "SEC..."
 $env:DINGTALK_KEYWORD = "渠道抓取告警"
-python -m src.notifications
+python -m src.channel_ops notify
 ```
 
 ## 4. 故障兜底

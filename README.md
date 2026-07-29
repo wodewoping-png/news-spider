@@ -54,7 +54,7 @@ The Information 提供官方认证订阅 Feed。需要全文时，在 GitHub Act
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python -m src.main --sources sources.xlsx
+python -m src.channel_ops cycle --sources sources.xlsx
 ```
 
 常用参数：
@@ -75,11 +75,11 @@ python -m src.main --ignore-robots
 
 workflow 文件位于 `.github/workflows/daily-news.yml`。
 
-- 每天 UTC 14:00 自动运行一次，约等于北京时间 22:00。
+- 每天 UTC 22:00 自动运行一次，约等于次日北京时间 06:00，并抓取完整的前一自然日。
 - 支持在 GitHub 页面手动点击 `workflow_dispatch` 运行。
 - 运行后会上传 `data/` 和 `logs/` 为 artifact。
 - 如果 `data/` 或 `logs/` 有变化，会自动提交回仓库。
-- 每次运行后会把本次渠道审查报告写入 GitHub Actions 的任务摘要。
+- 每次运行后会把统一渠道运维报告写入 GitHub Actions 的任务摘要。
 
 首次放入 GitHub 仓库后，请确认仓库 `Settings -> Actions -> General -> Workflow permissions` 允许 `Read and write permissions`。
 
@@ -98,10 +98,16 @@ workflow 文件位于 `.github/workflows/daily-news.yml`。
 
 ## 自主审查与每日统计
 
-审查会在每次日常抓取结束后自动执行，所以实际周期为每天一次，满足 1–2 天内发现异常的要求。重复运行同一个目标日期时会覆盖当天记录，不会重复记账。
+`src.channel_ops` 是统一渠道运维入口。每日周期按“处理已确认缺口 → 抓取 → 审查 →
+归并运维状态 → 钉钉状态变化通知”执行。单渠道失败只进入事件台账和恢复队列，不会停止
+其他渠道；重复归并同一次抓取不会重复计数或重复发送通知。
 
 输出文件：
 
+- `logs/channel-operations.jsonl`：追加式运行事件，一次渠道抓取尝试一行，记录时间、目标日期、状态、错误类型、原因、候选数、正文访问数和产出数。
+- `logs/channel-operations.csv`：每个渠道一行的当前运维状态表，包含最近成功时间、连续异常次数、待补日期数和下一步动作。
+- `logs/channel-ops-state.json`：统一管理程序使用的幂等状态，不应手工修改。
+- `logs/channel-ops-report.json` / `.md`：机器可读与人工可读的渠道运维总览；Markdown 会写入 GitHub Actions 任务摘要。
 - `logs/channel-daily-stats.csv`：每个渠道每天一行，包含收集量、唯一文章数、正文可用率、前次收集量、7 日中位数、变化倍数、连续为零天数和异常原因。
 - `logs/channel-daily-volume.csv`：便于直接观察的宽表，每行一个日期、每列一个渠道，单元格为当天文章数；无法确认历史状态的位置保留为空。
 - `logs/daily-collection-summary.csv`：每天一行，包含整体文章量、有产出渠道数、零产出渠道数、失败渠道数和整体异常。
@@ -109,9 +115,9 @@ workflow 文件位于 `.github/workflows/daily-news.yml`。
 - `logs/audit-report.md`：便于人工阅读的本次中文审查报告，并会显示在 GitHub Actions 任务摘要中。
 - `logs/recovery-queue.json`：按渠道和缺失日期保存告警、异常原因、人工确认及自动补抓状态。
 
-完整的异常确认、修复和历史补抓操作见
-[`CHANNEL_RECOVERY.md`](CHANNEL_RECOVERY.md)。每日工作流会先补抓已人工确认的历史缺口，
-再运行当天抓取；仍有未确认或补抓失败的渠道时会通过 GitHub Actions 标红告警。
+完整的运维架构、状态口径、异常确认、修复验证和历史补抓操作见
+[`CHANNEL_OPERATIONS.md`](CHANNEL_OPERATIONS.md)。原有 `src.recovery` 和
+`src.notifications` 命令仍兼容，但日常维护统一使用 `src.channel_ops`。
 
 钉钉群机器人推送已经接入每日抓取和人工补抓工作流。Webhook、加签密钥及安全关键词的
 配置步骤见 [`DINGTALK_SETUP.md`](DINGTALK_SETUP.md)；未配置凭据时会自动跳过推送。

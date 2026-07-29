@@ -1,5 +1,8 @@
 # 渠道异常自反馈与自动补抓
 
+> 日常维护已统一到 [`CHANNEL_OPERATIONS.md`](CHANNEL_OPERATIONS.md) 和
+> `python -m src.channel_ops`。本文件保留底层恢复模块说明和兼容命令。
+
 每日抓取结束后，`src.audit` 会把日更渠道的零产出或抓取失败按“渠道 + 缺失日期”写入
 `logs/recovery-queue.json`。同一缺口重复审查不会重复建单。
 

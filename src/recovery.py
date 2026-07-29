@@ -65,9 +65,24 @@ def diagnose_incident(row: dict, health: dict | None = None) -> tuple[str, str]:
 
     if crawl_status == "failed":
         patterns = (
+            (
+                ("missing run record",),
+                "missing_run_record",
+                "该日期没有渠道抓取记录，检查工作流延迟、取消或进程级失败",
+            ),
+            (
+                ("401", "unauthorized", "authentication", "authenticated subscriber"),
+                "authentication_failed",
+                "认证失败或订阅 Feed 不可用，检查账号权限和 GitHub Actions Secrets",
+            ),
             (("403", "forbidden"), "access_denied", "站点拒绝访问（HTTP 403），检查反爬、请求头或访问权限"),
             (("404", "not found"), "entry_not_found", "抓取入口返回 HTTP 404，检查渠道 URL 或 RSS 地址"),
             (("429", "too many requests"), "rate_limited", "请求频率受限（HTTP 429），降低频率或增加重试退避"),
+            (
+                ("500", "502", "503", "504", "service unavailable", "bad gateway"),
+                "upstream_unavailable",
+                "站点服务暂时不可用（HTTP 5xx），保留缺口并在站点恢复后验证",
+            ),
             (("timeout", "timed out"), "timeout", "站点请求超时，检查可用性并调整超时/重试策略"),
             (("ssl", "certificate"), "tls_error", "TLS/证书校验失败，检查站点证书或网络链路"),
             (("robots",), "robots_blocked", "robots.txt 禁止抓取，需确认合规抓取入口"),
@@ -172,6 +187,8 @@ def sync_recovery_queue(
                 "technical_reason": str(
                     health.get("reason") or row.get("anomaly_reason") or ""
                 ),
+                "error_type": str(health.get("error_type") or ""),
+                "failed_at": str(health.get("failed_at") or ""),
                 "updated_at": timestamp,
             }
         )
@@ -219,6 +236,34 @@ def update_incidents(
             )
             changed.append(incident)
     save_queue(path, payload, updated_at=now)
+    return changed
+
+
+def auto_confirm_missing_run_incidents(
+    path: Path,
+    *,
+    timestamp: str | None = None,
+) -> list[dict]:
+    """Confirm only system-detected missing-run gaps for automatic backfill."""
+    payload = load_queue(path)
+    now = timestamp or _now()
+    changed: list[dict] = []
+    for incident in payload["incidents"]:
+        if (
+            incident.get("status") == "pending_confirmation"
+            and incident.get("diagnosis_code") == "missing_run_record"
+        ):
+            incident.update(
+                {
+                    "status": "confirmed",
+                    "confirmed_at": now,
+                    "confirmation_note": "系统检测到整日运行记录缺失，自动确认补抓",
+                    "updated_at": now,
+                }
+            )
+            changed.append(incident)
+    if changed:
+        save_queue(path, payload, updated_at=now)
     return changed
 
 

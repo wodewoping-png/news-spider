@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from src.recovery import (
+    auto_confirm_missing_run_incidents,
     diagnose_incident,
     load_queue,
     main,
@@ -18,6 +19,43 @@ from src.recovery import (
 
 
 class RecoveryQueueTests(unittest.TestCase):
+    def test_only_missing_run_incidents_are_auto_confirmed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            queue = Path(temp) / "recovery-queue.json"
+            save_queue(
+                queue,
+                {
+                    "incidents": [
+                        {
+                            "id": "2026-07-20::Missing",
+                            "source": "Missing",
+                            "date": "2026-07-20",
+                            "status": "pending_confirmation",
+                            "diagnosis_code": "missing_run_record",
+                        },
+                        {
+                            "id": "2026-07-28::Broken",
+                            "source": "Broken",
+                            "date": "2026-07-28",
+                            "status": "pending_confirmation",
+                            "diagnosis_code": "timeout",
+                        },
+                    ]
+                },
+            )
+
+            changed = auto_confirm_missing_run_incidents(
+                queue,
+                timestamp="2026-07-29T08:00:00+08:00",
+            )
+
+            self.assertEqual([item["source"] for item in changed], ["Missing"])
+            saved = {
+                item["source"]: item for item in load_queue(queue)["incidents"]
+            }
+            self.assertEqual(saved["Missing"]["status"], "confirmed")
+            self.assertEqual(saved["Broken"]["status"], "pending_confirmation")
+
     def test_sync_creates_diagnosed_incident_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as temp:
             queue = Path(temp) / "recovery-queue.json"
@@ -61,6 +99,13 @@ class RecoveryQueueTests(unittest.TestCase):
         )
         self.assertEqual(code, "timeout")
         self.assertIn("超时", reason)
+
+        code, reason = diagnose_incident(
+            {"crawl_status": "failed"},
+            {"reason": "Authenticated subscriber RSS request failed: HTTP 401"},
+        )
+        self.assertEqual(code, "authentication_failed")
+        self.assertIn("认证", reason)
 
     def test_human_confirmation_and_successful_backfill(self):
         with tempfile.TemporaryDirectory() as temp:

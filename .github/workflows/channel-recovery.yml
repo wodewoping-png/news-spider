@@ -50,34 +50,36 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Record human decision
+      - name: Resolve incident and run maintenance
         env:
           RECOVERY_ACTION: ${{ inputs.action }}
           RECOVERY_SOURCE: ${{ inputs.source }}
           RECOVERY_NOTE: ${{ inputs.note }}
-        run: |
-          python -m src.recovery "$RECOVERY_ACTION" \
-            --source "$RECOVERY_SOURCE" \
-            --note "$RECOVERY_NOTE"
-
-      - name: Backfill confirmed gaps
-        if: inputs.action == 'confirm'
-        env:
           THE_INFORMATION_RSS_USERNAME: ${{ secrets.THE_INFORMATION_RSS_USERNAME }}
           THE_INFORMATION_RSS_PASSWORD: ${{ secrets.THE_INFORMATION_RSS_PASSWORD }}
-        run: |
-          python -m src.recovery run --sources sources.xlsx
-
-      - name: Send DingTalk recovery result
-        if: always()
-        continue-on-error: true
-        env:
           DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
           DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          python -m src.notifications
+          args=(
+            resolve "$RECOVERY_ACTION"
+            --source "$RECOVERY_SOURCE"
+            --note "$RECOVERY_NOTE"
+            --sources sources.xlsx
+            --notify
+          )
+          if [ "$RECOVERY_ACTION" = "confirm" ]; then
+            args+=(--run)
+          fi
+          python -m src.channel_ops "${args[@]}"
+
+      - name: Publish channel operations summary
+        if: always()
+        run: |
+          if [ -f logs/channel-ops-report.md ]; then
+            cat logs/channel-ops-report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Commit recovery result
         if: always()

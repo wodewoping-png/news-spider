@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -26,10 +27,19 @@ STATUS_LABELS = {
     "recovery_failed": "补抓失败",
     "recovered": "补抓成功",
 }
+_SECRET_PATTERN = re.compile(
+    r"(?i)((?:access[_-]?token|api[_-]?key|password|secret|authorization)"
+    r"(?:%3[dD]|=|:)\s*)[^&\s,;]+"
+)
 
 
 class NotificationError(RuntimeError):
     pass
+
+
+def _safe_text(value: object, limit: int = 500) -> str:
+    text = str(value or "").replace("\n", " ")
+    return _SECRET_PATTERN.sub(r"\1[REDACTED]", text)[:limit]
 
 
 def _now() -> str:
@@ -102,17 +112,33 @@ def build_dingtalk_markdown(
     for item in rows[:max_items]:
         status = str(item.get("status") or "")
         label = STATUS_LABELS.get(status, status)
-        diagnosis = str(
+        diagnosis = _safe_text(
             item.get("last_error")
             or item.get("diagnosis")
             or item.get("technical_reason")
-            or "未记录原因"
-        ).replace("\n", " ")[:500]
+            or "未记录原因",
+        )
+        technical_reason = _safe_text(item.get("technical_reason"))
+        occurred_at = _safe_text(
+            item.get("failed_at")
+            or item.get("last_attempt_at")
+            or item.get("detected_at")
+            or item.get("updated_at")
+            or "-"
+        )
+        error_type = _safe_text(
+            item.get("error_type") or item.get("diagnosis_code") or "-"
+        )
         lines.extend(
             [
                 f"### {label}｜{item.get('source')}",
                 f"- 缺失日期：{item.get('date')}",
-                f"- 原因：{diagnosis}",
+                f"- 发生/发现时间：{occurred_at}",
+                f"- 错误类型：`{error_type}`",
+                f"- 诊断：{diagnosis}",
+                f"- 原始错误：{technical_reason}"
+                if technical_reason and technical_reason != diagnosis
+                else "- 原始错误：同上",
                 f"- 处理状态：`{status}`",
                 "",
             ]

@@ -68,6 +68,26 @@ class DingTalkNotificationTests(unittest.TestCase):
         self.assertIn("未发现候选文章", markdown)
         self.assertIn("2026-07-22", markdown)
 
+    def test_message_includes_failure_metadata_and_redacts_secrets(self):
+        item = incident("pending_confirmation")
+        item.update(
+            {
+                "failed_at": "2026-07-23T06:01:02+08:00",
+                "error_type": "RequiredFetchError",
+                "technical_reason": "HTTP 401 password=do-not-send",
+            }
+        )
+
+        _title, markdown = build_dingtalk_markdown(
+            [item],
+            keyword="渠道抓取告警",
+        )
+
+        self.assertIn("2026-07-23T06:01:02+08:00", markdown)
+        self.assertIn("RequiredFetchError", markdown)
+        self.assertNotIn("do-not-send", markdown)
+        self.assertIn("[REDACTED]", markdown)
+
     def test_only_selects_status_transitions(self):
         queue = {"incidents": [incident("pending_confirmation")]}
         state = {

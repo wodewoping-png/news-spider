@@ -46,54 +46,38 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Backfill previously confirmed channel gaps
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
-        continue-on-error: true
-        env:
-          THE_INFORMATION_RSS_USERNAME: ${{ secrets.THE_INFORMATION_RSS_USERNAME }}
-          THE_INFORMATION_RSS_PASSWORD: ${{ secrets.THE_INFORMATION_RSS_PASSWORD }}
-        run: |
-          python -m src.recovery run --sources sources.xlsx
-
-      - name: Run crawler
+      - name: Run unified channel operations cycle
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         env:
           TARGET_DATE: ${{ inputs.target_date }}
           THE_INFORMATION_RSS_USERNAME: ${{ secrets.THE_INFORMATION_RSS_USERNAME }}
           THE_INFORMATION_RSS_PASSWORD: ${{ secrets.THE_INFORMATION_RSS_PASSWORD }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD }}
+          ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           args=(--sources sources.xlsx)
           if [ -n "$TARGET_DATE" ]; then
             args+=(--target-date "$TARGET_DATE")
           fi
-          python -m src.main "${args[@]}"
+          python -m src.channel_ops cycle "${args[@]}"
 
-      - name: Publish channel audit summary
+      - name: Publish channel operations summary
         if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true) }}
         run: |
-          if [ -f logs/audit-report.md ]; then
-            cat logs/audit-report.md >> "$GITHUB_STEP_SUMMARY"
+          if [ -f logs/channel-ops-report.md ]; then
+            cat logs/channel-ops-report.md >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "## Channel audit report unavailable" >> "$GITHUB_STEP_SUMMARY"
+            echo "## Channel operations report unavailable" >> "$GITHUB_STEP_SUMMARY"
           fi
-
-      - name: Send DingTalk channel alert
-        if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true) }}
-        continue-on-error: true
-        env:
-          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
-          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
-          DINGTALK_KEYWORD: ${{ secrets.DINGTALK_KEYWORD }}
-          ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          python -m src.notifications
 
       - name: Test DingTalk notification
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dingtalk_test == true }}
         env:
           DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
-          DINGTALK_KEYWORD: ${{ secrets.DINGTALK_KEYWORD }}
+          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           python -m src.notifications --test
@@ -126,7 +110,7 @@ jobs:
             git push origin "HEAD:$branch"
           fi
 
-      - name: Report uncollected channels
+      - name: Report channels requiring maintenance
         if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true) }}
         run: |
-          python -m src.recovery check --warn-only
+          python -m src.channel_ops check --warn-only
