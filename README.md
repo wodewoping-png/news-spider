@@ -4,7 +4,7 @@
 
 当前默认输入文件是 `sources.xlsx`。本目录里的原始表格 `news web.xlsx` 已复制为 `sources.xlsx`，后续只维护 `sources.xlsx` 即可。
 
-`sources.xlsx` 已合并 `else/news-search-main` 项目中的每日抓取渠道。当前共有 47 条来源记录，其中 37 条会进入每日抓取流程，10 条因公众号、无法访问、需订阅或空链接而默认跳过。
+`sources.xlsx` 已合并 `else/news-search-main` 和 `sources II.xlsx` 中的网页渠道。当前共有 57 条来源记录，其中 43 条会进入抓取流程，14 条因公众号、无法访问、需订阅、需账号登录或空链接而默认跳过。
 
 ## 采集字段
 
@@ -189,8 +189,35 @@ SCRAPER_REGISTRY = {
 - `科学网新闻`: `src/scrapers/science_net.py`
 - `新华网科技`: `src/scrapers/xinhua_tech.py`
 - `H2 View`、`国际太阳能光伏网`、中国新能源系列入口：`src/scrapers/multi_page.py`
+- `光伏测试网`: `src/scrapers/testpv.py`
+- `索比光伏`: `src/scrapers/solarbe.py`
+- `国际能源网`: `src/scrapers/international_energy.py`
+- `中国能源网`: `src/scrapers/china_energy.py`
+- `我爱电车网`: `src/scrapers/xevcar.py`
+- `北极星储能网`: `src/scrapers/bjx_storage.py`
+- `INSIDEEVs`: `src/scrapers/insideevs.py`
+- `EnergyTrend储能`: `src/scrapers/energytrend.py`
+- `NE时代`: `src/scrapers/ne_time.py`
+- `电池网`: `src/scrapers/itdcw.py`
+- `X-MOL`: `src/scrapers/xmol.py`（当前需账号登录，默认跳过）
 
 这些模块先使用来源页面的文章链接选择器，再进入详情页使用通用正文解析器。对 WordPress 或公开 RSS 支持良好的网站，运行时通常会优先走 RSS。
+
+## 从 sources II.xlsx 补充的渠道
+
+已排除搜狗微信公众号检索入口，并为其余网站逐站配置抓取流程：
+
+- 光伏测试网只读取 Discuz 门户文章，过滤论坛链接。
+- 索比光伏读取“光伏要闻”，只保留按日期组织的详情页。
+- 国际能源网聚合宏观新闻、国内政策和国际政策三个栏目。
+- 中国能源网绕开需会话首页，读取无需登录的能源经济公开栏目。
+- 我爱电车网读取首页新闻卡片并过滤侧栏旧闻。
+- 北极星储能网聚合要闻、独家和市场三个栏目。
+- INSIDEEVs 优先使用官方 News RSS，网页列表只作为回退。
+- EnergyTrend储能限定新闻页，排除价格和研究栏目。
+- NE时代只读取 `/web/article/{id}` 文章路由。
+- 电池网聚合国内、国际和企业新闻三个栏目。
+- X-MOL 在公开入口跳转登录页时记录受限并跳过，不尝试绕过登录。
 
 ## 从 news-search-main 补充的渠道
 
@@ -207,6 +234,8 @@ SCRAPER_REGISTRY = {
 - `中粉固态电池`、`起点钠电`、`能源学人`、`钙钛矿工厂`、`钙钛矿学习xx平台`、`地热能在线`: 备注为公众号
 - `ESPLAZA长时储能网`: 备注为公众号+网站，默认按备注跳过；如需抓取网站内容，可从备注中移除“公众号”
 - `风电世界`: 链接为空
+- `全球风电网`、`新能源网`、`中国新能源网-新闻`: 现有入口无法访问
+- `X-MOL`: 需账号登录，未配置授权凭据时跳过
 
 以下来源可以先由通用 RSS / 通用列表 scraper 尝试；如果日志出现 `TODO scraper needed`，需要人工补充列表页 CSS 选择器、文章页 HTML 样例或动态接口信息：
 

@@ -3,9 +3,15 @@ from __future__ import annotations
 from .base import BaseScraper
 from .batteries_international import BatteriesInternationalScraper
 from .batterytechonline import BatteryTechOnlineScraper
+from .bjx_storage import BJXStorageScraper
+from .china_energy import ChinaEnergyScraper
 from .electrek import ElectrekScraper
 from .electrive import ElectriveScraper
+from .energytrend import EnergyTrendScraper
 from .generic import GenericListingScraper
+from .insideevs import InsideEVsScraper
+from .international_energy import InternationalEnergyScraper
+from .itdcw import ITDCWScraper
 from .multi_page import (
     ChinaNengyuanScraper,
     ChinaNengyuanTechScraper,
@@ -14,17 +20,33 @@ from .multi_page import (
     PerovskiteInfoScraper,
     SolarInEnScraper,
 )
+from .ne_time import NETimeScraper
 from .pv_magazine import PVMagazineScraper
 from .science_net import ScienceNetScraper
+from .solarbe import SolarbeScraper
 from .supply_chain_digital import SupplyChainDigitalScraper
+from .testpv import TestPVScraper
 from .volta import VoltaFoundationScraper
 from .renewables_now import RenewablesNowScraper
+from .xevcar import XEVCarScraper
 from .xinhua_tech import XinhuaTechScraper
+from .xmol import XMolScraper
 from .tgs4c import TGS4COffshoreScraper
 
 
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "electrive": ElectriveScraper,
+    "光伏测试网": TestPVScraper,
+    "索比光伏": SolarbeScraper,
+    "国际能源网": InternationalEnergyScraper,
+    "中国能源网": ChinaEnergyScraper,
+    "我爱电车网": XEVCarScraper,
+    "北极星储能网": BJXStorageScraper,
+    "insideevs": InsideEVsScraper,
+    "energytrend储能": EnergyTrendScraper,
+    "ne时代": NETimeScraper,
+    "电池网": ITDCWScraper,
+    "x-mol": XMolScraper,
     "batteries international": BatteriesInternationalScraper,
     "volta foundation": VoltaFoundationScraper,
     "battery tech online": BatteryTechOnlineScraper,

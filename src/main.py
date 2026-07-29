@@ -49,6 +49,16 @@ RSS_DISCOVERY_DISABLED_SOURCES = {
     "新能源网",
     "全球风电网",
     "中国新能源网-新闻",
+    "光伏测试网",
+    "索比光伏",
+    "国际能源网",
+    "中国能源网",
+    "我爱电车网",
+    "北极星储能网",
+    "energytrend储能",
+    "ne时代",
+    "电池网",
+    "x-mol",
 }
 THE_INFORMATION_SOURCE_KEY = "the information"
 THE_INFORMATION_SUBSCRIBER_FEED = "https://www.theinformation.com/subscriber_feed"
