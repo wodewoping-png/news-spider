@@ -44,6 +44,10 @@ class FetchResult:
     content_type: str
 
 
+class RequiredFetchError(RuntimeError):
+    """Raised when a required authenticated/resource fetch cannot be completed."""
+
+
 class RobotsCache:
     def __init__(self, session: requests.Session, user_agent: str, timeout: int) -> None:
         self.session = session
@@ -115,8 +119,17 @@ class HttpClient:
         self.session.mount("https://", adapter)
         self.robots = RobotsCache(self.session, user_agent, timeout)
 
-    def get(self, url: str, *, allow_non_html: bool = True) -> Optional[FetchResult]:
+    def get(
+        self,
+        url: str,
+        *,
+        allow_non_html: bool = True,
+        auth: tuple[str, str] | None = None,
+        required: bool = False,
+    ) -> Optional[FetchResult]:
         if self.respect_robots and not self.robots.can_fetch(url):
+            if required:
+                raise RequiredFetchError(f"Required fetch blocked by robots.txt: {url}")
             logging.warning("Blocked by robots.txt: %s", url)
             return None
 
@@ -126,9 +139,16 @@ class HttpClient:
                 url,
                 timeout=self.timeout,
                 headers=request_headers_for_url(url, self.user_agent),
+                auth=auth,
             )
             response.raise_for_status()
         except requests.RequestException as exc:
+            if required:
+                status_code = getattr(getattr(exc, "response", None), "status_code", None)
+                reason = f"HTTP {status_code}" if status_code else type(exc).__name__
+                raise RequiredFetchError(
+                    f"Required fetch failed: {url} ({reason})"
+                ) from exc
             logging.warning("Fetch failed: %s (%s)", url, exc)
             return None
 

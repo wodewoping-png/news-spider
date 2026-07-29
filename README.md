@@ -35,6 +35,19 @@ Excel 表头必须包含：
 
 这些来源不会抓取，但会写入日志，例如 `logs/daily-news.log`。
 
+### The Information 订阅 RSS
+
+The Information 提供官方认证订阅 Feed。需要全文时，在 GitHub Actions Secrets 中配置：
+
+- `THE_INFORMATION_RSS_USERNAME`
+- `THE_INFORMATION_RSS_PASSWORD`
+
+两项都存在时，程序仅对官方
+`https://www.theinformation.com/subscriber_feed` 使用 HTTP Basic 认证，并直接采用 Feed
+内的订阅正文；凭据不会写入源码、Excel、日志或抓取数据。两项均未配置时继续使用公开
+`/feed` 摘要。只配置其中一项、认证被拒绝或认证 Feed 为空时，该渠道会记录为失败并进入
+现有告警/修复流程，同时不影响其他渠道继续抓取。
+
 ## 本地运行
 
 ```powershell

@@ -2,14 +2,27 @@ from __future__ import annotations
 
 import unittest
 from datetime import date, datetime
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from zoneinfo import ZoneInfo
+
+import requests
 
 from src.article_parser import parse_article_html
 from src.date_utils import date_from_url, default_target_date, parse_target_date
-from src.http_client import FetchResult, request_headers_for_url
+from src.http_client import (
+    FetchResult,
+    HttpClient,
+    RequiredFetchError,
+    request_headers_for_url,
+)
 from src.load_sources import Source, expects_output_on_date
-from src.main import default_csv_path, enrich_from_rss_entry, expects_daily_output
+from src.main import (
+    THE_INFORMATION_SUBSCRIBER_FEED,
+    default_csv_path,
+    enrich_from_rss_entry,
+    expects_daily_output,
+    resolve_feed_access,
+)
 from src.rss_discovery import parse_feed
 from src.scrapers.generic import GenericListingScraper
 from src.scrapers.multi_page import H2ViewScraper
@@ -289,6 +302,87 @@ class ListingScraperTests(unittest.TestCase):
         with patch("src.main.fetch_and_parse_article", return_value=paywall_article):
             article = enrich_from_rss_entry(None, source, entry)
         self.assertIn("substantially more useful context", article["content"])
+
+    def test_rss_content_is_used_when_article_page_cannot_be_parsed(self):
+        feed = """
+        <rss><channel><item>
+          <title>Subscriber headline</title>
+          <link>https://www.theinformation.com/articles/subscriber-story</link>
+          <pubDate>Tue, 28 Jul 2026 08:00:00 GMT</pubDate>
+          <description><![CDATA[
+            <p>Authenticated subscriber feed content that remains available
+            even when the linked article page cannot be parsed.</p>
+          ]]></description>
+        </item></channel></rss>
+        """
+        entry = parse_feed(feed)[0]
+        source = make_source("The Information", "https://www.theinformation.com/")
+        with patch("src.main.fetch_and_parse_article", return_value=None):
+            article = enrich_from_rss_entry(None, source, entry)
+
+        self.assertEqual(article["title"], "Subscriber headline")
+        self.assertIn("Authenticated subscriber feed content", article["content"])
+        self.assertEqual(article["source_name"], "The Information")
+
+    def test_the_information_uses_official_subscriber_feed_with_both_secrets(self):
+        feed_url, auth, required, crawl_mode = resolve_feed_access(
+            "the information",
+            "https://www.theinformation.com/feed",
+            environ={
+                "THE_INFORMATION_RSS_USERNAME": "subscriber@example.com",
+                "THE_INFORMATION_RSS_PASSWORD": "secret",
+            },
+        )
+
+        self.assertEqual(feed_url, THE_INFORMATION_SUBSCRIBER_FEED)
+        self.assertEqual(auth, ("subscriber@example.com", "secret"))
+        self.assertTrue(required)
+        self.assertEqual(crawl_mode, "rss_authenticated")
+
+    def test_the_information_rejects_partial_secret_configuration(self):
+        with self.assertRaisesRegex(ValueError, "must both be configured"):
+            resolve_feed_access(
+                "the information",
+                "https://www.theinformation.com/feed",
+                environ={"THE_INFORMATION_RSS_USERNAME": "subscriber@example.com"},
+            )
+
+    def test_the_information_keeps_public_feed_without_secrets(self):
+        feed_url, auth, required, crawl_mode = resolve_feed_access(
+            "the information",
+            "https://www.theinformation.com/feed",
+            environ={},
+        )
+
+        self.assertEqual(feed_url, "https://www.theinformation.com/feed")
+        self.assertIsNone(auth)
+        self.assertFalse(required)
+        self.assertEqual(crawl_mode, "rss_public")
+
+    def test_required_authenticated_fetch_forwards_auth_without_leaking_it(self):
+        response = Mock()
+        response.status_code = 401
+        response.raise_for_status.side_effect = requests.HTTPError(
+            "unauthorized",
+            response=response,
+        )
+        client = HttpClient(sleep_seconds=0, respect_robots=False)
+        with patch.object(client.session, "get", return_value=response) as request:
+            with self.assertRaises(RequiredFetchError) as raised:
+                client.get(
+                    THE_INFORMATION_SUBSCRIBER_FEED,
+                    auth=("subscriber@example.com", "secret"),
+                    required=True,
+                )
+
+        request.assert_called_once()
+        self.assertEqual(
+            request.call_args.kwargs["auth"],
+            ("subscriber@example.com", "secret"),
+        )
+        self.assertIn("HTTP 401", str(raised.exception))
+        self.assertNotIn("subscriber@example.com", str(raised.exception))
+        self.assertNotIn("secret", str(raised.exception))
 
     def test_renewables_now_filters_navigation_links(self):
         source = make_source("Renewables Now", "https://renewablesnow.com/news/")

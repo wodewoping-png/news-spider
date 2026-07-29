@@ -62,6 +62,9 @@ jobs:
 
       - name: Backfill confirmed gaps
         if: inputs.action == 'confirm'
+        env:
+          THE_INFORMATION_RSS_USERNAME: ${{ secrets.THE_INFORMATION_RSS_USERNAME }}
+          THE_INFORMATION_RSS_PASSWORD: ${{ secrets.THE_INFORMATION_RSS_PASSWORD }}
         run: |
           python -m src.recovery run --sources sources.xlsx
 

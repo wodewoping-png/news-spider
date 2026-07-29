@@ -3,11 +3,12 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from .article_parser import fetch_and_parse_article
+from .article_parser import fetch_and_parse_article, utc_now_iso
 from .audit import run_daily_audit
 from .date_utils import (
     DEFAULT_TIMEZONE,
@@ -46,6 +47,10 @@ RSS_DISCOVERY_DISABLED_SOURCES = {
     "全球风电网",
     "中国新能源网-新闻",
 }
+THE_INFORMATION_SOURCE_KEY = "the information"
+THE_INFORMATION_SUBSCRIBER_FEED = "https://www.theinformation.com/subscriber_feed"
+THE_INFORMATION_USERNAME_ENV = "THE_INFORMATION_RSS_USERNAME"
+THE_INFORMATION_PASSWORD_ENV = "THE_INFORMATION_RSS_PASSWORD"
 
 
 def default_csv_path(
@@ -134,7 +139,18 @@ def parse_args() -> argparse.Namespace:
 def enrich_from_rss_entry(client: HttpClient, source, entry) -> dict | None:
     article = fetch_and_parse_article(client, entry.url, source)
     if not article:
-        return None
+        if not entry.summary:
+            return None
+        article = {
+            "title": entry.title,
+            "published_at": entry.published_at,
+            "content": entry.summary,
+            "url": entry.url,
+            "source_name": source.name,
+            "domain": source.domain,
+            "sub_domain": source.sub_domain,
+            "crawled_at": utc_now_iso(),
+        }
     if entry.title and not article.get("title"):
         article["title"] = entry.title
     if entry.published_at and not article.get("published_at"):
@@ -144,6 +160,34 @@ def enrich_from_rss_entry(client: HttpClient, source, entry) -> dict | None:
         article["content"] = public_excerpt
     article["url"] = article.get("url") or entry.url
     return article
+
+
+def resolve_feed_access(
+    source_name: str,
+    configured_feed_url: str | None,
+    *,
+    environ: dict[str, str] | None = None,
+) -> tuple[str | None, tuple[str, str] | None, bool, str]:
+    """Resolve source-specific feed authentication without exposing credentials."""
+    if source_name.strip().lower() != THE_INFORMATION_SOURCE_KEY:
+        return configured_feed_url, None, False, "rss"
+
+    environment = environ if environ is not None else os.environ
+    username = str(environment.get(THE_INFORMATION_USERNAME_ENV) or "").strip()
+    password = str(environment.get(THE_INFORMATION_PASSWORD_ENV) or "")
+    if bool(username) != bool(password):
+        raise ValueError(
+            f"{THE_INFORMATION_USERNAME_ENV} and "
+            f"{THE_INFORMATION_PASSWORD_ENV} must both be configured"
+        )
+    if username and password:
+        return (
+            THE_INFORMATION_SUBSCRIBER_FEED,
+            (username, password),
+            True,
+            "rss_authenticated",
+        )
+    return configured_feed_url, None, False, "rss_public"
 
 
 def write_health_report(
@@ -254,15 +298,39 @@ def main() -> int:
         try:
             source_key = source.name.strip().lower()
             feed_url = source.configured_rss_url
+            feed_auth = None
+            feed_required = False
+            feed_crawl_mode = "rss"
+            feed_url, feed_auth, feed_required, feed_crawl_mode = resolve_feed_access(
+                source.name,
+                feed_url,
+            )
             if not feed_url and source_key not in RSS_DISCOVERY_DISABLED_SOURCES:
                 feed_url = discover_feed(client, source.url)
             entries = []
             if feed_url:
-                if source.configured_rss_url:
+                if feed_auth:
+                    logging.info(
+                        "Using authenticated subscriber RSS for %s",
+                        source.name,
+                    )
+                elif source.configured_rss_url:
                     logging.info("Using configured RSS for %s: %s", source.name, feed_url)
-                entries = list(fetch_feed_entries(client, feed_url, candidate_limit))
+                entries = list(
+                    fetch_feed_entries(
+                        client,
+                        feed_url,
+                        candidate_limit,
+                        auth=feed_auth,
+                        required=feed_required,
+                    )
+                )
+                if feed_required and not entries:
+                    raise RuntimeError(
+                        "Authenticated subscriber RSS returned no entries"
+                    )
             if entries:
-                crawl_mode = "rss"
+                crawl_mode = feed_crawl_mode
                 candidates_seen = len(entries)
                 for entry in entries:
                     if len(new_articles) >= args.limit_per_source:

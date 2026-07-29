@@ -120,8 +120,16 @@ def fetch_feed_entries(
     client: HttpClient,
     feed_url: str,
     limit: int | None = 100,
+    *,
+    auth: tuple[str, str] | None = None,
+    required: bool = False,
 ) -> Iterable[FeedEntry]:
-    result = client.get(feed_url)
+    request_options = {}
+    if auth is not None:
+        request_options["auth"] = auth
+    if required:
+        request_options["required"] = True
+    result = client.get(feed_url, **request_options)
     if not result:
         return []
     entries = parse_feed(result.text)

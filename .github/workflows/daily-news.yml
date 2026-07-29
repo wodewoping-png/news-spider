@@ -49,6 +49,9 @@ jobs:
       - name: Backfill previously confirmed channel gaps
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         continue-on-error: true
+        env:
+          THE_INFORMATION_RSS_USERNAME: ${{ secrets.THE_INFORMATION_RSS_USERNAME }}
+          THE_INFORMATION_RSS_PASSWORD: ${{ secrets.THE_INFORMATION_RSS_PASSWORD }}
         run: |
           python -m src.recovery run --sources sources.xlsx
 
@@ -56,6 +59,8 @@ jobs:
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         env:
           TARGET_DATE: ${{ inputs.target_date }}
+          THE_INFORMATION_RSS_USERNAME: ${{ secrets.THE_INFORMATION_RSS_USERNAME }}
+          THE_INFORMATION_RSS_PASSWORD: ${{ secrets.THE_INFORMATION_RSS_PASSWORD }}
         run: |
           args=(--sources sources.xlsx)
           if [ -n "$TARGET_DATE" ]; then
