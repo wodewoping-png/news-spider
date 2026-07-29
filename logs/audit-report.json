@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-07-29T07:33:59.099795+08:00",
+  "generated_at": "2026-07-29T10:34:08.806549+08:00",
   "target_date": "2026-07-28",
   "overall": {
     "date": "2026-07-28",
-    "total_articles": 185,
-    "unique_articles": 185,
-    "usable_articles": 181,
+    "total_articles": 192,
+    "unique_articles": 192,
+    "usable_articles": 188,
     "sources_configured": 47,
     "sources_active": 34,
-    "sources_with_articles": 24,
+    "sources_with_articles": 25,
     "healthy_sources": 21,
-    "zero_sources": 5,
-    "idle_sources": 5,
+    "zero_sources": 4,
+    "idle_sources": 9,
     "failed_sources": 0,
-    "updated_at": "2026-07-29T07:33:59.099795+08:00",
-    "usable_rate": "0.9784",
+    "updated_at": "2026-07-29T10:34:08.806549+08:00",
+    "usable_rate": "0.9792",
     "baseline_median_7d": "108.00",
-    "ratio_to_baseline": "1.71",
+    "ratio_to_baseline": "1.78",
     "anomaly_level": "normal",
     "anomaly_codes": "",
     "anomaly_reason": ""
@@ -27,7 +27,7 @@
       "source": "Renewables Now",
       "frequency": "工作日",
       "expected_daily": "true",
-      "crawl_status": "healthy",
+      "crawl_status": "already_collected",
       "candidates_seen": 27,
       "pages_fetched": 27,
       "article_count": 18,
@@ -42,7 +42,7 @@
       "anomaly_level": "warning",
       "anomaly_codes": "surge_2x",
       "anomaly_reason": "较 7 日中位数增至 3.60 倍",
-      "updated_at": "2026-07-29T07:33:59.099795+08:00"
+      "updated_at": "2026-07-29T10:34:08.806549+08:00"
     },
     {
       "date": "2026-07-28",
@@ -64,7 +64,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "no_output,zero_2d",
       "anomaly_reason": "日更渠道当天没有收集到文章；已连续 2 天为 0",
-      "updated_at": "2026-07-29T07:33:59.099795+08:00"
+      "updated_at": "2026-07-29T10:34:08.806549+08:00"
     },
     {
       "date": "2026-07-28",
@@ -86,29 +86,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero",
       "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-07-29T07:33:59.099795+08:00"
-    },
-    {
-      "date": "2026-07-28",
-      "source": "中国电力新闻网-新能源",
-      "frequency": "工作日",
-      "expected_daily": "true",
-      "crawl_status": "zero",
-      "candidates_seen": 28,
-      "pages_fetched": 2,
-      "article_count": 0,
-      "unique_articles": 0,
-      "duplicate_articles": 0,
-      "usable_articles": 0,
-      "usable_rate": "0.0000",
-      "previous_count": 2,
-      "baseline_median_7d": "0.00",
-      "ratio_to_baseline": "",
-      "zero_streak_days": 1,
-      "anomaly_level": "critical",
-      "anomaly_codes": "sudden_zero",
-      "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-07-29T07:33:59.099795+08:00"
+      "updated_at": "2026-07-29T10:34:08.806549+08:00"
     },
     {
       "date": "2026-07-28",
@@ -130,7 +108,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero",
       "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-07-29T07:33:59.099795+08:00"
+      "updated_at": "2026-07-29T10:34:08.806549+08:00"
     },
     {
       "date": "2026-07-28",
@@ -152,7 +130,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero",
       "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-07-29T07:33:59.099795+08:00"
+      "updated_at": "2026-07-29T10:34:08.806549+08:00"
     }
   ],
   "paths": {
@@ -163,7 +141,7 @@
     "recovery_queue": "logs/recovery-queue.json"
   },
   "recovery": {
-    "pending_confirmation": 7,
+    "pending_confirmation": 6,
     "confirmed": 0,
     "recovery_failed": 0
   }
