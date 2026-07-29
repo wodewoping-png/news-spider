@@ -54,7 +54,7 @@ jobs:
           THE_INFORMATION_RSS_PASSWORD: ${{ secrets.THE_INFORMATION_RSS_PASSWORD }}
           DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
-          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD }}
+          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD || secrets.DINGTALK_KEYWORD }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           args=(--sources sources.xlsx)
@@ -77,7 +77,7 @@ jobs:
         env:
           DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
-          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD }}
+          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD || secrets.DINGTALK_KEYWORD }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           python -m src.notifications --test
