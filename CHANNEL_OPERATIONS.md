@@ -56,11 +56,11 @@ python -m src.channel_ops cycle \
 | 文件 | 用途 |
 | --- | --- |
 | `logs/channel-operations.jsonl` | 不可变的逐次抓取事件，便于追溯某渠道何时、为何失败 |
-| `logs/channel-operations.csv` | 每个渠道当前状态，适合筛选和人工检查 |
+| `logs/channel-operations.csv` | 每个渠道当前状态，含短正文数和正文最小/中位/最大字符数 |
 | `logs/channel-ops-state.json` | 幂等状态、最近成功时间和连续异常次数 |
 | `logs/channel-ops-report.json` | 供自动化读取的当前总览 |
 | `logs/channel-ops-report.md` | GitHub Actions 中展示的中文运维总览 |
-| `logs/channel-daily-stats.csv` | 渠道×日期的产量、质量和异常基线 |
+| `logs/channel-daily-stats.csv` | 渠道×日期的产量、正文字符分布、质量和异常基线 |
 | `logs/recovery-queue.json` | 渠道×缺失日期的修复/补抓状态机 |
 | `logs/source-errors.jsonl` | 抓取程序记录的底层渠道异常 |
 
@@ -136,6 +136,10 @@ python -m src.channel_ops resolve ignore \
 
 补抓只运行对应渠道和缺失日期。找到文章后自动标记 `recovered` 并发送恢复通知；仍为空或
 再次报错则标记 `recovery_failed`，不会无限重试。
+
+正文默认少于 500 字即进入质量告警。再次运行同一日期时，已有短正文会重新抓取；仅当
+新的正文更长时才更新原记录。正文提取范围包括普通段落、列表、表格、引用、图注和
+JSON-LD `articleBody`，避免只保存页面摘要。
 
 GitHub Actions 的 **Channel Recovery** 提供相同操作，不需要在命令行执行。
 

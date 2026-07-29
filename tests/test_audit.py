@@ -155,6 +155,45 @@ class DailyAuditTests(unittest.TestCase):
             self.assertNotIn("Weekday", by_source)
             self.assertEqual(report["overall"]["zero_sources"], 0)
 
+    def test_content_character_distribution_is_recorded(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            data = root / "articles.jsonl"
+            logs = root / "logs"
+            rows = [
+                {
+                    **article("2026-07-28", "Daily", 1),
+                    "content": "x" * 120,
+                },
+                {
+                    **article("2026-07-28", "Daily", 2),
+                    "content": "x" * 800,
+                },
+            ]
+            self.write_articles(data, rows)
+
+            run_daily_audit(
+                data,
+                logs,
+                date(2026, 7, 28),
+                [health("Daily", "degraded")],
+                min_content_chars=500,
+            )
+
+            with (logs / "channel-daily-stats.csv").open(
+                "r", encoding="utf-8-sig", newline=""
+            ) as handle:
+                saved = list(csv.DictReader(handle))
+            daily = next(
+                row
+                for row in saved
+                if row["date"] == "2026-07-28" and row["source"] == "Daily"
+            )
+            self.assertEqual(daily["short_articles"], "1")
+            self.assertEqual(daily["content_chars_min"], "120")
+            self.assertEqual(daily["content_chars_median"], "460")
+            self.assertEqual(daily["content_chars_max"], "800")
+
 
 if __name__ == "__main__":
     unittest.main()

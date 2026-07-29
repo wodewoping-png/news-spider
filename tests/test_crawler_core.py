@@ -17,6 +17,7 @@ from src.http_client import (
 )
 from src.load_sources import Source, expects_output_on_date
 from src.main import (
+    DEFAULT_MIN_CONTENT_CHARS,
     THE_INFORMATION_SUBSCRIBER_FEED,
     default_csv_path,
     enrich_from_rss_entry,
@@ -267,6 +268,48 @@ class ListingScraperTests(unittest.TestCase):
         """
         article = parse_article_html(html, source.url, source)
         self.assertEqual(article["published_at"], "2026-07-27T06:00:00+0300")
+
+    def test_json_ld_article_body_wins_over_short_dom_excerpt(self):
+        source = make_source("example", "https://example.com/")
+        structured_body = (
+            "This is the complete structured article body. " + "detail " * 120
+        )
+        html = f"""
+        <script type="application/ld+json">
+          {{"@type":"NewsArticle","articleBody":"{structured_body}"}}
+        </script>
+        <article><p>Short public excerpt only.</p></article>
+        """
+
+        article = parse_article_html(html, source.url, source)
+
+        self.assertGreater(len(article["content"]), 500)
+        self.assertIn("complete structured article body", article["content"])
+
+    def test_lists_tables_and_captions_are_preserved_in_article_body(self):
+        source = make_source("example", "https://example.com/")
+        html = """
+        <article>
+          <p>Introductory paragraph with enough context for the article.</p>
+          <ul>
+            <li>First material project milestone and its detailed outcome.</li>
+            <li>Second material project milestone and its detailed outcome.</li>
+          </ul>
+          <table>
+            <tr><th>Region and capacity</th><td>North region reaches 850 MW.</td></tr>
+          </table>
+          <figure><figcaption>Detailed project location caption.</figcaption></figure>
+        </article>
+        """
+
+        article = parse_article_html(html, source.url, source)
+
+        self.assertIn("First material project milestone", article["content"])
+        self.assertIn("North region reaches 850 MW", article["content"])
+        self.assertIn("Detailed project location caption", article["content"])
+
+    def test_default_content_quality_threshold_is_expanded(self):
+        self.assertEqual(DEFAULT_MIN_CONTENT_CHARS, 500)
 
     def test_rss_public_excerpt_is_parsed(self):
         feed = """

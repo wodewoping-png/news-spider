@@ -27,6 +27,10 @@ CHANNEL_FIELDS = (
     "duplicate_articles",
     "usable_articles",
     "usable_rate",
+    "short_articles",
+    "content_chars_min",
+    "content_chars_median",
+    "content_chars_max",
     "previous_count",
     "baseline_median_7d",
     "ratio_to_baseline",
@@ -135,7 +139,12 @@ def _inventory(
     timezone_name: str,
 ) -> dict[tuple[str, str], dict[str, int]]:
     grouped: dict[tuple[str, str], dict] = defaultdict(
-        lambda: {"article_count": 0, "usable_articles": 0, "urls": set()}
+        lambda: {
+            "article_count": 0,
+            "usable_articles": 0,
+            "urls": set(),
+            "content_lengths": [],
+        }
     )
     if not jsonl_path.exists():
         return {}
@@ -153,7 +162,9 @@ def _inventory(
                 continue
             bucket = grouped[(published.isoformat(), source)]
             bucket["article_count"] += 1
-            if len(str(item.get("content") or "").strip()) >= min_content_chars:
+            content_length = len(str(item.get("content") or "").strip())
+            bucket["content_lengths"].append(content_length)
+            if content_length >= min_content_chars:
                 bucket["usable_articles"] += 1
             url_key = canonicalize_url(str(item.get("url") or ""))
             if url_key:
@@ -163,11 +174,19 @@ def _inventory(
     for key, value in grouped.items():
         total = value["article_count"]
         unique = len(value["urls"])
+        content_lengths = value["content_lengths"]
+        usable = value["usable_articles"]
         result[key] = {
             "article_count": total,
             "unique_articles": unique,
             "duplicate_articles": max(total - unique, 0),
-            "usable_articles": value["usable_articles"],
+            "usable_articles": usable,
+            "short_articles": max(total - usable, 0),
+            "content_chars_min": min(content_lengths, default=0),
+            "content_chars_median": (
+                int(median(content_lengths)) if content_lengths else 0
+            ),
+            "content_chars_max": max(content_lengths, default=0),
         }
     return result
 
@@ -443,7 +462,7 @@ def run_daily_audit(
     target_date: date,
     health_records: list[dict],
     *,
-    min_content_chars: int = 200,
+    min_content_chars: int = 500,
     timezone_name: str = DEFAULT_TIMEZONE,
 ) -> dict:
     logs_dir.mkdir(parents=True, exist_ok=True)
@@ -516,6 +535,10 @@ def run_daily_audit(
                 "unique_articles": 0,
                 "duplicate_articles": 0,
                 "usable_articles": 0,
+                "short_articles": 0,
+                "content_chars_min": 0,
+                "content_chars_median": 0,
+                "content_chars_max": 0,
             },
         )
         crawl_status = str(record.get("status") or "")

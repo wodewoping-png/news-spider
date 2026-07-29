@@ -6,6 +6,7 @@ import logging
 import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from statistics import median
 from zoneinfo import ZoneInfo
 
 from .article_parser import fetch_and_parse_article, utc_now_iso
@@ -27,10 +28,11 @@ from .load_sources import (
 from .rss_discovery import discover_feed, fetch_feed_entries
 from .scrapers import get_scraper_class
 from .storage import (
-    append_jsonl,
     canonicalize_url,
     export_csv,
+    load_existing_content_lengths,
     load_existing_urls,
+    upsert_jsonl,
 )
 
 
@@ -51,6 +53,7 @@ THE_INFORMATION_SOURCE_KEY = "the information"
 THE_INFORMATION_SUBSCRIBER_FEED = "https://www.theinformation.com/subscriber_feed"
 THE_INFORMATION_USERNAME_ENV = "THE_INFORMATION_RSS_USERNAME"
 THE_INFORMATION_PASSWORD_ENV = "THE_INFORMATION_RSS_PASSWORD"
+DEFAULT_MIN_CONTENT_CHARS = 500
 
 
 def default_csv_path(
@@ -105,7 +108,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--min-content-chars",
         type=int,
-        default=200,
+        default=DEFAULT_MIN_CONTENT_CHARS,
         help="Content shorter than this is reported as degraded.",
     )
     parser.add_argument(
@@ -260,6 +263,7 @@ def main() -> int:
             logging.error("Requested sources not found: %s", missing_sources)
             return 2
     existing_urls = load_existing_urls(args.output)
+    existing_content_lengths = load_existing_content_lengths(args.output)
     client = HttpClient(
         user_agent=args.user_agent,
         timeout=args.timeout,
@@ -268,6 +272,7 @@ def main() -> int:
     )
 
     total_new = 0
+    total_refreshed = 0
     skipped_sources: list[tuple[str, str]] = []
     failed_sources: list[tuple[str, str]] = []
     degraded_sources: list[tuple[str, str]] = []
@@ -336,7 +341,11 @@ def main() -> int:
                     if len(new_articles) >= args.limit_per_source:
                         break
                     entry_key = canonicalize_url(entry.url)
-                    if entry_key in existing_urls:
+                    if (
+                        entry_key in existing_urls
+                        and existing_content_lengths.get(entry_key, 0)
+                        >= args.min_content_chars
+                    ):
                         continue
                     if entry.published_at and args.date_filter == "today":
                         feed_article = {"published_at": entry.published_at, "url": entry.url}
@@ -350,7 +359,16 @@ def main() -> int:
                     article = enrich_from_rss_entry(client, source, entry)
                     pages_fetched += 1
                     article_key = canonicalize_url(article.get("url", "")) if article else ""
-                    if article and article_key and article_key not in existing_urls:
+                    if article and article_key:
+                        content_length = len(
+                            str(article.get("content") or "").strip()
+                        )
+                        previous_length = existing_content_lengths.get(article_key)
+                        if (
+                            previous_length is not None
+                            and content_length <= previous_length
+                        ):
+                            continue
                         ensure_published_at(article)
                         if args.date_filter == "today" and not is_article_on_date(article, target_date, DEFAULT_CSV_TIMEZONE):
                             logging.info(
@@ -362,6 +380,7 @@ def main() -> int:
                         normalize_published_at(article, DEFAULT_CSV_TIMEZONE)
                         new_articles.append(article)
                         existing_urls.add(article_key)
+                        existing_content_lengths[article_key] = content_length
             else:
                 if feed_url:
                     logging.warning(
@@ -381,7 +400,16 @@ def main() -> int:
                 for article in scraped_articles:
                     url = article.get("url")
                     url_key = canonicalize_url(url or "")
-                    if url and url_key not in existing_urls:
+                    if url and url_key:
+                        content_length = len(
+                            str(article.get("content") or "").strip()
+                        )
+                        previous_length = existing_content_lengths.get(url_key)
+                        if (
+                            previous_length is not None
+                            and content_length <= previous_length
+                        ):
+                            continue
                         ensure_published_at(article)
                         if args.date_filter == "today" and not is_article_on_date(article, target_date, DEFAULT_CSV_TIMEZONE):
                             logging.info(
@@ -393,6 +421,7 @@ def main() -> int:
                         normalize_published_at(article, DEFAULT_CSV_TIMEZONE)
                         new_articles.append(article)
                         existing_urls.add(url_key)
+                        existing_content_lengths[url_key] = content_length
         except Exception as exc:  # Keep one bad source from stopping the daily run.
             logging.exception("Source failed: %s", source.name)
             failure = append_source_error(args.logs, target_date, source, exc)
@@ -414,21 +443,30 @@ def main() -> int:
             )
             continue
 
-        count = append_jsonl(args.output, new_articles)
-        total_new += count
-        usable_count = sum(
-            len(str(article.get("content") or "").strip()) >= args.min_content_chars
+        added_count, refreshed_count = upsert_jsonl(args.output, new_articles)
+        changed_count = added_count + refreshed_count
+        total_new += added_count
+        total_refreshed += refreshed_count
+        content_lengths = [
+            len(str(article.get("content") or "").strip())
             for article in new_articles
+        ]
+        usable_count = sum(
+            length >= args.min_content_chars for length in content_lengths
         )
-        if count == 0 and not expects_output_on_date(source.frequency, target_date):
+        short_count = max(changed_count - usable_count, 0)
+        if changed_count == 0 and not expects_output_on_date(source.frequency, target_date):
             status = "idle"
             reason = "no target-date articles were expected for this source schedule"
-        elif count == 0:
+        elif changed_count == 0:
             status = "zero"
             reason = "no target-date articles were collected"
-        elif usable_count < count:
+        elif usable_count < changed_count:
             status = "degraded"
-            reason = f"{count - usable_count} articles have short content"
+            reason = (
+                f"{short_count} articles have content shorter than "
+                f"{args.min_content_chars} chars"
+            )
         else:
             status = "healthy"
             reason = ""
@@ -444,14 +482,23 @@ def main() -> int:
                 "crawl_mode": crawl_mode,
                 "candidates_seen": candidates_seen,
                 "pages_fetched": pages_fetched,
-                "new_articles": count,
+                "new_articles": added_count,
+                "refreshed_articles": refreshed_count,
                 "usable_articles": usable_count,
+                "short_articles": short_count,
+                "min_content_chars": args.min_content_chars,
+                "content_chars_min": min(content_lengths, default=0),
+                "content_chars_median": (
+                    int(median(content_lengths)) if content_lengths else 0
+                ),
+                "content_chars_max": max(content_lengths, default=0),
             }
         )
         logging.info(
-            "Source complete: %s, new articles=%s, usable=%s, status=%s",
+            "Source complete: %s, new articles=%s, refreshed=%s, usable=%s, status=%s",
             source.name,
-            count,
+            added_count,
+            refreshed_count,
             usable_count,
             status,
         )
@@ -470,6 +517,7 @@ def main() -> int:
             timezone_name=DEFAULT_CSV_TIMEZONE,
         )
     logging.info("Run complete. New articles: %s", total_new)
+    logging.info("Run complete. Refreshed short articles: %s", total_refreshed)
     logging.info("Channel health report: %s", health_path)
     if audit_report:
         logging.info(

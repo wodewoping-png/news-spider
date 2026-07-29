@@ -49,6 +49,26 @@ SOURCE_ARTICLE_SELECTORS = {
     "4c offshore": (
         "#NewsContent",
     ),
+    "it之家": (
+        "#paragraph",
+    ),
+    "科学网新闻": (
+        "#content",
+    ),
+    "索比光伏": (
+        ".detail-left-content-box",
+        "article",
+    ),
+    "索比光伏-综合新闻": (
+        ".detail-left-content-box",
+        "article",
+    ),
+    "hydrogen tech world": (
+        ".entry-content",
+        ".post-content",
+        ".article-content",
+        "article",
+    ),
     "electrive": (
         ".entry-content",
         ".post-content",
@@ -73,6 +93,22 @@ SOURCE_ARTICLE_SELECTORS = {
         "article",
     ),
 }
+
+BODY_BLOCK_TAGS = (
+    "p",
+    "div",
+    "section",
+    "article",
+    "li",
+    "blockquote",
+    "pre",
+    "h2",
+    "h3",
+    "h4",
+    "td",
+    "th",
+    "figcaption",
+)
 
 REMOVE_SELECTORS = (
     "script",
@@ -172,7 +208,7 @@ DATE_CONTAINER_SELECTORS = (
     ".time",
 )
 
-MIN_PARAGRAPH_LENGTH = 12
+MIN_PARAGRAPH_LENGTH = 8
 BODY_END_LINE_KEYWORDS = (
     "版权声明",
     "免责声明",
@@ -291,6 +327,7 @@ def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
     source_key = source_name.strip().lower()
     strict_selectors = STRICT_SOURCE_ARTICLE_SELECTORS.get(source_key, ())
     source_selectors = SOURCE_ARTICLE_SELECTORS.get(source_key, ())
+    structured_body = extract_structured_body(soup)
     guarded_selectors = strict_selectors + source_selectors + ARTICLE_SELECTORS
     guarded_query = ",".join(guarded_selectors)
     for selector in REMOVE_SELECTORS:
@@ -318,6 +355,14 @@ def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
             text = extract_node_body_text(node)
             if text:
                 candidates.append((score_body_candidate(node, text), text))
+    if structured_body:
+        candidates.append(
+            (
+                len(structured_body)
+                + len(structured_body.splitlines()) * 120,
+                structured_body,
+            )
+        )
     if candidates:
         return trim_body_noise(max(candidates, key=lambda item: item[0])[1])
     if strict_selectors:
@@ -327,8 +372,8 @@ def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
 
 def extract_node_body_text(node) -> str:
     paragraphs = []
-    for tag in node.find_all(("p", "div"), recursive=True):
-        if tag.find(("p", "div")):
+    for tag in node.find_all(BODY_BLOCK_TAGS, recursive=True):
+        if tag.find(BODY_BLOCK_TAGS):
             continue
         text = clean_text(tag.get_text("\n", strip=True))
         if is_body_line(text):
@@ -342,6 +387,28 @@ def extract_node_body_text(node) -> str:
         if is_body_line(line.strip())
     ]
     return clean_text("\n".join(lines))
+
+
+def extract_structured_body(soup: BeautifulSoup) -> str:
+    """Return the longest schema.org articleBody embedded in JSON-LD."""
+    candidates: list[str] = []
+    for script in soup.select('script[type="application/ld+json"]'):
+        try:
+            data = json.loads(script.string or script.get_text() or "")
+        except (json.JSONDecodeError, TypeError):
+            continue
+        for node in _iter_json_objects(data):
+            if not isinstance(node, dict):
+                continue
+            value = node.get("articleBody")
+            if not isinstance(value, str) or not value.strip():
+                continue
+            text = clean_text(
+                BeautifulSoup(value, "html.parser").get_text("\n", strip=True)
+            )
+            if is_body_line(text):
+                candidates.append(text)
+    return max(candidates, key=len, default="")
 
 
 def is_body_line(text: str) -> bool:
