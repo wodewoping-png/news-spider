@@ -47,6 +47,8 @@ def assess_content(
         return INCOMPLETE_CONTENT_STATUS, "truncated_ending"
     if extraction_method == "rss_excerpt" and not declared_full:
         return INCOMPLETE_CONTENT_STATUS, "rss_excerpt_only"
+    if extraction_method == "public_preview":
+        return INCOMPLETE_CONTENT_STATUS, "public_preview_only"
     if extraction_method:
         return FULL_CONTENT_STATUS, ""
     return UNKNOWN_CONTENT_STATUS, "legacy_record_not_verified"

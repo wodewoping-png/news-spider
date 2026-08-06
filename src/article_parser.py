@@ -42,6 +42,15 @@ ARTICLE_SELECTORS = (
 )
 
 STRICT_SOURCE_ARTICLE_SELECTORS = {
+    "interesting engineering": (
+        ".body-content",
+    ),
+    "batteries news": (
+        ".entry-content",
+    ),
+    "pv magazine c&i pv": (
+        ".pvmagazine-post-content .entry-content",
+    ),
     "新华网科技": (
         ".main-left.left",
     ),
