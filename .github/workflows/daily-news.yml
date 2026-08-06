@@ -46,6 +46,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Prepare RIOnews daily exports
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
+        continue-on-error: true
+        env:
+          TARGET_DATE: ${{ inputs.target_date }}
+          RIO_USERNAME: ${{ secrets.RIO_USERNAME }}
+          RIO_PASSWORD: ${{ secrets.RIO_PASSWORD }}
+          RIO_BASE_URL: ${{ vars.RIO_BASE_URL }}
+          RIO_SYSTEM_TYPE: ${{ vars.RIO_SYSTEM_TYPE }}
+          RIO_DAYS: ${{ vars.RIO_DAYS || '7' }}
+        run: |
+          daily_dir="$RUNNER_TEMP/rionews/daily"
+          echo "RIONEWS_DAILY_DIR=$daily_dir" >> "$GITHUB_ENV"
+          if [ -z "$RIO_USERNAME" ] || [ -z "$RIO_PASSWORD" ]; then
+            echo "RIOnews credentials are not configured; RIOnews-backed channels will report no input."
+            exit 0
+          fi
+          args=(--daily-output-dir "$daily_dir" --days "$RIO_DAYS")
+          if [ -n "$TARGET_DATE" ]; then
+            args+=(--target-date "$TARGET_DATE")
+          fi
+          python -m src.rionews_fetch "${args[@]}"
+
       - name: Run unified channel operations cycle
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
         env:

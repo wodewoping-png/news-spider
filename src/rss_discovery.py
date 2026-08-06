@@ -73,7 +73,13 @@ def _entry_text(entry) -> tuple[str, bool]:
         text = " ".join(BeautifulSoup(str(value), "html.parser").stripped_strings)
         if text:
             candidates.append((text, is_full))
-    return max(candidates, key=lambda item: len(item[0]), default=("", False))
+    # feedparser can expose content:encoded through both summary and content.
+    # Prefer the explicitly full variant when their lengths tie.
+    return max(
+        candidates,
+        key=lambda item: (len(item[0]), item[1]),
+        default=("", False),
+    )
 
 
 def parse_feed(text: str) -> list[FeedEntry]:

@@ -6,12 +6,21 @@ from src.http_client import FetchResult
 from src.load_sources import Source
 from src.scrapers import get_scraper_class
 from src.scrapers.bjx_storage import BJXStorageScraper
+from src.scrapers.batteries_news import BatteriesNewsScraper
 from src.scrapers.china_energy import ChinaEnergyScraper
 from src.scrapers.energytrend import EnergyTrendScraper
 from src.scrapers.insideevs import InsideEVsScraper
+from src.scrapers.interesting_engineering import InterestingEngineeringScraper
 from src.scrapers.international_energy import InternationalEnergyScraper
 from src.scrapers.itdcw import ITDCWScraper
 from src.scrapers.ne_time import NETimeScraper
+from src.scrapers.pv_magazine import PVMagazineCIPVScraper
+from src.scrapers.rionews import (
+    RIONewsBatteryScraper,
+    RIONewsChinaEnergyScraper,
+    RIONewsInternationalEnergyScraper,
+    RIONewsXEVCarScraper,
+)
 from src.scrapers.solarbe import SolarbeScraper
 from src.scrapers.testpv import TestPVScraper
 from src.scrapers.xevcar import XEVCarScraper
@@ -51,17 +60,20 @@ class StaticClient:
 class NewChannelRegistryTests(unittest.TestCase):
     def test_every_spreadsheet_website_has_a_specific_scraper(self):
         expected = {
+            "pv magazine C&I PV": PVMagazineCIPVScraper,
             "光伏测试网": TestPVScraper,
             "索比光伏": SolarbeScraper,
-            "国际能源网": InternationalEnergyScraper,
-            "中国能源网": ChinaEnergyScraper,
-            "我爱电车网": XEVCarScraper,
+            "国际能源网": RIONewsInternationalEnergyScraper,
+            "中国能源网": RIONewsChinaEnergyScraper,
+            "我爱电车网": RIONewsXEVCarScraper,
             "北极星储能网": BJXStorageScraper,
             "INSIDEEVs": InsideEVsScraper,
+            "interesting engineering": InterestingEngineeringScraper,
             "EnergyTrend储能": EnergyTrendScraper,
             "NE时代": NETimeScraper,
-            "电池网": ITDCWScraper,
+            "电池网": RIONewsBatteryScraper,
             "X-MOL": XMolScraper,
+            "Batteries News": BatteriesNewsScraper,
         }
         for name, scraper_class in expected.items():
             with self.subTest(source=name):
@@ -195,6 +207,14 @@ class NewChannelDiscoveryTests(unittest.TestCase):
             urls,
             ["https://www.energytrend.cn/news/20260728-148232.html"],
         )
+
+    def test_energytrend_rss_rejects_price_and_research_sections(self):
+        accepted = type("Entry", (), {"url": "https://www.energytrend.cn/news/20260804-148294.html"})()
+        price = type("Entry", (), {"url": "https://www.energytrend.cn/pricequotes/20260730-148244.html"})()
+        research = type("Entry", (), {"url": "https://www.energytrend.cn/research/20260804-1.html"})()
+        self.assertTrue(EnergyTrendScraper.accepts_rss_entry(accepted))
+        self.assertFalse(EnergyTrendScraper.accepts_rss_entry(price))
+        self.assertFalse(EnergyTrendScraper.accepts_rss_entry(research))
 
     def test_ne_time_keeps_numeric_article_routes(self):
         source = make_source("NE时代", "https://www.ne-time.cn/")

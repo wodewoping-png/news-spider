@@ -39,6 +39,7 @@ from .storage import (
 
 DEFAULT_CSV_TIMEZONE = DEFAULT_TIMEZONE
 RSS_DISCOVERY_DISABLED_SOURCES = {
+    "batteries news",
     "volta foundation",
     "perovskite-info",
     "pv magazine c&i pv",
@@ -362,15 +363,24 @@ def main() -> int:
         crawl_mode = "listing"
         try:
             source_key = source.name.strip().lower()
-            feed_url = source.configured_rss_url
+            scraper_class = get_scraper_class(source.name)
+            scraper_handles_feed = bool(
+                getattr(scraper_class, "handles_configured_feed", False)
+            )
+            feed_url = None if scraper_handles_feed else source.configured_rss_url
             feed_auth = None
             feed_required = False
             feed_crawl_mode = "rss"
-            feed_url, feed_auth, feed_required, feed_crawl_mode = resolve_feed_access(
-                source.name,
-                feed_url,
-            )
-            if not feed_url and source_key not in RSS_DISCOVERY_DISABLED_SOURCES:
+            if not scraper_handles_feed:
+                feed_url, feed_auth, feed_required, feed_crawl_mode = resolve_feed_access(
+                    source.name,
+                    feed_url,
+                )
+            if (
+                not scraper_handles_feed
+                and not feed_url
+                and source_key not in RSS_DISCOVERY_DISABLED_SOURCES
+            ):
                 feed_url = discover_feed(client, source.url)
             entries = []
             if feed_url:
@@ -394,6 +404,11 @@ def main() -> int:
                     raise RuntimeError(
                         "Authenticated subscriber RSS returned no entries"
                     )
+                accepts_rss_entry = getattr(scraper_class, "accepts_rss_entry", None)
+                if callable(accepts_rss_entry):
+                    entries = [
+                        entry for entry in entries if accepts_rss_entry(entry)
+                    ]
             if entries:
                 crawl_mode = feed_crawl_mode
                 candidates_seen = len(entries)
@@ -456,7 +471,6 @@ def main() -> int:
                         "RSS unavailable or empty for %s; falling back to listing scraper",
                         source.name,
                     )
-                scraper_class = get_scraper_class(source.name)
                 scraper = scraper_class(client, source)
                 scrape_target = target_date if args.date_filter == "today" else None
                 scraped_articles = scraper.scrape(
