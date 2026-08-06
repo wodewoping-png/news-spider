@@ -4,6 +4,7 @@ from .base import BaseScraper
 from .batteries_international import BatteriesInternationalScraper
 from .batteries_news import BatteriesNewsScraper
 from .batterytechonline import BatteryTechOnlineScraper
+from .datacenter_knowledge import DataCenterKnowledgeScraper
 from .bjx_storage import BJXStorageScraper
 from .electrek import ElectrekScraper
 from .electrive import ElectriveScraper
@@ -54,6 +55,7 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "x-mol": XMolScraper,
     "batteries international": BatteriesInternationalScraper,
     "batteries news": BatteriesNewsScraper,
+    "data center knowledge": DataCenterKnowledgeScraper,
     "volta foundation": VoltaFoundationScraper,
     "battery tech online": BatteryTechOnlineScraper,
     "supply chain digital": SupplyChainDigitalScraper,

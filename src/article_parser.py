@@ -48,6 +48,9 @@ STRICT_SOURCE_ARTICLE_SELECTORS = {
     "batteries news": (
         ".entry-content",
     ),
+    "data center knowledge": (
+        ".ArticleBase-BodyContent_Article",
+    ),
     "pv magazine c&i pv": (
         ".pvmagazine-post-content .entry-content",
     ),
@@ -494,7 +497,11 @@ def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional
 
     selector_body = extract_body(soup, source.name)
     full_text_body = extract_trafilatura_body(html, canonical)
-    if len(full_text_body) > len(selector_body):
+    source_key = source.name.strip().lower()
+    if source_key in STRICT_SOURCE_ARTICLE_SELECTORS and selector_body:
+        content = selector_body
+        extraction_method = "dom_or_structured_full_text"
+    elif len(full_text_body) > len(selector_body):
         content = full_text_body
         extraction_method = "trafilatura_full_text"
     else:

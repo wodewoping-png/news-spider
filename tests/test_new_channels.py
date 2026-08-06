@@ -7,6 +7,7 @@ from src.load_sources import Source
 from src.scrapers import get_scraper_class
 from src.scrapers.bjx_storage import BJXStorageScraper
 from src.scrapers.batteries_news import BatteriesNewsScraper
+from src.scrapers.datacenter_knowledge import DataCenterKnowledgeScraper
 from src.scrapers.china_energy import ChinaEnergyScraper
 from src.scrapers.energytrend import EnergyTrendScraper
 from src.scrapers.insideevs import InsideEVsScraper
@@ -74,6 +75,7 @@ class NewChannelRegistryTests(unittest.TestCase):
             "电池网": RIONewsBatteryScraper,
             "X-MOL": XMolScraper,
             "Batteries News": BatteriesNewsScraper,
+            "Data Center Knowledge": DataCenterKnowledgeScraper,
         }
         for name, scraper_class in expected.items():
             with self.subTest(source=name):
