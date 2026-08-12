@@ -23,7 +23,17 @@ FIELDNAMES = (
     "domain",
     "sub_domain",
     "crawled_at",
+    "industry_primary_path",
+    "industry_top_level",
+    "industry_leaf",
+    "industry_classifications",
+    "industry_classification_status",
+    "industry_classified_at",
+    "industry_classifier_model",
+    "industry_taxonomy_version",
 )
+
+INDUSTRY_FIELDNAMES = FIELDNAMES[-8:]
 
 TRACKING_QUERY_KEYS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 
@@ -132,6 +142,34 @@ def is_better_article(candidate: dict, existing: dict) -> bool:
     return candidate_length > existing_length
 
 
+def _preserve_industry_classification(candidate: dict, existing: dict) -> dict:
+    """Keep prior AI enrichment when a content refresh was not reclassified."""
+    candidate_status = str(
+        candidate.get("industry_classification_status") or ""
+    ).lower()
+    existing_status = str(
+        existing.get("industry_classification_status") or ""
+    ).lower()
+    if candidate_status in {"classified", "unclassified"}:
+        return candidate
+    if candidate_status == "error" and existing_status not in {
+        "classified",
+        "unclassified",
+    }:
+        return candidate
+    merged = dict(candidate)
+    for key in INDUSTRY_FIELDNAMES:
+        if key in existing:
+            merged[key] = existing[key]
+    return merged
+
+
+def _csv_value(value: object) -> object:
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    return value
+
+
 def append_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> int:
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
@@ -177,7 +215,10 @@ def upsert_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> tuple[int, int]:
                     seen.add(url_key)
                     if is_better_article(candidate, existing):
                         output_lines.append(
-                            json.dumps(candidate, ensure_ascii=False)
+                            json.dumps(
+                                _preserve_industry_classification(candidate, existing),
+                                ensure_ascii=False,
+                            )
                         )
                         updated += 1
                         continue
@@ -221,4 +262,6 @@ def export_csv(
                     continue
                 if target_date and article_date(item, timezone_name) != target_date:
                     continue
-                writer.writerow({key: item.get(key, "") for key in FIELDNAMES})
+                writer.writerow(
+                    {key: _csv_value(item.get(key, "")) for key in FIELDNAMES}
+                )

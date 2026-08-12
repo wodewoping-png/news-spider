@@ -13,6 +13,8 @@
 - `title`: 新闻标题
 - `published_at`: 发布日期
 - `content`: 正文内容
+
+如配置 `ZAI_API_KEY`，程序还会调用智谱 Z.AI，依据从 `行业图景.xmind` 整理出的 75 个末级领域语义定义自动分类新闻，并写入完整行业路径、多标签置信度和判断依据。配置方法、补分类命令和输出字段见 [`INDUSTRY_CLASSIFICATION.md`](INDUSTRY_CLASSIFICATION.md)。未配置密钥或 API 暂时失败不会影响新闻抓取。
 - `url`: 原文 URL
 - `source_name`: 来源名称
 - `domain`: 主干领域

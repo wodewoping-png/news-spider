@@ -20,6 +20,16 @@ from .date_utils import (
     parse_target_date,
 )
 from .http_client import DEFAULT_USER_AGENT, HttpClient
+from .industry_classifier import (
+    DEFAULT_BATCH_SIZE as DEFAULT_CLASSIFICATION_BATCH_SIZE,
+    DEFAULT_MAX_CONTENT_CHARS as DEFAULT_CLASSIFICATION_CONTENT_CHARS,
+    DEFAULT_MIN_CONFIDENCE as DEFAULT_CLASSIFICATION_CONFIDENCE,
+    DEFAULT_MODEL as DEFAULT_CLASSIFICATION_MODEL,
+    DEFAULT_TAXONOMY_PATH,
+    IndustryClassificationError,
+    ZAIIndustryClassifier,
+    mark_classification_error,
+)
 from .load_sources import (
     default_sources_path,
     expects_daily_output,
@@ -147,6 +157,38 @@ def parse_args() -> argparse.Namespace:
         "--skip-audit",
         action="store_true",
         help="Skip daily statistics/audit update (used by isolated historical recovery jobs).",
+    )
+    parser.add_argument(
+        "--skip-industry-classification",
+        action="store_true",
+        help="Do not call Z.AI even when ZAI_API_KEY is configured.",
+    )
+    parser.add_argument(
+        "--industry-taxonomy",
+        type=Path,
+        default=DEFAULT_TAXONOMY_PATH,
+        help="Semantic industry taxonomy JSON generated from 行业图景.xmind.",
+    )
+    parser.add_argument(
+        "--industry-model",
+        default=os.getenv("ZAI_MODEL", DEFAULT_CLASSIFICATION_MODEL),
+        help="Z.AI model used for semantic news classification.",
+    )
+    parser.add_argument(
+        "--industry-batch-size",
+        type=int,
+        default=DEFAULT_CLASSIFICATION_BATCH_SIZE,
+    )
+    parser.add_argument(
+        "--industry-content-chars",
+        type=int,
+        default=DEFAULT_CLASSIFICATION_CONTENT_CHARS,
+        help="Maximum article characters sent to Z.AI per article.",
+    )
+    parser.add_argument(
+        "--industry-min-confidence",
+        type=float,
+        default=DEFAULT_CLASSIFICATION_CONFIDENCE,
     )
     return parser.parse_args()
 
@@ -331,6 +373,43 @@ def main() -> int:
         sleep_seconds=args.sleep,
         respect_robots=not args.ignore_robots,
     )
+    skip_industry_classification = getattr(
+        args, "skip_industry_classification", False
+    )
+    industry_classifier = None
+    if not skip_industry_classification:
+        industry_classifier = ZAIIndustryClassifier.from_environment(
+            taxonomy_path=getattr(
+                args, "industry_taxonomy", DEFAULT_TAXONOMY_PATH
+            ),
+            model=getattr(
+                args, "industry_model", DEFAULT_CLASSIFICATION_MODEL
+            ),
+            batch_size=getattr(
+                args, "industry_batch_size", DEFAULT_CLASSIFICATION_BATCH_SIZE
+            ),
+            max_content_chars=getattr(
+                args,
+                "industry_content_chars",
+                DEFAULT_CLASSIFICATION_CONTENT_CHARS,
+            ),
+            min_confidence=getattr(
+                args,
+                "industry_min_confidence",
+                DEFAULT_CLASSIFICATION_CONFIDENCE,
+            ),
+        )
+    if industry_classifier:
+        logging.info(
+            "Industry classification enabled: model=%s, taxonomy=%s",
+            industry_classifier.model,
+            industry_classifier.taxonomy.version,
+        )
+    else:
+        logging.info(
+            "Industry classification disabled: %s",
+            "command-line option" if skip_industry_classification else "ZAI_API_KEY is not configured",
+        )
 
     total_new = 0
     total_refreshed = 0
@@ -523,6 +602,20 @@ def main() -> int:
                 }
             )
             continue
+
+        if industry_classifier and new_articles:
+            try:
+                industry_classifier.enrich_articles(new_articles)
+            except IndustryClassificationError as exc:
+                logging.exception(
+                    "Industry classification failed for %s; saving articles without labels",
+                    source.name,
+                )
+                mark_classification_error(
+                    new_articles,
+                    model=industry_classifier.model,
+                    taxonomy_version=industry_classifier.taxonomy.version,
+                )
 
         added_count, refreshed_count = upsert_jsonl(args.output, new_articles)
         changed_count = added_count + refreshed_count
