@@ -1,54 +1,27 @@
 {
-  "generated_at": "2026-08-13T07:08:35.579495+08:00",
+  "generated_at": "2026-08-13T10:57:01.094617+08:00",
   "target_date": "2026-08-12",
   "overall": {
     "date": "2026-08-12",
-    "total_articles": 265,
-    "unique_articles": 265,
-    "usable_articles": 229,
+    "total_articles": 258,
+    "unique_articles": 258,
+    "usable_articles": 220,
     "sources_configured": 58,
     "sources_active": 45,
-    "sources_with_articles": 28,
-    "healthy_sources": 23,
-    "zero_sources": 10,
-    "idle_sources": 7,
-    "failed_sources": 0,
-    "updated_at": "2026-08-13T07:08:35.579495+08:00",
-    "usable_rate": "0.8642",
+    "sources_with_articles": 30,
+    "healthy_sources": 26,
+    "zero_sources": 5,
+    "idle_sources": 8,
+    "failed_sources": 4,
+    "updated_at": "2026-08-13T10:57:01.094617+08:00",
+    "usable_rate": "0.8527",
     "baseline_median_7d": "230.00",
-    "ratio_to_baseline": "1.15",
-    "anomaly_level": "normal",
-    "anomaly_codes": "",
-    "anomaly_reason": ""
+    "ratio_to_baseline": "1.12",
+    "anomaly_level": "critical",
+    "anomaly_codes": "source_failures",
+    "anomaly_reason": "4 个渠道抓取失败"
   },
   "anomalies": [
-    {
-      "date": "2026-08-12",
-      "source": "4C Offshore",
-      "frequency": "工作日",
-      "expected_daily": "true",
-      "crawl_status": "zero",
-      "candidates_seen": 100,
-      "pages_fetched": 27,
-      "article_count": 0,
-      "unique_articles": 0,
-      "duplicate_articles": 0,
-      "usable_articles": 0,
-      "usable_rate": "0.0000",
-      "incomplete_articles": 0,
-      "short_articles": 0,
-      "content_chars_min": 0,
-      "content_chars_median": 0,
-      "content_chars_max": 0,
-      "previous_count": 0,
-      "baseline_median_7d": "0.00",
-      "ratio_to_baseline": "",
-      "zero_streak_days": 6,
-      "anomaly_level": "critical",
-      "anomaly_codes": "no_output,zero_2d",
-      "anomaly_reason": "日更渠道当天没有收集到文章；已连续 6 天为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
-    },
     {
       "date": "2026-08-12",
       "source": "Batteries News",
@@ -74,7 +47,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "no_output,zero_2d",
       "anomaly_reason": "日更渠道当天没有收集到文章；已连续 7 天为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
@@ -101,7 +74,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero",
       "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
@@ -128,14 +101,14 @@
       "anomaly_level": "warning",
       "anomaly_codes": "low_usable_rate",
       "anomaly_reason": "正文可用率仅 33%",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "INSIDEEVs",
       "frequency": "实时",
       "expected_daily": "true",
-      "crawl_status": "degraded",
+      "crawl_status": "already_collected",
       "candidates_seen": 20,
       "pages_fetched": 10,
       "article_count": 10,
@@ -155,34 +128,7 @@
       "anomaly_level": "warning",
       "anomaly_codes": "low_usable_rate",
       "anomaly_reason": "正文可用率仅 0%",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
-    },
-    {
-      "date": "2026-08-12",
-      "source": "Informationsdienst Wissenschaft-idw",
-      "frequency": "工作日",
-      "expected_daily": "true",
-      "crawl_status": "zero",
-      "candidates_seen": 0,
-      "pages_fetched": 0,
-      "article_count": 0,
-      "unique_articles": 0,
-      "duplicate_articles": 0,
-      "usable_articles": 0,
-      "usable_rate": "0.0000",
-      "incomplete_articles": 0,
-      "short_articles": 0,
-      "content_chars_min": 0,
-      "content_chars_median": 0,
-      "content_chars_max": 0,
-      "previous_count": 2,
-      "baseline_median_7d": "1.00",
-      "ratio_to_baseline": "0.00",
-      "zero_streak_days": 1,
-      "anomaly_level": "critical",
-      "anomaly_codes": "sudden_zero",
-      "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
@@ -199,8 +145,8 @@
       "usable_rate": "1.0000",
       "incomplete_articles": 0,
       "short_articles": 0,
-      "content_chars_min": 643,
-      "content_chars_median": 3015,
+      "content_chars_min": 688,
+      "content_chars_median": 3099,
       "content_chars_max": 5742,
       "previous_count": 19,
       "baseline_median_7d": "4.00",
@@ -209,7 +155,7 @@
       "anomaly_level": "warning",
       "anomaly_codes": "surge_2x",
       "anomaly_reason": "较 7 日中位数增至 3.75 倍",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
@@ -217,35 +163,35 @@
       "frequency": "实时",
       "expected_daily": "true",
       "crawl_status": "degraded",
-      "candidates_seen": 33,
-      "pages_fetched": 24,
-      "article_count": 20,
-      "unique_articles": 20,
+      "candidates_seen": 40,
+      "pages_fetched": 20,
+      "article_count": 22,
+      "unique_articles": 22,
       "duplicate_articles": 0,
       "usable_articles": 0,
       "usable_rate": "0.0000",
-      "incomplete_articles": 20,
+      "incomplete_articles": 22,
       "short_articles": 0,
       "content_chars_min": 3150,
-      "content_chars_median": 3751,
+      "content_chars_median": 3700,
       "content_chars_max": 5586,
       "previous_count": 20,
       "baseline_median_7d": "20.00",
-      "ratio_to_baseline": "1.00",
+      "ratio_to_baseline": "1.10",
       "zero_streak_days": 0,
       "anomaly_level": "warning",
       "anomaly_codes": "low_usable_rate",
       "anomaly_reason": "正文可用率仅 0%",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "pv magazine C&I PV",
       "frequency": "工作日",
       "expected_daily": "true",
-      "crawl_status": "degraded",
-      "candidates_seen": 99,
-      "pages_fetched": 8,
+      "crawl_status": "already_collected",
+      "candidates_seen": 100,
+      "pages_fetched": 17,
       "article_count": 7,
       "unique_articles": 7,
       "duplicate_articles": 0,
@@ -263,14 +209,14 @@
       "anomaly_level": "critical",
       "anomaly_codes": "surge_2x",
       "anomaly_reason": "较 7 日中位数增至 7.00 倍",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "中国电力新闻网-新能源",
       "frequency": "工作日",
       "expected_daily": "true",
-      "crawl_status": "healthy",
+      "crawl_status": "already_collected",
       "candidates_seen": 28,
       "pages_fetched": 16,
       "article_count": 7,
@@ -290,14 +236,14 @@
       "anomaly_level": "critical",
       "anomaly_codes": "surge_2x",
       "anomaly_reason": "较 7 日中位数增至 7.00 倍",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "中国电力新闻网-科技",
       "frequency": "工作日",
       "expected_daily": "true",
-      "crawl_status": "healthy",
+      "crawl_status": "already_collected",
       "candidates_seen": 28,
       "pages_fetched": 14,
       "article_count": 6,
@@ -317,14 +263,14 @@
       "anomaly_level": "critical",
       "anomaly_codes": "surge_2x",
       "anomaly_reason": "较 7 日中位数增至 6.00 倍",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "中国能源网",
       "frequency": "工作日",
       "expected_daily": "true",
-      "crawl_status": "zero",
+      "crawl_status": "failed",
       "candidates_seen": 0,
       "pages_fetched": 0,
       "article_count": 0,
@@ -342,9 +288,9 @@
       "ratio_to_baseline": "",
       "zero_streak_days": 6,
       "anomaly_level": "critical",
-      "anomaly_codes": "no_output,zero_2d",
-      "anomaly_reason": "日更渠道当天没有收集到文章；已连续 6 天为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "anomaly_codes": "fetch_failed,no_output,zero_2d",
+      "anomaly_reason": "抓取任务失败；日更渠道当天没有收集到文章；已连续 6 天为 0",
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
@@ -371,14 +317,41 @@
       "anomaly_level": "critical",
       "anomaly_codes": "no_output,zero_2d",
       "anomaly_reason": "日更渠道当天没有收集到文章；已连续 8 天为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
+    },
+    {
+      "date": "2026-08-12",
+      "source": "北极星储能网",
+      "frequency": "实时",
+      "expected_daily": "true",
+      "crawl_status": "zero",
+      "candidates_seen": 100,
+      "pages_fetched": 10,
+      "article_count": 0,
+      "unique_articles": 0,
+      "duplicate_articles": 0,
+      "usable_articles": 0,
+      "usable_rate": "0.0000",
+      "incomplete_articles": 0,
+      "short_articles": 0,
+      "content_chars_min": 0,
+      "content_chars_median": 0,
+      "content_chars_max": 0,
+      "previous_count": 20,
+      "baseline_median_7d": "20.00",
+      "ratio_to_baseline": "0.00",
+      "zero_streak_days": 1,
+      "anomaly_level": "critical",
+      "anomaly_codes": "sudden_zero",
+      "anomaly_reason": "日更渠道从有产出降为 0",
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "国际太阳能光伏网",
       "frequency": "工作日",
       "expected_daily": "true",
-      "crawl_status": "healthy",
+      "crawl_status": "already_collected",
       "candidates_seen": 51,
       "pages_fetched": 27,
       "article_count": 9,
@@ -398,14 +371,14 @@
       "anomaly_level": "critical",
       "anomaly_codes": "surge_2x",
       "anomaly_reason": "较 7 日中位数增至 4.50 倍",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "国际能源网",
       "frequency": "实时",
       "expected_daily": "true",
-      "crawl_status": "zero",
+      "crawl_status": "failed",
       "candidates_seen": 0,
       "pages_fetched": 0,
       "article_count": 0,
@@ -423,16 +396,16 @@
       "ratio_to_baseline": "",
       "zero_streak_days": 8,
       "anomaly_level": "critical",
-      "anomaly_codes": "no_output,zero_2d",
-      "anomaly_reason": "日更渠道当天没有收集到文章；已连续 8 天为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "anomaly_codes": "fetch_failed,no_output,zero_2d",
+      "anomaly_reason": "抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0",
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "我爱电车网",
       "frequency": "实时",
       "expected_daily": "true",
-      "crawl_status": "zero",
+      "crawl_status": "failed",
       "candidates_seen": 0,
       "pages_fetched": 0,
       "article_count": 0,
@@ -450,16 +423,16 @@
       "ratio_to_baseline": "",
       "zero_streak_days": 8,
       "anomaly_level": "critical",
-      "anomaly_codes": "no_output,zero_2d",
-      "anomaly_reason": "日更渠道当天没有收集到文章；已连续 8 天为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "anomaly_codes": "fetch_failed,no_output,zero_2d",
+      "anomaly_reason": "抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0",
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
       "source": "电池网",
       "frequency": "实时",
       "expected_daily": "true",
-      "crawl_status": "zero",
+      "crawl_status": "failed",
       "candidates_seen": 0,
       "pages_fetched": 0,
       "article_count": 0,
@@ -477,9 +450,9 @@
       "ratio_to_baseline": "",
       "zero_streak_days": 8,
       "anomaly_level": "critical",
-      "anomaly_codes": "no_output,zero_2d",
-      "anomaly_reason": "日更渠道当天没有收集到文章；已连续 8 天为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "anomaly_codes": "fetch_failed,no_output,zero_2d",
+      "anomaly_reason": "抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0",
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     },
     {
       "date": "2026-08-12",
@@ -506,7 +479,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero",
       "anomaly_reason": "日更渠道从有产出降为 0",
-      "updated_at": "2026-08-13T07:08:35.579495+08:00"
+      "updated_at": "2026-08-13T10:57:01.094617+08:00"
     }
   ],
   "paths": {
@@ -517,7 +490,7 @@
     "recovery_queue": "logs/recovery-queue.json"
   },
   "recovery": {
-    "pending_confirmation": 131,
+    "pending_confirmation": 130,
     "confirmed": 0,
     "recovery_failed": 22
   }

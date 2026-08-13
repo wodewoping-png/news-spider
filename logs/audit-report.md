@@ -1,34 +1,37 @@
 # 新闻渠道自主审查报告
 
 - 审查日期：2026-08-12
-- 整体状态：normal
-- 收集总量：265 篇
-- 正文可用：229 篇（86%）
-- 有产出渠道：28/45
+- 整体状态：critical
+- 收集总量：258 篇
+- 正文可用：220 篇（85%）
+- 有产出渠道：30/45
 - 7 日总量中位数：230.00
+
+## 整体异常
+
+4 个渠道抓取失败
 
 ## 渠道异常
 
 | 级别 | 渠道 | 今日 | 前次 | 7日中位数 | 连续为0 | 异常说明 |
 |---|---|---:|---:|---:|---:|---|
-| critical | 4C Offshore | 0 | - | 0.00 | 6 | 日更渠道当天没有收集到文章；已连续 6 天为 0 |
 | critical | Batteries News | 0 | - | 0.00 | 7 | 日更渠道当天没有收集到文章；已连续 7 天为 0 |
 | critical | EnergyTrend储能 | 0 | 2 | 2.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | Informationsdienst Wissenschaft-idw | 0 | 2 | 1.00 | 1 | 日更渠道从有产出降为 0 |
 | critical | pv magazine C&I PV | 7 | 6 | 1.00 | 0 | 较 7 日中位数增至 7.00 倍 |
 | critical | 中国电力新闻网-新能源 | 7 | 1 | 1.00 | 0 | 较 7 日中位数增至 7.00 倍 |
 | critical | 中国电力新闻网-科技 | 6 | 1 | 1.00 | 0 | 较 7 日中位数增至 6.00 倍 |
-| critical | 中国能源网 | 0 | - | 0.00 | 6 | 日更渠道当天没有收集到文章；已连续 6 天为 0 |
+| critical | 中国能源网 | 0 | - | 0.00 | 6 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 6 天为 0 |
 | critical | 光伏测试网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
+| critical | 北极星储能网 | 0 | 20 | 20.00 | 1 | 日更渠道从有产出降为 0 |
 | critical | 国际太阳能光伏网 | 9 | 8 | 2.00 | 0 | 较 7 日中位数增至 4.50 倍 |
-| critical | 国际能源网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
-| critical | 我爱电车网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
-| critical | 电池网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
+| critical | 国际能源网 | 0 | - | 0.00 | 8 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0 |
+| critical | 我爱电车网 | 0 | - | 0.00 | 8 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0 |
+| critical | 电池网 | 0 | - | 0.00 | 8 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0 |
 | critical | 索比光伏 | 0 | 1 | 1.00 | 1 | 日更渠道从有产出降为 0 |
 | warning | H2 View | 6 | 8 | 5.00 | 0 | 正文可用率仅 33% |
 | warning | INSIDEEVs | 10 | 6 | 6.00 | 0 | 正文可用率仅 0% |
 | warning | NE时代 | 15 | 19 | 4.00 | 0 | 较 7 日中位数增至 3.75 倍 |
-| warning | interesting engineering | 20 | 20 | 20.00 | 0 | 正文可用率仅 0% |
+| warning | interesting engineering | 22 | 20 | 20.00 | 0 | 正文可用率仅 0% |
 
 ## 自反馈恢复队列
 
@@ -177,15 +180,14 @@
 | pending_confirmation | 2026-08-11 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-08-11 | 我爱电车网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-08-11 | 电池网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
-| pending_confirmation | 2026-08-12 | 4C Offshore | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
 | pending_confirmation | 2026-08-12 | Batteries News | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
 | pending_confirmation | 2026-08-12 | EnergyTrend储能 | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
-| pending_confirmation | 2026-08-12 | Informationsdienst Wissenschaft-idw | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
-| pending_confirmation | 2026-08-12 | 中国能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
+| pending_confirmation | 2026-08-12 | 中国能源网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-12: /home/runner/work/_temp/rionews/daily/news_export_2026-08-12.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
 | pending_confirmation | 2026-08-12 | 光伏测试网 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
-| pending_confirmation | 2026-08-12 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
-| pending_confirmation | 2026-08-12 | 我爱电车网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
-| pending_confirmation | 2026-08-12 | 电池网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
+| pending_confirmation | 2026-08-12 | 北极星储能网 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
+| pending_confirmation | 2026-08-12 | 国际能源网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-12: /home/runner/work/_temp/rionews/daily/news_export_2026-08-12.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
+| pending_confirmation | 2026-08-12 | 我爱电车网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-12: /home/runner/work/_temp/rionews/daily/news_export_2026-08-12.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
+| pending_confirmation | 2026-08-12 | 电池网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-12: /home/runner/work/_temp/rionews/daily/news_export_2026-08-12.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
 | pending_confirmation | 2026-08-12 | 索比光伏 | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
 
 处理方式：修复渠道后运行 `python -m src.recovery confirm --source "渠道名" --note "修复说明"`；后续任务会自动补抓所有已确认的原日期缺口。
