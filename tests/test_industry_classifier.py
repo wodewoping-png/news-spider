@@ -9,8 +9,10 @@ from unittest.mock import patch
 
 from src.industry_classifier import (
     DEFAULT_TAXONOMY_PATH,
+    IndustryClassificationError,
     IndustryTaxonomy,
     ZAIIndustryClassifier,
+    _parse_json_response,
     classify_jsonl,
 )
 from src.storage import export_csv, upsert_jsonl
@@ -184,7 +186,40 @@ class IndustryClassifierTests(unittest.TestCase):
         self.assertEqual(call["headers"]["x-api-key"], "test-key")
         self.assertNotIn("Authorization", call["headers"])
         self.assertIn("system", call["json"])
+        self.assertEqual(call["json"]["thinking"], {"type": "disabled"})
         self.assertEqual(item["industry_classification_status"], "unclassified")
+
+    def test_anthropic_combines_text_blocks_and_extracts_fenced_json(self):
+        session = FakeSession(
+            {
+                "content": [
+                    {"type": "thinking", "thinking": "internal reasoning"},
+                    {"type": "text", "text": "Here is the result:\n```json\n"},
+                    {
+                        "type": "text",
+                        "text": '{"results":[{"article_id":"0","matches":[]}]}\n```',
+                    },
+                ]
+            }
+        )
+        classifier = ZAIIndustryClassifier(
+            api_key="test-key",
+            taxonomy=self.taxonomy,
+            api_url="https://open.bigmodel.cn/api/anthropic",
+            session=session,
+        )
+        item = article()
+
+        classifier.enrich_articles([item])
+
+        self.assertEqual(item["industry_classification_status"], "unclassified")
+        self.assertNotIn("industry_classification_error", item)
+
+    def test_json_response_parser_rejects_empty_and_non_json_text(self):
+        for value in ("", "   ", "classification unavailable"):
+            with self.subTest(value=value):
+                with self.assertRaises(IndustryClassificationError):
+                    _parse_json_response(value)
 
     def test_failed_batch_does_not_discard_later_success(self):
         session = SequenceSession(
