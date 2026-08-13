@@ -121,6 +121,37 @@ def _anthropic_messages_url(api_url: str) -> str:
     return api_url.rstrip("/") if api_url.rstrip("/").endswith("/v1/messages") else f"{api_url.rstrip('/')}/v1/messages"
 
 
+def _parse_json_response(content: object) -> dict:
+    """Parse a model JSON response even when it is wrapped in prose or fences."""
+    if isinstance(content, dict):
+        return content
+    if not isinstance(content, str) or not content.strip():
+        raise IndustryClassificationError("Z.AI returned an empty text response")
+
+    text = content.strip()
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        decoder = json.JSONDecoder()
+        parsed = None
+        for index, character in enumerate(text):
+            if character != "{":
+                continue
+            try:
+                candidate, _ = decoder.raw_decode(text[index:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(candidate, dict):
+                parsed = candidate
+                break
+
+    if not isinstance(parsed, dict):
+        raise IndustryClassificationError(
+            "Z.AI response did not contain a valid JSON object"
+        )
+    return parsed
+
+
 class ZAIIndustryClassifier:
     def __init__(
         self,
@@ -240,6 +271,7 @@ class ZAIIndustryClassifier:
             "model": self.model,
             "system": self._system_prompt(),
             "messages": [{"role": "user", "content": user_content}],
+            "thinking": {"type": "disabled"},
             "max_tokens": max(1000, len(articles) * 450),
             "stream": False,
         }
@@ -285,16 +317,16 @@ class ZAIIndustryClassifier:
                 raw = response.json()
                 if self.protocol == "anthropic":
                     blocks = raw["content"]
-                    content = next(
-                        block["text"]
+                    content = "\n".join(
+                        str(block["text"])
                         for block in blocks
-                        if isinstance(block, dict) and block.get("type") == "text"
+                        if isinstance(block, dict)
+                        and block.get("type") == "text"
+                        and str(block.get("text") or "").strip()
                     )
                 else:
                     content = raw["choices"][0]["message"]["content"]
-                if isinstance(content, dict):
-                    return content
-                return json.loads(content)
+                return _parse_json_response(content)
             except PermanentIndustryClassificationError as exc:
                 last_error = exc
                 self._terminal_error = str(exc).replace(self.api_key, "***")[:500]
