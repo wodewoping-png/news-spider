@@ -23,14 +23,15 @@ $env:ZAI_MODEL = "glm-5.2"
 https://open.bigmodel.cn/api/paas/v4/chat/completions
 ```
 
-如账号使用其它兼容入口，可通过 `ZAI_API_URL` 覆盖。默认模型 `glm-5.2`，也可通过 `ZAI_MODEL` 或命令行参数切换。分类请求会关闭深度思考和随机采样，以获得更低延迟和更稳定的 JSON 判断。
+如账号使用其它兼容入口，可通过 `ZAI_API_URL` 覆盖。普通开放平台密钥继续使用上述 OpenAI 兼容接口；如使用 Anthropic/Coding Plan 兼容入口，可将 `ZAI_API_URL` 设置为 `https://open.bigmodel.cn/api/anthropic`，程序会自动改用 Anthropic Messages 协议（`/v1/messages`、`x-api-key` 和对应响应格式），不要把该地址当作 OpenAI 请求 URL 直接替换。默认模型 `glm-5.2`，也可通过 `ZAI_MODEL` 或命令行参数切换。分类请求会关闭深度思考，以获得更低延迟和更稳定的 JSON 判断。
 
 GitHub Actions 中需要添加：
 
 - Repository secret：`ZAI_API_KEY`
 - Repository variable（可选）：`ZAI_MODEL`
+- Repository variable（可选）：`ZAI_API_URL`
 
-`.github/workflows/daily-news.yml` 已将这两个值传给每日抓取任务。未配置密钥时，抓取照常运行，只跳过分类。
+`.github/workflows/daily-news.yml` 已将这些值传给每日抓取任务。Actions 默认使用 `https://open.bigmodel.cn/api/anthropic` 以适配 Coding Plan；如 Secrets 中是普通开放平台密钥，请把 `ZAI_API_URL` 仓库变量设为 `https://open.bigmodel.cn/api/paas/v4/chat/completions`。未配置密钥时，抓取照常运行，只跳过分类。额度、鉴权或请求配置错误会立即停止本轮后续分类请求，避免对每个渠道重复重试，但不影响新闻采集。
 
 ## 每日抓取自动分类
 
@@ -86,6 +87,7 @@ JSONL 与 CSV 会增加：
 - `industry_classified_at`：分类时间。
 - `industry_classifier_model`：使用的模型。
 - `industry_taxonomy_version`：分类表版本。
+- `industry_classification_error`：失败批次的脱敏错误摘要，成功分类时为空。
 
 ## 调整领域定义
 

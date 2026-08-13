@@ -62,6 +62,23 @@ def write_workbook(path: Path) -> None:
 
 
 class RIONewsTests(unittest.TestCase):
+    def test_missing_daily_workbook_is_reported_as_input_failure(self):
+        with tempfile.TemporaryDirectory() as temp:
+            previous = os.environ.get("RIONEWS_DAILY_DIR")
+            os.environ["RIONEWS_DAILY_DIR"] = temp
+            try:
+                scraper = RIONewsChinaEnergyScraper(object(), source())
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    "Prepare RIOnews daily exports",
+                ):
+                    scraper.scrape(target_date=date(2026, 8, 12))
+            finally:
+                if previous is None:
+                    os.environ.pop("RIONEWS_DAILY_DIR", None)
+                else:
+                    os.environ["RIONEWS_DAILY_DIR"] = previous
+
     def test_registry_uses_rionews_for_china_energy(self):
         self.assertIs(get_scraper_class("中国能源网"), RIONewsChinaEnergyScraper)
 

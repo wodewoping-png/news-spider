@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Iterable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from .content_quality import content_rank
+from .content_quality import assess_content, content_rank
 from .date_utils import DEFAULT_TIMEZONE, article_date
 
 
@@ -31,9 +31,10 @@ FIELDNAMES = (
     "industry_classified_at",
     "industry_classifier_model",
     "industry_taxonomy_version",
+    "industry_classification_error",
 )
 
-INDUSTRY_FIELDNAMES = FIELDNAMES[-8:]
+INDUSTRY_FIELDNAMES = FIELDNAMES[-9:]
 
 TRACKING_QUERY_KEYS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 
@@ -120,6 +121,13 @@ def load_existing_content_quality(jsonl_path: Path) -> dict[str, dict]:
             url_key = canonicalize_url(str(item.get("url") or ""))
             if not url_key:
                 continue
+            status, issue = assess_content(
+                str(item.get("content") or ""),
+                extraction_method=str(item.get("content_extraction") or ""),
+            )
+            if issue == "access_challenge":
+                item["content_status"] = status
+                item["content_issue"] = issue
             current = quality.get(url_key)
             if current is None or is_better_article(item, current):
                 quality[url_key] = item

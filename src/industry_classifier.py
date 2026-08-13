@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Iterable
+from urllib.parse import urlparse
 
 import requests
 
@@ -34,11 +35,16 @@ CLASSIFICATION_FIELDS = (
     "industry_classified_at",
     "industry_classifier_model",
     "industry_taxonomy_version",
+    "industry_classification_error",
 )
 
 
 class IndustryClassificationError(RuntimeError):
     """Raised when the model API cannot produce a usable classification."""
+
+
+class PermanentIndustryClassificationError(IndustryClassificationError):
+    """Raised for authentication, quota, or request errors that retries cannot fix."""
 
 
 @dataclass(frozen=True)
@@ -106,6 +112,15 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _protocol_for_url(api_url: str) -> str:
+    path = urlparse(api_url).path.rstrip("/").lower()
+    return "anthropic" if path.endswith("/api/anthropic") or path.endswith("/v1/messages") else "openai"
+
+
+def _anthropic_messages_url(api_url: str) -> str:
+    return api_url.rstrip("/") if api_url.rstrip("/").endswith("/v1/messages") else f"{api_url.rstrip('/')}/v1/messages"
+
+
 class ZAIIndustryClassifier:
     def __init__(
         self,
@@ -133,12 +148,14 @@ class ZAIIndustryClassifier:
         self.taxonomy = taxonomy
         self.model = model
         self.api_url = api_url
+        self.protocol = _protocol_for_url(api_url)
         self.batch_size = batch_size
         self.max_content_chars = max_content_chars
         self.min_confidence = min_confidence
         self.timeout = timeout
         self.retries = max(retries, 1)
         self.session = session or requests.Session()
+        self._terminal_error = ""
 
     @classmethod
     def from_environment(
@@ -201,53 +218,87 @@ class ZAIIndustryClassifier:
         return result
 
     def _request(self, articles: list[dict]) -> dict:
-        payload = {
+        if self._terminal_error:
+            raise PermanentIndustryClassificationError(self._terminal_error)
+        user_content = "请分类以下新闻：\n" + json.dumps(
+            self._article_payload(articles),
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+        openai_payload = {
             "model": self.model,
             "messages": [
                 {"role": "system", "content": self._system_prompt()},
-                {
-                    "role": "user",
-                    "content": "请分类以下新闻：\n"
-                    + json.dumps(
-                        self._article_payload(articles),
-                        ensure_ascii=False,
-                        separators=(",", ":"),
-                    ),
-                },
+                {"role": "user", "content": user_content},
             ],
             "response_format": {"type": "json_object"},
             "thinking": {"type": "disabled"},
-            "do_sample": False,
             "max_tokens": max(1000, len(articles) * 450),
             "stream": False,
         }
+        anthropic_payload = {
+            "model": self.model,
+            "system": self._system_prompt(),
+            "messages": [{"role": "user", "content": user_content}],
+            "max_tokens": max(1000, len(articles) * 450),
+            "stream": False,
+        }
+        if self.protocol == "anthropic":
+            request_url = _anthropic_messages_url(self.api_url)
+            headers = {
+                "x-api-key": self.api_key,
+                "anthropic-version": "2023-06-01",
+                "Content-Type": "application/json",
+            }
+            payload = anthropic_payload
+        else:
+            request_url = self.api_url
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+                "Accept-Language": "zh-CN,zh",
+            }
+            payload = openai_payload
         last_error: Exception | None = None
         for attempt in range(self.retries):
             try:
                 response = self.session.post(
-                    self.api_url,
-                    headers={
-                        "Authorization": f"Bearer {self.api_key}",
-                        "Content-Type": "application/json",
-                        "Accept-Language": "zh-CN,zh",
-                    },
+                    request_url,
+                    headers=headers,
                     json=payload,
                     timeout=self.timeout,
                 )
+                response_probe = response.text[:500]
+                if response.status_code == 429 and '"code":"1113"' in response_probe.replace(" ", ""):
+                    raise PermanentIndustryClassificationError(
+                        f"Z.AI account or quota HTTP 429: {response_probe}"
+                    )
                 if response.status_code in {408, 409, 429} or response.status_code >= 500:
                     raise IndustryClassificationError(
                         f"Z.AI temporary HTTP {response.status_code}: "
                         f"{response.text[:300]}"
                     )
                 if response.status_code >= 400:
-                    raise IndustryClassificationError(
+                    raise PermanentIndustryClassificationError(
                         f"Z.AI HTTP {response.status_code}: {response.text[:500]}"
                     )
                 raw = response.json()
-                content = raw["choices"][0]["message"]["content"]
+                if self.protocol == "anthropic":
+                    blocks = raw["content"]
+                    content = next(
+                        block["text"]
+                        for block in blocks
+                        if isinstance(block, dict) and block.get("type") == "text"
+                    )
+                else:
+                    content = raw["choices"][0]["message"]["content"]
                 if isinstance(content, dict):
                     return content
                 return json.loads(content)
+            except PermanentIndustryClassificationError as exc:
+                last_error = exc
+                self._terminal_error = str(exc).replace(self.api_key, "***")[:500]
+                break
             except (
                 requests.RequestException,
                 KeyError,
@@ -261,6 +312,8 @@ class ZAIIndustryClassifier:
                 if attempt + 1 >= self.retries:
                     break
                 time.sleep(min(2**attempt, 8))
+        if isinstance(last_error, PermanentIndustryClassificationError):
+            raise PermanentIndustryClassificationError(str(last_error))
         raise IndustryClassificationError(str(last_error or "Unknown Z.AI response error"))
 
     def _validate_matches(self, raw_matches: object) -> list[dict]:
@@ -312,7 +365,23 @@ class ZAIIndustryClassifier:
         enriched = 0
         for start in range(0, len(article_list), self.batch_size):
             batch = article_list[start : start + self.batch_size]
-            classifications = self.classify_batch(batch)
+            try:
+                classifications = self.classify_batch(batch)
+            except IndustryClassificationError as exc:
+                safe_error = str(exc).replace(self.api_key, "***")[:500]
+                logging.warning(
+                    "Industry classification batch failed: start=%s size=%s error=%s",
+                    start,
+                    len(batch),
+                    safe_error,
+                )
+                mark_classification_error(
+                    batch,
+                    model=self.model,
+                    taxonomy_version=self.taxonomy.version,
+                    error=safe_error,
+                )
+                continue
             classified_at = _now_iso()
             for article, matches in zip(batch, classifications):
                 primary = matches[0] if matches else None
@@ -330,6 +399,7 @@ class ZAIIndustryClassifier:
                 article["industry_classified_at"] = classified_at
                 article["industry_classifier_model"] = self.model
                 article["industry_taxonomy_version"] = self.taxonomy.version
+                article.pop("industry_classification_error", None)
                 enriched += 1
         return enriched
 
@@ -339,11 +409,13 @@ def mark_classification_error(
     *,
     model: str,
     taxonomy_version: str,
+    error: str = "",
 ) -> None:
     for article in articles:
         article["industry_classification_status"] = "error"
         article["industry_classifier_model"] = model
         article["industry_taxonomy_version"] = taxonomy_version
+        article["industry_classification_error"] = str(error or "")[:500]
 
 
 def classify_jsonl(

@@ -5,7 +5,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.storage import load_existing_content_lengths, upsert_jsonl
+from src.storage import (
+    load_existing_content_lengths,
+    load_existing_content_quality,
+    upsert_jsonl,
+)
 
 
 def article(url: str, content: str) -> dict:
@@ -22,6 +26,22 @@ def article(url: str, content: str) -> dict:
 
 
 class StorageContentRefreshTests(unittest.TestCase):
+    def test_legacy_waf_record_is_not_treated_as_verified_full_content(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "articles.jsonl"
+            blocked = article(
+                "https://news.bjx.com.cn/html/20260812/1.shtml",
+                'appkey: "CF_APP_WAF"; var requestInfo = {"token":"redacted"};',
+            )
+            blocked["content_status"] = "full"
+            blocked["content_extraction"] = "dom_or_structured_full_text"
+            path.write_text(json.dumps(blocked) + "\n", encoding="utf-8")
+
+            quality = load_existing_content_quality(path)
+            saved = next(iter(quality.values()))
+            self.assertEqual(saved["content_status"], "missing")
+            self.assertEqual(saved["content_issue"], "access_challenge")
+
     def test_existing_content_is_replaced_only_when_longer(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "articles.jsonl"

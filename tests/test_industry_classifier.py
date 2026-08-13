@@ -36,6 +36,16 @@ class FakeSession:
         return FakeResponse(self.response_payload)
 
 
+class SequenceSession:
+    def __init__(self, responses: list[FakeResponse]) -> None:
+        self.responses = responses
+        self.calls: list[dict] = []
+
+    def post(self, url: str, **kwargs) -> FakeResponse:
+        self.calls.append({"url": url, **kwargs})
+        return self.responses.pop(0)
+
+
 def article(url: str = "https://example.com/news") -> dict:
     return {
         "title": "固态锂电池新工厂开始量产",
@@ -141,8 +151,92 @@ class IndustryClassifierTests(unittest.TestCase):
         request = session.calls[0]["json"]
         self.assertEqual(request["response_format"], {"type": "json_object"})
         self.assertEqual(request["thinking"], {"type": "disabled"})
-        self.assertFalse(request["do_sample"])
+        self.assertNotIn("do_sample", request)
         self.assertNotIn("test-key", json.dumps(request, ensure_ascii=False))
+
+    def test_anthropic_base_url_uses_messages_protocol(self):
+        response = {
+            "content": [
+                {
+                    "type": "text",
+                    "text": json.dumps(
+                        {"results": [{"article_id": "0", "matches": []}]},
+                        ensure_ascii=False,
+                    ),
+                }
+            ]
+        }
+        session = FakeSession(response)
+        classifier = ZAIIndustryClassifier(
+            api_key="test-key",
+            taxonomy=self.taxonomy,
+            api_url="https://open.bigmodel.cn/api/anthropic",
+            session=session,
+        )
+        item = article()
+        classifier.enrich_articles([item])
+
+        call = session.calls[0]
+        self.assertEqual(
+            call["url"],
+            "https://open.bigmodel.cn/api/anthropic/v1/messages",
+        )
+        self.assertEqual(call["headers"]["x-api-key"], "test-key")
+        self.assertNotIn("Authorization", call["headers"])
+        self.assertIn("system", call["json"])
+        self.assertEqual(item["industry_classification_status"], "unclassified")
+
+    def test_failed_batch_does_not_discard_later_success(self):
+        session = SequenceSession(
+            [
+                FakeResponse({"error": "temporary"}, status_code=500),
+                FakeResponse({"error": "temporary"}, status_code=500),
+                FakeResponse({"error": "temporary"}, status_code=500),
+                FakeResponse(
+                    api_payload([{"article_id": "0", "matches": []}])
+                ),
+            ]
+        )
+        classifier = ZAIIndustryClassifier(
+            api_key="test-key",
+            taxonomy=self.taxonomy,
+            batch_size=1,
+            session=session,
+        )
+        first = article("https://example.com/first")
+        second = article("https://example.com/second")
+        enriched = classifier.enrich_articles([first, second])
+
+        self.assertEqual(enriched, 1)
+        self.assertEqual(first["industry_classification_status"], "error")
+        self.assertIn("HTTP 500", first["industry_classification_error"])
+        self.assertNotIn("test-key", first["industry_classification_error"])
+        self.assertEqual(second["industry_classification_status"], "unclassified")
+        self.assertNotIn("industry_classification_error", second)
+
+    def test_quota_error_is_not_retried_and_opens_circuit(self):
+        session = SequenceSession(
+            [
+                FakeResponse(
+                    {"error": {"code": "1113", "message": "quota unavailable"}},
+                    status_code=429,
+                )
+            ]
+        )
+        classifier = ZAIIndustryClassifier(
+            api_key="test-key",
+            taxonomy=self.taxonomy,
+            batch_size=1,
+            session=session,
+        )
+        first = article("https://example.com/first")
+        second = article("https://example.com/second")
+        classifier.enrich_articles([first, second])
+
+        self.assertEqual(len(session.calls), 1)
+        self.assertEqual(first["industry_classification_status"], "error")
+        self.assertEqual(second["industry_classification_status"], "error")
+        self.assertIn("quota HTTP 429", first["industry_classification_error"])
 
     def test_empty_matches_are_unclassified(self):
         classifier = ZAIIndustryClassifier(
