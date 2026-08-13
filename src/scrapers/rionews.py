@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import os
 from datetime import date
 from pathlib import Path
@@ -33,14 +32,11 @@ class RIONewsSourceScraper(BaseScraper):
     ) -> list[dict]:
         workbook_path = self._workbook_path(target_date)
         if workbook_path is None or not workbook_path.exists():
-            logging.warning(
-                "RIOnews daily workbook unavailable for %s: %s",
-                target_date or "latest",
-                workbook_path or self._daily_dir(),
+            raise RuntimeError(
+                "RIOnews input workbook is unavailable for "
+                f"{target_date or 'latest'}: {workbook_path or self._daily_dir()}; "
+                "check the Prepare RIOnews daily exports workflow step and credentials"
             )
-            self.last_candidate_count = 0
-            self.last_fetched_count = 0
-            return []
 
         articles = load_rionews_articles(
             workbook_path,

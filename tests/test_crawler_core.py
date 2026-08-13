@@ -7,12 +7,14 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-from src.article_parser import parse_article_html
+from src.article_parser import normalize_source_date, parse_article_html
+from src.content_quality import assess_content
 from src.date_utils import date_from_url, default_target_date, parse_target_date
 from src.http_client import (
     FetchResult,
     HttpClient,
     RequiredFetchError,
+    is_access_challenge_html,
     request_headers_for_url,
 )
 from src.load_sources import Source, expects_output_on_date
@@ -84,6 +86,47 @@ class DateAndUrlTests(unittest.TestCase):
         self.assertEqual(
             request_headers_for_url("https://www.sciencenet.cn/", "custom-agent"), {}
         )
+
+    def test_bjx_waf_script_is_detected_as_access_challenge(self):
+        html = """
+        <html><script>
+        appkey: "CF_APP_WAF";
+        var requestInfo = {"sceneId":"redacted"};
+        </script></html>
+        """
+        self.assertTrue(is_access_challenge_html(html))
+        self.assertEqual(
+            assess_content(
+                'appkey: "CF_APP_WAF"; var requestInfo = {"token":"redacted"};',
+                extraction_method="trafilatura_full_text",
+            ),
+            ("missing", "access_challenge"),
+        )
+
+    def test_4c_offshore_uses_day_month_year_dates(self):
+        self.assertEqual(
+            normalize_source_date("12/08/2026", "4C Offshore"),
+            "2026-08-12",
+        )
+        self.assertEqual(
+            normalize_source_date("12/08/2026", "US publisher"),
+            "12/08/2026",
+        )
+
+    def test_http_client_rejects_http_200_access_challenge(self):
+        response = Mock()
+        response.status_code = 200
+        response.url = "https://news.bjx.com.cn/html/20260812/1.shtml"
+        response.headers = {"content-type": "text/html"}
+        response.encoding = "utf-8"
+        response.text = (
+            '<script>appkey: "CF_APP_WAF"; '
+            'var requestInfo = {"sceneId":"redacted"};</script>'
+        )
+        response.raise_for_status.return_value = None
+        client = HttpClient(sleep_seconds=0, respect_robots=False)
+        with patch.object(client.session, "get", return_value=response):
+            self.assertIsNone(client.get(response.url, allow_non_html=False))
 
     def test_low_frequency_source_is_not_expected_daily(self):
         self.assertFalse(expects_daily_output("\u6bcf\u5468"))

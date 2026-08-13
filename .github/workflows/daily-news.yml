@@ -80,6 +80,7 @@ jobs:
           DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD || secrets.DINGTALK_KEYWORD }}
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL || 'glm-5.2' }}
+          ZAI_API_URL: ${{ vars.ZAI_API_URL || 'https://open.bigmodel.cn/api/anthropic' }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           args=(--sources sources.xlsx)

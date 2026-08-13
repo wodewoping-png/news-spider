@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Optional
 from urllib.parse import urljoin, urlparse
 
@@ -337,6 +337,19 @@ def extract_date(soup: BeautifulSoup) -> str:
     return ""
 
 
+def normalize_source_date(value: str, source_name: str) -> str:
+    """Normalize unambiguous publisher-specific numeric dates before global parsing."""
+    if source_name.strip().lower() == "4c offshore":
+        match = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(20\d{2})", value.strip())
+        if match:
+            day, month, year = (int(part) for part in match.groups())
+            try:
+                return date(year, month, day).isoformat()
+            except ValueError:
+                return value
+    return value
+
+
 def extract_body(soup: BeautifulSoup, source_name: str = "") -> str:
     source_key = source_name.strip().lower()
     strict_selectors = STRICT_SOURCE_ARTICLE_SELECTORS.get(source_key, ())
@@ -492,7 +505,11 @@ def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional
         canonical = url
 
     url_date = date_from_url(canonical) or date_from_url(url)
-    published_at = url_date.isoformat() if url_date else extract_date(soup)
+    published_at = (
+        url_date.isoformat()
+        if url_date
+        else normalize_source_date(extract_date(soup), source.name)
+    )
     title = extract_title(soup)
 
     selector_body = extract_body(soup, source.name)
@@ -532,6 +549,8 @@ def fetch_and_parse_article(client: HttpClient, url: str, source: Source) -> Opt
     if not result:
         return None
     article = parse_article_html(result.text, url, source)
+    if article.get("content_issue") == "access_challenge":
+        return None
     if not article["title"] and not article["content"]:
         return None
     return article

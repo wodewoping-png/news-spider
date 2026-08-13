@@ -22,6 +22,19 @@ SCIENCENET_BROWSER_USER_AGENT = (
     "Chrome/138.0 Safari/537.36"
 )
 
+ACCESS_CHALLENGE_SIGNATURE_GROUPS = (
+    ("cf_app_waf", "requestinfo"),
+    ("cf-chl-", "challenge-platform"),
+    ("checking your browser", "enable javascript and cookies"),
+    ("verify you are human", "cloudflare"),
+)
+
+
+def is_access_challenge_html(value: str) -> bool:
+    """Detect access-control interstitials that returned HTTP 200 as if they were pages."""
+    probe = str(value or "")[:100_000].lower()
+    return any(all(marker in probe for marker in group) for group in ACCESS_CHALLENGE_SIGNATURE_GROUPS)
+
 
 def request_headers_for_url(
     url: str,
@@ -170,6 +183,9 @@ class HttpClient:
             or "页面不存在" in stripped_text[:2000]
         ):
             logging.warning("Soft 404 response: %s", response.url)
+            return None
+        if is_access_challenge_html(response_text):
+            logging.warning("Access challenge response: %s", response.url)
             return None
         return FetchResult(
             url=response.url,

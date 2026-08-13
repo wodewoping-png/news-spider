@@ -8,6 +8,12 @@ INCOMPLETE_CONTENT_STATUS = "incomplete"
 MISSING_CONTENT_STATUS = "missing"
 UNKNOWN_CONTENT_STATUS = "unknown"
 
+ACCESS_CHALLENGE_MARKER_GROUPS = (
+    ("cf_app_waf", "requestinfo"),
+    ("checking your browser", "enable javascript and cookies"),
+    ("verify you are human", "cloudflare"),
+)
+
 PAYWALL_MARKERS = (
     "subscribe to unlock",
     "subscribe to continue",
@@ -41,6 +47,11 @@ def assess_content(
         return MISSING_CONTENT_STATUS, "empty_content"
 
     lowered = text.lower()
+    if any(
+        all(marker in lowered for marker in group)
+        for group in ACCESS_CHALLENGE_MARKER_GROUPS
+    ):
+        return MISSING_CONTENT_STATUS, "access_challenge"
     if any(marker in lowered for marker in PAYWALL_MARKERS):
         return INCOMPLETE_CONTENT_STATUS, "paywall_or_login_wall"
     if TRUNCATION_END_RE.search(text):
