@@ -39,6 +39,11 @@ def main() -> int:
         type=Path,
         default=Path("configs/industry_taxonomy.json"),
     )
+    parser.add_argument(
+        "--exact",
+        action="store_true",
+        help="Also fail when the semantic taxonomy intentionally extends the XMind leaves",
+    )
     args = parser.parse_args()
 
     xmind_paths = read_xmind_leaf_paths(args.xmind)
@@ -51,7 +56,7 @@ def main() -> int:
         print(f"MISSING: {' > '.join(path)}")
     for path in extra:
         print(f"EXTRA: {' > '.join(path)}")
-    return 1 if missing or extra else 0
+    return 1 if missing or (args.exact and extra) else 0
 
 
 if __name__ == "__main__":

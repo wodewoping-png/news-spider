@@ -268,16 +268,39 @@ def resolve_canonical_url(url: str, candidate: str) -> str:
         return url
     return resolved
 
-def extract_title(soup: BeautifulSoup) -> str:
+def extract_title(soup: BeautifulSoup, source_name: str = "") -> str:
     meta_title = first_meta(soup, ("og:title", "twitter:title"))
-    if meta_title:
+    source_key = source_name.strip().lower()
+    if meta_title and not (
+        source_key == "ne时代" and meta_title.strip().lower() == source_key
+    ):
         return meta_title
     h1 = soup.find("h1")
     if h1:
-        return h1.get_text(" ", strip=True)
+        h1_title = h1.get_text(" ", strip=True)
+        if h1_title and not (
+            source_key == "ne时代" and h1_title.strip().lower() == source_key
+        ):
+            return h1_title
     if soup.title:
-        return soup.title.get_text(" ", strip=True)
+        document_title = soup.title.get_text(" ", strip=True)
+        if document_title and not (
+            source_key == "ne时代" and document_title.strip().lower() == source_key
+        ):
+            return document_title
     return ""
+
+
+def normalize_source_title(title: str, content: str, source_name: str) -> str:
+    if source_name.strip().lower() != "ne时代":
+        return title
+    if title.strip() and title.strip().lower() != "ne时代":
+        return title
+    for line in content.splitlines():
+        candidate = line.strip()
+        if candidate and candidate.lower() != "ne时代":
+            return candidate[:500]
+    return title
 
 
 def _iter_json_objects(value):
@@ -510,7 +533,7 @@ def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional
         if url_date
         else normalize_source_date(extract_date(soup), source.name)
     )
-    title = extract_title(soup)
+    title = extract_title(soup, source.name)
 
     selector_body = extract_body(soup, source.name)
     full_text_body = extract_trafilatura_body(html, canonical)
@@ -528,6 +551,7 @@ def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional
         content,
         extraction_method=extraction_method,
     )
+    title = normalize_source_title(title, content, source.name)
 
     return {
         "title": title,

@@ -26,9 +26,8 @@ from .industry_classifier import (
     DEFAULT_MIN_CONFIDENCE as DEFAULT_CLASSIFICATION_CONFIDENCE,
     DEFAULT_MODEL as DEFAULT_CLASSIFICATION_MODEL,
     DEFAULT_TAXONOMY_PATH,
-    IndustryClassificationError,
     ZAIIndustryClassifier,
-    mark_classification_error,
+    classify_jsonl,
 )
 from .load_sources import (
     default_sources_path,
@@ -603,20 +602,6 @@ def main() -> int:
             )
             continue
 
-        if industry_classifier and new_articles:
-            try:
-                industry_classifier.enrich_articles(new_articles)
-            except IndustryClassificationError as exc:
-                logging.exception(
-                    "Industry classification failed for %s; saving articles without labels",
-                    source.name,
-                )
-                mark_classification_error(
-                    new_articles,
-                    model=industry_classifier.model,
-                    taxonomy_version=industry_classifier.taxonomy.version,
-                )
-
         added_count, refreshed_count = upsert_jsonl(args.output, new_articles)
         changed_count = added_count + refreshed_count
         total_new += added_count
@@ -680,6 +665,20 @@ def main() -> int:
             refreshed_count,
             usable_count,
             status,
+        )
+
+    if industry_classifier:
+        classification_result = classify_jsonl(
+            industry_classifier,
+            args.output,
+            target_date=target_date,
+            timezone_name=DEFAULT_CSV_TIMEZONE,
+        )
+        logging.info(
+            "Industry classification pass complete: selected=%s total=%s malformed=%s",
+            classification_result["classified"],
+            classification_result["records"],
+            classification_result["malformed"],
         )
 
     export_target_date = target_date if args.date_filter == "today" else None

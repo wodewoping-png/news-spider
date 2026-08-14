@@ -139,6 +139,17 @@ def is_better_article(candidate: dict, existing: dict) -> bool:
     existing_status = content_rank(str(existing.get("content_status") or ""))
     candidate_length = len(str(candidate.get("content") or "").strip())
     existing_length = len(str(existing.get("content") or "").strip())
+    candidate_title = str(candidate.get("title") or "").strip()
+    existing_title = str(existing.get("title") or "").strip()
+    existing_source = str(existing.get("source_name") or "").strip()
+    if (
+        existing_source.lower() == "ne时代"
+        and existing_title.lower() == existing_source.lower()
+        and candidate_title
+        and candidate_title.lower() != existing_title.lower()
+        and candidate_status >= existing_status
+    ):
+        return True
     if candidate_status == 3 and existing_status != 3:
         return True
     if existing_status == 3 and candidate_status != 3:
