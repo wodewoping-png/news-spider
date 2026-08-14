@@ -42,6 +42,9 @@ ARTICLE_SELECTORS = (
 )
 
 STRICT_SOURCE_ARTICLE_SELECTORS = {
+    "中国能源网": (
+        "#showcontent",
+    ),
     "interesting engineering": (
         ".body-content",
     ),
@@ -218,6 +221,8 @@ DATE_CONTAINER_SELECTORS = (
     ".publish-time",
     ".publish-date",
     ".pubtime",
+    ".showtitinfo",
+    ".qr_code",
     ".date",
     ".time",
 )

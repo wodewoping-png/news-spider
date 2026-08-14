@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import unittest
+from datetime import date
+from pathlib import Path
+from unittest.mock import patch
 
 from src.http_client import FetchResult
 from src.load_sources import Source
@@ -98,6 +101,45 @@ class NewChannelRegistryTests(unittest.TestCase):
         )
         self.assertIsNone(public_source.skip_reason)
         self.assertIn("需账号登录", restricted_source.skip_reason or "")
+
+    def test_rionews_missing_workbook_uses_public_fallback(self):
+        class FakePublicScraper:
+            def __init__(self, client, source) -> None:
+                self.client = client
+                self.source = source
+                self.last_candidate_count = 7
+                self.last_fetched_count = 3
+
+            def scrape(self, limit=20, *, target_date=None, candidate_limit=None):
+                self.received = (limit, target_date, candidate_limit)
+                return [{"url": "https://example.com/public-article"}]
+
+        source = make_source("中国能源网", "https://www.china5e.com/news/")
+        scraper = RIONewsChinaEnergyScraper(StaticClient({}), source)
+        with (
+            patch.object(
+                RIONewsChinaEnergyScraper,
+                "fallback_scraper_class",
+                FakePublicScraper,
+            ),
+            patch.object(
+                scraper,
+                "_workbook_path",
+                return_value=Path("missing-rionews-workbook.xlsx"),
+            ),
+        ):
+            articles = scraper.scrape(
+                5,
+                target_date=date(2026, 8, 13),
+                candidate_limit=25,
+            )
+
+        self.assertEqual(
+            articles,
+            [{"url": "https://example.com/public-article"}],
+        )
+        self.assertEqual(scraper.last_candidate_count, 7)
+        self.assertEqual(scraper.last_fetched_count, 3)
 
 
 class NewChannelDiscoveryTests(unittest.TestCase):

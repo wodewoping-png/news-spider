@@ -60,7 +60,7 @@ jobs:
           daily_dir="$RUNNER_TEMP/rionews/daily"
           echo "RIONEWS_DAILY_DIR=$daily_dir" >> "$GITHUB_ENV"
           if [ -z "$RIO_USERNAME" ] || [ -z "$RIO_PASSWORD" ]; then
-            echo "RIOnews credentials are not configured; RIOnews-backed channels will report no input."
+            echo "RIOnews credentials are not configured; affected channels will use their public-site fallback scrapers."
             exit 0
           fi
           args=(--daily-output-dir "$daily_dir" --days "$RIO_DAYS")

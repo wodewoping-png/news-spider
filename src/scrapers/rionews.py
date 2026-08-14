@@ -1,17 +1,23 @@
 from __future__ import annotations
 
+import logging
 import os
 from datetime import date
 from pathlib import Path
 
 from ..rionews import load_rionews_articles
 from .base import BaseScraper
+from .china_energy import ChinaEnergyScraper
+from .international_energy import InternationalEnergyScraper
+from .itdcw import ITDCWScraper
+from .xevcar import XEVCarScraper
 
 
 class RIONewsSourceScraper(BaseScraper):
     """Import one configured source from the curated RIOnews daily workbook."""
 
     media_prefix = ""
+    fallback_scraper_class: type[BaseScraper] | None = None
 
     def _daily_dir(self) -> Path:
         return Path(os.getenv("RIONEWS_DAILY_DIR", "data/rionews/daily"))
@@ -32,11 +38,34 @@ class RIONewsSourceScraper(BaseScraper):
     ) -> list[dict]:
         workbook_path = self._workbook_path(target_date)
         if workbook_path is None or not workbook_path.exists():
-            raise RuntimeError(
-                "RIOnews input workbook is unavailable for "
-                f"{target_date or 'latest'}: {workbook_path or self._daily_dir()}; "
-                "check the Prepare RIOnews daily exports workflow step and credentials"
+            if self.fallback_scraper_class is None:
+                raise RuntimeError(
+                    "RIOnews input workbook is unavailable for "
+                    f"{target_date or 'latest'}: {workbook_path or self._daily_dir()}"
+                )
+            logging.warning(
+                "RIOnews input workbook is unavailable for %s; "
+                "falling back to the public %s scraper",
+                target_date or "latest",
+                self.source.name,
             )
+            fallback = self.fallback_scraper_class(self.client, self.source)
+            articles = fallback.scrape(
+                limit,
+                target_date=target_date,
+                candidate_limit=candidate_limit,
+            )
+            self.last_candidate_count = getattr(
+                fallback,
+                "last_candidate_count",
+                len(articles),
+            )
+            self.last_fetched_count = getattr(
+                fallback,
+                "last_fetched_count",
+                len(articles),
+            )
+            return articles
 
         articles = load_rionews_articles(
             workbook_path,
@@ -53,15 +82,19 @@ class RIONewsSourceScraper(BaseScraper):
 
 class RIONewsChinaEnergyScraper(RIONewsSourceScraper):
     media_prefix = "中国能源网_"
+    fallback_scraper_class = ChinaEnergyScraper
 
 
 class RIONewsBatteryScraper(RIONewsSourceScraper):
     media_prefix = "电池网_"
+    fallback_scraper_class = ITDCWScraper
 
 
 class RIONewsXEVCarScraper(RIONewsSourceScraper):
     media_prefix = "我爱电车网_"
+    fallback_scraper_class = XEVCarScraper
 
 
 class RIONewsInternationalEnergyScraper(RIONewsSourceScraper):
     media_prefix = "国际能源网_"
+    fallback_scraper_class = InternationalEnergyScraper

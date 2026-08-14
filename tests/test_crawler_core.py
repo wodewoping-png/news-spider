@@ -87,6 +87,55 @@ class DateAndUrlTests(unittest.TestCase):
             request_headers_for_url("https://www.sciencenet.cn/", "custom-agent"), {}
         )
 
+    def test_insideevs_uses_browser_user_agent_by_default(self):
+        headers = request_headers_for_url("https://insideevs.com/news/123/example/")
+        self.assertIn("Mozilla/5.0", headers["User-Agent"])
+        self.assertEqual(
+            request_headers_for_url("https://insideevs.com/news/", "custom-agent"), {}
+        )
+
+    def test_public_fallback_channel_date_containers_are_parsed(self):
+        cases = (
+            (
+                "中国能源网",
+                '<div class="showtitinfo">2026-08-13 08:19:30 来源：中国能源网</div>',
+                "2026-08-13 08:19:30",
+            ),
+            (
+                "我爱电车网",
+                '<span class="qr_code">2026-08-13 09:40</span>',
+                "2026-08-13 09:40",
+            ),
+        )
+        for source_name, date_html, expected in cases:
+            with self.subTest(source=source_name):
+                source = make_source(source_name, "https://example.com/article")
+                article = parse_article_html(
+                    f"<html><body><h1>Fallback article</h1>{date_html}"
+                    f"<article><p>{'Detailed public reporting. ' * 40}</p></article>"
+                    "</body></html>",
+                    source.url,
+                    source,
+                )
+                self.assertEqual(article["published_at"], expected)
+
+    def test_china_energy_strict_body_excludes_recommendation_sidebar(self):
+        source = make_source(
+            "中国能源网",
+            "https://www.china5e.com/news/news-1-1.html",
+        )
+        article = parse_article_html(
+            "<html><body><h1>Energy article</h1>"
+            f"<div id='showcontent'><p>{'Complete public article detail. ' * 40}</p></div>"
+            "<aside><p>Recommended headline...</p></aside>"
+            "</body></html>",
+            source.url,
+            source,
+        )
+        self.assertIn("Complete public article detail", article["content"])
+        self.assertNotIn("Recommended headline", article["content"])
+        self.assertEqual(article["content_status"], "full")
+
     def test_bjx_waf_script_is_detected_as_access_challenge(self):
         html = """
         <html><script>
