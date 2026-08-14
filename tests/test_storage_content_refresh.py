@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from src.storage import (
+    is_better_article,
     load_existing_content_lengths,
     load_existing_content_quality,
     upsert_jsonl,
@@ -26,6 +27,16 @@ def article(url: str, content: str) -> dict:
 
 
 class StorageContentRefreshTests(unittest.TestCase):
+    def test_ne_time_real_headline_replaces_site_name_title(self):
+        existing = article("https://www.ne-time.cn/web/article/123", "same content")
+        existing["title"] = "NE时代"
+        existing["source_name"] = "NE时代"
+        existing["content_status"] = "full"
+        candidate = dict(existing)
+        candidate["title"] = "空中客车与 MTU 合作开发氢燃料电池发动机"
+
+        self.assertTrue(is_better_article(candidate, existing))
+
     def test_legacy_waf_record_is_not_treated_as_verified_full_content(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "articles.jsonl"

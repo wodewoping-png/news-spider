@@ -527,6 +527,34 @@ class ListingScraperTests(unittest.TestCase):
             ["https://renewablesnow.com/news/real-project-headline-1298706/"],
         )
 
+    def test_ne_time_uses_first_content_line_when_page_title_is_site_name(self):
+        source = make_source("NE时代", "https://www.ne-time.cn/")
+        html = """
+        <html>
+          <head>
+            <meta property="og:title" content="NE时代">
+            <title>NE时代</title>
+          </head>
+          <body>
+            <article>
+              <p>空中客车与 MTU 合作开发氢燃料电池发动机</p>
+              <p>双方计划成立合资企业推动航空动力系统商业化。</p>
+            </article>
+          </body>
+        </html>
+        """
+
+        parsed = parse_article_html(
+            html,
+            "https://www.ne-time.cn/web/article/123",
+            source,
+        )
+
+        self.assertEqual(
+            parsed["title"],
+            "空中客车与 MTU 合作开发氢燃料电池发动机",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
