@@ -1,31 +1,32 @@
 # 新闻渠道自主审查报告
 
-- 审查日期：2026-08-14
+- 审查日期：2026-08-15
 - 整体状态：critical
-- 收集总量：227 篇
-- 正文可用：198 篇（87%）
-- 有产出渠道：29/45
-- 7 日总量中位数：242.00
+- 收集总量：108 篇
+- 正文可用：94 篇（87%）
+- 有产出渠道：14/45
+- 7 日总量中位数：238.00
 
 ## 整体异常
 
-4 个渠道抓取失败
+总量仅为 7 日中位数的 0.45 倍；4 个渠道抓取失败
 
 ## 渠道异常
 
 | 级别 | 渠道 | 今日 | 前次 | 7日中位数 | 连续为0 | 异常说明 |
 |---|---|---:|---:|---:|---:|---|
 | critical | Batteries News | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
-| critical | 中国电力新闻网-新能源 | 0 | 1 | 1.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | 中国能源网 | 0 | - | 0.00 | 6 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 6 天为 0 |
+| critical | MIT Technology Review | 0 | 4 | 2.00 | 1 | 日更渠道从有产出降为 0 |
+| critical | NE时代 | 0 | 7 | 15.00 | 1 | 日更渠道从有产出降为 0 |
+| critical | 中国能源网 | 0 | - | 0.00 | 6 | 抓取任务失败 |
 | critical | 光伏测试网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
-| critical | 北极星储能网 | 0 | - | 0.00 | 3 | 日更渠道当天没有收集到文章；已连续 3 天为 0 |
+| critical | 北极星储能网 | 0 | - | 0.00 | 4 | 日更渠道当天没有收集到文章；已连续 4 天为 0 |
 | critical | 国际能源网 | 0 | - | 0.00 | 8 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0 |
 | critical | 我爱电车网 | 0 | - | 0.00 | 8 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0 |
 | critical | 电池网 | 0 | - | 0.00 | 8 | 抓取任务失败；日更渠道当天没有收集到文章；已连续 8 天为 0 |
-| warning | H2 View | 3 | 5 | 5.00 | 0 | 正文可用率仅 33% |
-| warning | INSIDEEVs | 7 | 8 | 6.00 | 0 | 正文可用率仅 0% |
-| warning | interesting engineering | 20 | 20 | 20.00 | 0 | 正文可用率仅 5% |
+| warning | INSIDEEVs | 2 | 7 | 6.00 | 0 | 仅为 7 日中位数的 0.33 倍；正文可用率仅 0% |
+| warning | interesting engineering | 20 | 20 | 20.00 | 0 | 正文可用率仅 40% |
+| warning | pv magazine | 1 | 10 | 10.00 | 0 | 仅为 7 日中位数的 0.10 倍 |
 
 ## 自反馈恢复队列
 
@@ -200,6 +201,14 @@
 | pending_confirmation | 2026-08-14 | 国际能源网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-14: /home/runner/work/_temp/rionews/daily/news_export_2026-08-14.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
 | pending_confirmation | 2026-08-14 | 我爱电车网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-14: /home/runner/work/_temp/rionews/daily/news_export_2026-08-14.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
 | pending_confirmation | 2026-08-14 | 电池网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-14: /home/runner/work/_temp/rionews/daily/news_export_2026-08-14.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
+| pending_confirmation | 2026-08-15 | Batteries News | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
+| pending_confirmation | 2026-08-15 | MIT Technology Review | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
+| pending_confirmation | 2026-08-15 | NE时代 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
+| pending_confirmation | 2026-08-15 | 光伏测试网 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
+| pending_confirmation | 2026-08-15 | 北极星储能网 | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
+| pending_confirmation | 2026-08-15 | 国际能源网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-15: /home/runner/work/_temp/rionews/daily/news_export_2026-08-15.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
+| pending_confirmation | 2026-08-15 | 我爱电车网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-15: /home/runner/work/_temp/rionews/daily/news_export_2026-08-15.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
+| pending_confirmation | 2026-08-15 | 电池网 | 抓取任务异常退出：RIOnews input workbook is unavailable for 2026-08-15: /home/runner/work/_temp/rionews/daily/news_export_2026-08-15.xlsx; check the Prepare RIOnews daily exports workflow step and credentials | - |
 
 处理方式：修复渠道后运行 `python -m src.recovery confirm --source "渠道名" --note "修复说明"`；后续任务会自动补抓所有已确认的原日期缺口。
 
