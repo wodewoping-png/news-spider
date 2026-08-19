@@ -16,11 +16,13 @@ DEFAULT_USER_AGENT = (
     "DailyNewsSpider/0.1 "
     "(respectful research crawler; contact: update-user-agent-in-config)"
 )
-SCIENCENET_BROWSER_USER_AGENT = (
+BROWSER_USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/138.0 Safari/537.36"
 )
+# Backward-compatible name used by the dedicated ScienceNet scraper.
+SCIENCENET_BROWSER_USER_AGENT = BROWSER_USER_AGENT
 
 ACCESS_CHALLENGE_SIGNATURE_GROUPS = (
     ("cf_app_waf", "requestinfo"),
@@ -44,8 +46,12 @@ def request_headers_for_url(
     if user_agent != DEFAULT_USER_AGENT:
         return {}
     hostname = (urlparse(url).hostname or "").lower()
-    if hostname == "sciencenet.cn" or hostname.endswith(".sciencenet.cn"):
-        return {"User-Agent": SCIENCENET_BROWSER_USER_AGENT}
+    browser_ua_domains = ("sciencenet.cn", "insideevs.com")
+    if any(
+        hostname == domain or hostname.endswith(f".{domain}")
+        for domain in browser_ua_domains
+    ):
+        return {"User-Agent": BROWSER_USER_AGENT}
     return {}
 
 

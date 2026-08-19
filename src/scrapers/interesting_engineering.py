@@ -12,6 +12,9 @@ from ..rss_discovery import FeedEntry, fetch_feed_entries
 from .base import BaseScraper
 
 
+MIN_PUBLIC_FULL_TEXT_CHARS = 800
+
+
 @dataclass(frozen=True)
 class InterestingEngineeringCard:
     url: str
@@ -110,9 +113,13 @@ class InterestingEngineeringScraper(BaseScraper):
             }
 
         article = fetch_and_parse_article(self.client, card.url, self.source)
-        if article:
-            # The public page may expose only the pre-subscription preview. Keep it,
-            # but label it incomplete instead of attempting to bypass the wall.
+        if (
+            article
+            and len(str(article.get("content") or "").strip())
+            < MIN_PUBLIC_FULL_TEXT_CHARS
+        ):
+            # Short public pages may expose only a pre-subscription preview. Keep
+            # those, but do not downgrade substantive public article text.
             article["content_extraction"] = "public_preview"
         if article and card.published_date and not article.get("published_at"):
             article["published_at"] = card.published_date.isoformat()

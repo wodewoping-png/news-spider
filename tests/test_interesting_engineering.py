@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from datetime import date
 
-from src.content_quality import INCOMPLETE_CONTENT_STATUS, assess_content
+from src.content_quality import FULL_CONTENT_STATUS, INCOMPLETE_CONTENT_STATUS, assess_content
 from src.http_client import FetchResult
 from src.load_sources import Source
 from src.scrapers.interesting_engineering import InterestingEngineeringScraper
@@ -158,6 +158,33 @@ class InterestingEngineeringTests(unittest.TestCase):
         )
         self.assertEqual(status, INCOMPLETE_CONTENT_STATUS)
         self.assertEqual(issue, "public_preview_only")
+
+    def test_substantive_public_detail_is_kept_as_full_text(self):
+        source = make_source()
+        article_url = "https://interestingengineering.com/energy/public-full-story"
+        pages = {
+            source.url: listing("8/6/2026", "/energy/public-full-story"),
+            source.configured_rss_url: "<rss><channel></channel></rss>",
+            article_url: f"""
+                <html><head><meta property="article:published_time"
+                content="2026-08-06T08:00:00+00:00"></head>
+                <body><h1>Substantive public story</h1><div class="body-content">
+                <p>{"Detailed public reporting with technical context. " * 40}</p>
+                </div></body></html>
+            """,
+        }
+        articles = InterestingEngineeringScraper(StaticClient(pages), source).scrape(
+            10,
+            target_date=date(2026, 8, 6),
+        )
+        self.assertEqual(len(articles), 1)
+        self.assertGreater(len(articles[0]["content"]), 800)
+        self.assertNotEqual(articles[0]["content_extraction"], "public_preview")
+        status, issue = assess_content(
+            articles[0]["content"],
+            extraction_method=articles[0]["content_extraction"],
+        )
+        self.assertEqual((status, issue), (FULL_CONTENT_STATUS, ""))
 
 
 if __name__ == "__main__":
