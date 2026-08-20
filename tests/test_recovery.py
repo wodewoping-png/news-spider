@@ -107,6 +107,26 @@ class RecoveryQueueTests(unittest.TestCase):
         self.assertEqual(code, "authentication_failed")
         self.assertIn("认证", reason)
 
+    def test_diagnoses_known_non_target_dates_without_fetch_error(self):
+        code, reason = diagnose_incident(
+            {
+                "date": "2026-08-19",
+                "crawl_status": "zero",
+                "candidates_seen": 29,
+                "pages_fetched": 0,
+            },
+            {
+                "date_filtered_candidates": 29,
+                "undated_candidates": 0,
+                "candidate_date_min": "2026-08-08",
+                "candidate_date_max": "2026-08-08",
+            },
+        )
+
+        self.assertEqual(code, "non_target_date_candidates")
+        self.assertIn("2026-08-08", reason)
+        self.assertIn("正确过滤", reason)
+
     def test_human_confirmation_and_successful_backfill(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
