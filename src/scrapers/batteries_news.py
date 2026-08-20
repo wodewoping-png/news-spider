@@ -93,6 +93,9 @@ class BatteriesNewsScraper(BaseScraper):
         page_url = self.source.url
         candidates_seen = 0
         fetched_count = 0
+        date_filtered_count = 0
+        undated_candidate_count = 0
+        candidate_dates: list[date] = []
 
         for _ in range(self.max_pages):
             if not page_url or page_url in seen_pages or candidates_seen >= effective_candidate_limit:
@@ -114,7 +117,13 @@ class BatteriesNewsScraper(BaseScraper):
                 if card.url in seen_urls:
                     continue
                 seen_urls.add(card.url)
+                if card.published_date:
+                    candidate_dates.append(card.published_date)
                 if target_date and card.published_date != target_date:
+                    if card.published_date:
+                        date_filtered_count += 1
+                    else:
+                        undated_candidate_count += 1
                     continue
                 article = fetch_and_parse_article(self.client, card.url, self.source)
                 fetched_count += 1
@@ -134,4 +143,12 @@ class BatteriesNewsScraper(BaseScraper):
 
         self.last_candidate_count = candidates_seen
         self.last_fetched_count = fetched_count
+        self.last_date_filtered_count = date_filtered_count
+        self.last_undated_candidate_count = undated_candidate_count
+        self.last_candidate_date_min = (
+            min(candidate_dates).isoformat() if candidate_dates else ""
+        )
+        self.last_candidate_date_max = (
+            max(candidate_dates).isoformat() if candidate_dates else ""
+        )
         return articles

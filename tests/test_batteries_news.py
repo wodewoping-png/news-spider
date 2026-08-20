@@ -88,6 +88,36 @@ class BatteriesNewsTests(unittest.TestCase):
         self.assertNotIn("sidebar noise", articles[0]["content"])
         self.assertNotIn("https://batteriesnews.com/page/2/", client.requested)
         self.assertEqual(scraper.last_fetched_count, 1)
+        self.assertEqual(scraper.last_date_filtered_count, 1)
+        self.assertEqual(scraper.last_undated_candidate_count, 0)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-07-22")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-04")
+
+    def test_records_when_all_candidates_are_from_older_dates(self):
+        pages = {
+            "https://batteriesnews.com/": listing(
+                [
+                    ("https://batteriesnews.com/older-one/", "August 8, 2026"),
+                    ("https://batteriesnews.com/older-two/", "August 7, 2026"),
+                ]
+            ),
+        }
+        client = StaticClient(pages)
+        scraper = BatteriesNewsScraper(client, source())
+
+        articles = scraper.scrape(
+            target_date=date(2026, 8, 19),
+            candidate_limit=100,
+        )
+
+        self.assertEqual(articles, [])
+        self.assertEqual(scraper.last_candidate_count, 2)
+        self.assertEqual(scraper.last_fetched_count, 0)
+        self.assertEqual(scraper.last_date_filtered_count, 2)
+        self.assertEqual(scraper.last_undated_candidate_count, 0)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-08-07")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-08")
+        self.assertEqual(client.requested, ["https://batteriesnews.com/"])
 
     def test_follows_load_more_until_target_date_page(self):
         article_url = "https://batteriesnews.com/target-story/"
