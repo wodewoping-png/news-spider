@@ -438,6 +438,10 @@ def main() -> int:
         new_articles: list[dict] = []
         candidates_seen = 0
         pages_fetched = 0
+        date_filtered_candidates = 0
+        undated_candidates = 0
+        candidate_date_min = ""
+        candidate_date_max = ""
         crawl_mode = "listing"
         try:
             source_key = source.name.strip().lower()
@@ -558,6 +562,26 @@ def main() -> int:
                 )
                 candidates_seen = getattr(scraper, "last_candidate_count", len(scraped_articles))
                 pages_fetched = getattr(scraper, "last_fetched_count", len(scraped_articles))
+                date_filtered_candidates = getattr(
+                    scraper,
+                    "last_date_filtered_count",
+                    0,
+                )
+                undated_candidates = getattr(
+                    scraper,
+                    "last_undated_candidate_count",
+                    0,
+                )
+                candidate_date_min = getattr(
+                    scraper,
+                    "last_candidate_date_min",
+                    "",
+                )
+                candidate_date_max = getattr(
+                    scraper,
+                    "last_candidate_date_max",
+                    "",
+                )
                 for article in scraped_articles:
                     ensure_content_quality(article)
                     url = article.get("url")
@@ -645,6 +669,10 @@ def main() -> int:
                 "crawl_mode": crawl_mode,
                 "candidates_seen": candidates_seen,
                 "pages_fetched": pages_fetched,
+                "date_filtered_candidates": date_filtered_candidates,
+                "undated_candidates": undated_candidates,
+                "candidate_date_min": candidate_date_min,
+                "candidate_date_max": candidate_date_max,
                 "new_articles": added_count,
                 "refreshed_articles": refreshed_count,
                 "usable_articles": usable_count,

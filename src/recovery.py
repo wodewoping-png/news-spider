@@ -62,6 +62,21 @@ def diagnose_incident(row: dict, health: dict | None = None) -> tuple[str, str]:
     lowered = technical_reason.lower()
     candidates = _as_int(row.get("candidates_seen", health.get("candidates_seen")))
     pages = _as_int(row.get("pages_fetched", health.get("pages_fetched")))
+    date_filtered = _as_int(
+        row.get(
+            "date_filtered_candidates",
+            health.get("date_filtered_candidates"),
+        )
+    )
+    undated = _as_int(
+        row.get("undated_candidates", health.get("undated_candidates"))
+    )
+    candidate_date_min = str(
+        row.get("candidate_date_min") or health.get("candidate_date_min") or ""
+    )
+    candidate_date_max = str(
+        row.get("candidate_date_max") or health.get("candidate_date_max") or ""
+    )
 
     if crawl_status == "failed":
         patterns = (
@@ -100,6 +115,15 @@ def diagnose_incident(row: dict, health: dict | None = None) -> tuple[str, str]:
             "未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性",
         )
     if pages == 0:
+        if date_filtered and date_filtered + undated >= candidates and not undated:
+            date_range = candidate_date_max
+            if candidate_date_min and candidate_date_min != candidate_date_max:
+                date_range = f"{candidate_date_min} 至 {candidate_date_max}"
+            return (
+                "non_target_date_candidates",
+                f"候选发布日期均为 {date_range or '其他日期'}，"
+                "与目标日期不符，已在抓取正文前正确过滤；站点当日可能无更新",
+            )
         return (
             "candidates_filtered",
             "发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误",
@@ -181,6 +205,28 @@ def sync_recovery_queue(
                 ),
                 "pages_fetched": _as_int(
                     row.get("pages_fetched", health.get("pages_fetched"))
+                ),
+                "date_filtered_candidates": _as_int(
+                    row.get(
+                        "date_filtered_candidates",
+                        health.get("date_filtered_candidates"),
+                    )
+                ),
+                "undated_candidates": _as_int(
+                    row.get(
+                        "undated_candidates",
+                        health.get("undated_candidates"),
+                    )
+                ),
+                "candidate_date_min": str(
+                    row.get("candidate_date_min")
+                    or health.get("candidate_date_min")
+                    or ""
+                ),
+                "candidate_date_max": str(
+                    row.get("candidate_date_max")
+                    or health.get("candidate_date_max")
+                    or ""
                 ),
                 "diagnosis_code": diagnosis_code,
                 "diagnosis": diagnosis,
