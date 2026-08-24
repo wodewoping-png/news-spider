@@ -27,7 +27,7 @@ def make_source(name: str) -> Source:
 
 
 class SourceFailureContinuityTests(unittest.TestCase):
-    def test_rss_entries_from_other_dates_are_recorded_as_idle(self):
+    def test_existing_rss_entries_from_other_dates_are_recorded_as_idle(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             output = root / "data" / "articles.jsonl"
@@ -57,11 +57,21 @@ class SourceFailureContinuityTests(unittest.TestCase):
                 log_dir.mkdir(parents=True, exist_ok=True)
                 return log_dir / "daily-news.log"
 
+            existing_url = "https://rss.example.com/2026/08/22/article"
             with (
                 patch("src.main.parse_args", return_value=args),
                 patch("src.main.setup_logging", side_effect=fake_setup_logging),
                 patch("src.main.load_sources", return_value=[make_source("rss")]),
-                patch("src.main.load_existing_content_quality", return_value={}),
+                patch(
+                    "src.main.load_existing_content_quality",
+                    return_value={
+                        existing_url: {
+                            "url": existing_url,
+                            "content": "existing full article" * 100,
+                            "content_status": "full",
+                        }
+                    },
+                ),
                 patch("src.main.HttpClient", return_value=object()),
                 patch("src.main.discover_feed", return_value="https://rss.example.com/feed"),
                 patch(
