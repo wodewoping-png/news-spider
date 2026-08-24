@@ -514,6 +514,21 @@ def main() -> int:
                     if len(new_articles) >= args.limit_per_source:
                         break
                     entry_key = canonicalize_url(entry.url)
+                    if entry.published_at and args.date_filter == "today":
+                        feed_article = {"published_at": entry.published_at, "url": entry.url}
+                        feed_date = article_date(feed_article, DEFAULT_CSV_TIMEZONE)
+                        if feed_date:
+                            observed_candidate_dates.append(feed_date)
+                            if feed_date != target_date:
+                                date_filtered_candidates += 1
+                                logging.info(
+                                    "Skip non-target-date RSS entry: %s (%s)",
+                                    entry.url,
+                                    entry.published_at,
+                                )
+                                continue
+                        else:
+                            undated_candidates += 1
                     if (
                         entry_key in existing_urls
                         and str(
@@ -525,19 +540,6 @@ def main() -> int:
                         == FULL_CONTENT_STATUS
                     ):
                         continue
-                    if entry.published_at and args.date_filter == "today":
-                        feed_article = {"published_at": entry.published_at, "url": entry.url}
-                        feed_date = article_date(feed_article, DEFAULT_CSV_TIMEZONE)
-                        if feed_date:
-                            observed_candidate_dates.append(feed_date)
-                        if feed_date != target_date:
-                            date_filtered_candidates += 1
-                            logging.info(
-                                "Skip non-target-date RSS entry: %s (%s)",
-                                entry.url,
-                                entry.published_at,
-                            )
-                            continue
                     article = enrich_from_rss_entry(
                         client,
                         source,
