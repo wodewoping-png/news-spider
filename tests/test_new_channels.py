@@ -211,6 +211,43 @@ class NewChannelDiscoveryTests(unittest.TestCase):
         self.assertEqual(scraper.last_candidate_date_min, "2026-08-21")
         self.assertEqual(scraper.last_candidate_date_max, "2026-08-24")
 
+    def test_international_energy_uses_mobile_listing_when_feed_is_blocked(self):
+        source = make_source("国际能源网", "https://www.in-en.com/article/")
+        mobile_listing = """
+        <div class="item">
+          <h3><a href="https://m.in-en.com/article/html/energy-2343403.shtml">今日新闻</a></h3>
+          <span class="time">2小时前</span>
+        </div>
+        <div class="item">
+          <h3><a href="https://m.in-en.com/article/html/energy-2343385.shtml">三日前新闻</a></h3>
+          <span class="time">3天前</span>
+        </div>
+        <div class="item">
+          <h3><a href="https://m.in-en.com/article/html/energy-2343373.shtml">较早新闻</a></h3>
+          <span class="time">2026-08-20</span>
+        </div>
+        """
+        scraper = InternationalEnergyScraper(
+            StaticClient(
+                {InternationalEnergyScraper.official_mobile_listing_url: mobile_listing}
+            ),
+            source,
+        )
+
+        with patch(
+            "src.scrapers.international_energy.local_today",
+            return_value=date(2026, 8, 24),
+        ):
+            articles = scraper.scrape(10, target_date=date(2026, 8, 23))
+
+        self.assertEqual(articles, [])
+        self.assertEqual(scraper.last_candidate_count, 3)
+        self.assertEqual(scraper.last_fetched_count, 0)
+        self.assertEqual(scraper.last_date_filtered_count, 3)
+        self.assertEqual(scraper.last_undated_candidate_count, 0)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-08-20")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-24")
+
     def test_china_energy_uses_public_energy_economy_section(self):
         source = make_source("中国能源网", "https://www.china5e.com/news/")
         listing = ChinaEnergyScraper.additional_listing_urls[0]
