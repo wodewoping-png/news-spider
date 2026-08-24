@@ -147,8 +147,12 @@ class GenericListingScraper(BaseScraper):
         fetched_count = 0
         target_date_absent = False
         for url in urls:
-            url_date = date_from_url(url)
-            if target_date and url_date and url_date != target_date:
+            known_candidate_date = candidate_dates[url]
+            if (
+                target_date
+                and known_candidate_date
+                and known_candidate_date != target_date
+            ):
                 continue
             article = fetch_and_parse_article(self.client, url, self.source)
             fetched_count += 1
