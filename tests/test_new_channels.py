@@ -182,8 +182,34 @@ class NewChannelDiscoveryTests(unittest.TestCase):
         ).discover_article_urls(10)
         self.assertEqual(
             urls,
-            ["https://www.in-en.com/article/html/energy-2343180.shtml"],
+            ["https://in-en.com/article/html/energy-2343180.shtml"],
         )
+
+    def test_international_energy_prefers_official_no_www_feed(self):
+        source = make_source("国际能源网", "https://www.in-en.com/article/")
+        feed = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0"><channel>
+          <item><title>八月二十四日新闻</title>
+            <link>https://www.in-en.com/article/html/energy-2343403.shtml</link>
+            <pubDate>2026-08-24 10:53:26</pubDate></item>
+          <item><title>八月二十一日新闻</title>
+            <link>https://www.in-en.com/article/html/energy-2343390.shtml</link>
+            <pubDate>2026-08-21 17:40:10</pubDate></item>
+        </channel></rss>"""
+        scraper = InternationalEnergyScraper(
+            StaticClient({InternationalEnergyScraper.official_feed_url: feed}),
+            source,
+        )
+
+        articles = scraper.scrape(10, target_date=date(2026, 8, 23))
+
+        self.assertEqual(articles, [])
+        self.assertEqual(scraper.last_candidate_count, 2)
+        self.assertEqual(scraper.last_fetched_count, 0)
+        self.assertEqual(scraper.last_date_filtered_count, 2)
+        self.assertEqual(scraper.last_undated_candidate_count, 0)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-08-21")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-24")
 
     def test_china_energy_uses_public_energy_economy_section(self):
         source = make_source("中国能源网", "https://www.china5e.com/news/")
@@ -247,6 +273,7 @@ class NewChannelDiscoveryTests(unittest.TestCase):
 
         self.assertEqual(articles, [])
         self.assertEqual(scraper.last_candidate_count, 2)
+        self.assertEqual(scraper.last_fetched_count, 0)
         self.assertEqual(scraper.last_date_filtered_count, 2)
         self.assertEqual(scraper.last_undated_candidate_count, 0)
         self.assertEqual(scraper.last_candidate_date_min, "2026-08-21")
