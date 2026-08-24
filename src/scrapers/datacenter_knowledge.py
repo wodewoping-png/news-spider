@@ -164,6 +164,7 @@ class DataCenterKnowledgeScraper(BaseScraper):
         page_url = self.source.url
         candidates_seen = 0
         fetched_count = 0
+        candidate_dates: dict[str, date | None] = {}
 
         for _ in range(self.max_pages):
             if (
@@ -193,17 +194,26 @@ class DataCenterKnowledgeScraper(BaseScraper):
                     continue
                 seen_urls.add(key)
                 entry = feed_entries.get(key)
-                if target_date:
-                    feed_date = (
-                        article_date(
-                            {
-                                "published_at": entry.published_at,
-                                "url": entry.url,
-                            }
-                        )
-                        if entry and entry.published_at
-                        else None
+                feed_date = (
+                    article_date(
+                        {
+                            "published_at": entry.published_at,
+                            "url": entry.url,
+                        }
                     )
+                    if entry and entry.published_at
+                    else None
+                )
+                evidence_date = feed_date or card.published_date
+                if (
+                    target_date
+                    and not feed_date
+                    and card.published_date == target_date - timedelta(days=1)
+                ):
+                    # A date-only listing can be one local day behind a precise feed time.
+                    evidence_date = None
+                candidate_dates[key] = evidence_date
+                if target_date:
                     if feed_date and feed_date != target_date:
                         continue
                     if not feed_date and card.published_date not in {
@@ -216,7 +226,10 @@ class DataCenterKnowledgeScraper(BaseScraper):
                 fetched_count += 1
                 if not article:
                     continue
-                if target_date and article_date(article) != target_date:
+                parsed_date = article_date(article)
+                if parsed_date:
+                    candidate_dates[key] = parsed_date
+                if target_date and parsed_date != target_date:
                     continue
                 articles.append(article)
 
@@ -240,13 +253,14 @@ class DataCenterKnowledgeScraper(BaseScraper):
                 continue
             seen_urls.add(key)
             candidates_seen += 1
+            feed_date = article_date(
+                {
+                    "published_at": entry.published_at,
+                    "url": entry.url,
+                }
+            )
+            candidate_dates[key] = feed_date
             if target_date:
-                feed_date = article_date(
-                    {
-                        "published_at": entry.published_at,
-                        "url": entry.url,
-                    }
-                )
                 if feed_date != target_date:
                     continue
             article = self._article_from_card(
@@ -256,10 +270,27 @@ class DataCenterKnowledgeScraper(BaseScraper):
             fetched_count += 1
             if not article:
                 continue
-            if target_date and article_date(article) != target_date:
+            parsed_date = article_date(article)
+            if parsed_date:
+                candidate_dates[key] = parsed_date
+            if target_date and parsed_date != target_date:
                 continue
             articles.append(article)
 
         self.last_candidate_count = candidates_seen
         self.last_fetched_count = fetched_count
+        known_dates = [value for value in candidate_dates.values() if value]
+        self.last_date_filtered_count = sum(
+            bool(target_date and value and value != target_date)
+            for value in candidate_dates.values()
+        )
+        self.last_undated_candidate_count = sum(
+            value is None for value in candidate_dates.values()
+        )
+        self.last_candidate_date_min = (
+            min(known_dates).isoformat() if known_dates else ""
+        )
+        self.last_candidate_date_max = (
+            max(known_dates).isoformat() if known_dates else ""
+        )
         return articles

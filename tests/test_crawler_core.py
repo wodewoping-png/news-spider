@@ -24,6 +24,7 @@ from src.main import (
     default_csv_path,
     enrich_from_rss_entry,
     expects_daily_output,
+    has_confirmed_non_target_candidates,
     resolve_feed_access,
 )
 from src.rss_discovery import parse_feed
@@ -301,6 +302,62 @@ class ListingScraperTests(unittest.TestCase):
         self.assertEqual(len(articles), 2)
         self.assertTrue(all("20260720" in item["url"] for item in articles))
 
+    def test_url_dated_candidates_confirm_target_day_had_no_articles(self):
+        source = make_source("example", "https://example.com/list")
+        scraper = GenericListingScraper(StaticClient({}), source)
+        urls = [
+            "https://example.com/html/20260822/1.shtml",
+            "https://example.com/html/20260821/2.shtml",
+        ]
+        with patch.object(scraper, "discover_article_urls", return_value=urls):
+            articles = scraper.scrape(
+                20,
+                target_date=date(2026, 8, 23),
+                candidate_limit=20,
+            )
+
+        self.assertEqual(articles, [])
+        self.assertEqual(scraper.last_candidate_count, 2)
+        self.assertEqual(scraper.last_date_filtered_count, 2)
+        self.assertEqual(scraper.last_undated_candidate_count, 0)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-08-21")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-22")
+        self.assertTrue(
+            has_confirmed_non_target_candidates(
+                scraper.last_candidate_count,
+                scraper.last_date_filtered_count,
+                scraper.last_undated_candidate_count,
+            )
+        )
+
+    def test_undated_candidate_does_not_confirm_no_news(self):
+        self.assertFalse(has_confirmed_non_target_candidates(2, 1, 1))
+
+    def test_ordered_listing_of_older_articles_confirms_no_news(self):
+        source = make_source("example", "https://example.com/list")
+        scraper = GenericListingScraper(StaticClient({}), source)
+        urls = [f"https://example.com/news/{index}.html" for index in range(20)]
+
+        def older_article(_client, url, _source):
+            return {
+                "title": url,
+                "published_at": "2026-08-21",
+                "content": "x" * 500,
+                "url": url,
+            }
+
+        with (
+            patch.object(scraper, "discover_article_urls", return_value=urls),
+            patch(
+                "src.scrapers.generic.fetch_and_parse_article",
+                side_effect=older_article,
+            ),
+        ):
+            articles = scraper.scrape(20, target_date=date(2026, 8, 23))
+
+        self.assertEqual(articles, [])
+        self.assertTrue(scraper.last_target_date_absent)
+
     def test_consecutive_failed_pages_stop_early(self):
         source = make_source("example", "https://example.com/list")
         scraper = GenericListingScraper(StaticClient({}), source)
@@ -319,6 +376,7 @@ class ListingScraperTests(unittest.TestCase):
             )
         self.assertEqual(articles, [])
         self.assertEqual(fetch.call_count, 10)
+        self.assertFalse(scraper.last_target_date_absent)
 
     def test_embedded_mit_article_urls_are_discovered(self):
         source = make_source(

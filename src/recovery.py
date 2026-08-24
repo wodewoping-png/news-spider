@@ -173,6 +173,21 @@ def sync_recovery_queue(
                     }
                 )
             continue
+        if crawl_status == "idle":
+            if existing and existing.get("status") in OPEN_STATUSES:
+                health = health_by_source.get(source, {})
+                existing.update(
+                    {
+                        "status": "ignored",
+                        "confirmation_note": str(
+                            health.get("reason")
+                            or "候选发布日期均不属于目标日期，确认当日无新闻"
+                        ),
+                        "ignored_at": timestamp,
+                        "updated_at": timestamp,
+                    }
+                )
+            continue
         if not expected_daily or crawl_status not in RECOVERABLE_CRAWL_STATUSES:
             continue
 

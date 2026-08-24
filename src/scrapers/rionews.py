@@ -18,6 +18,15 @@ class RIONewsSourceScraper(BaseScraper):
 
     media_prefix = ""
     fallback_scraper_class: type[BaseScraper] | None = None
+    fallback_health_attributes = (
+        "last_candidate_count",
+        "last_fetched_count",
+        "last_date_filtered_count",
+        "last_undated_candidate_count",
+        "last_candidate_date_min",
+        "last_candidate_date_max",
+        "last_target_date_absent",
+    )
 
     def _daily_dir(self) -> Path:
         return Path(os.getenv("RIONEWS_DAILY_DIR", "data/rionews/daily"))
@@ -55,16 +64,11 @@ class RIONewsSourceScraper(BaseScraper):
                 target_date=target_date,
                 candidate_limit=candidate_limit,
             )
-            self.last_candidate_count = getattr(
-                fallback,
-                "last_candidate_count",
-                len(articles),
-            )
-            self.last_fetched_count = getattr(
-                fallback,
-                "last_fetched_count",
-                len(articles),
-            )
+            for attribute in self.fallback_health_attributes:
+                if hasattr(fallback, attribute):
+                    setattr(self, attribute, getattr(fallback, attribute))
+            self.last_candidate_count = getattr(self, "last_candidate_count", len(articles))
+            self.last_fetched_count = getattr(self, "last_fetched_count", len(articles))
             return articles
 
         articles = load_rionews_articles(
