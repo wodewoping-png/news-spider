@@ -1,10 +1,10 @@
 # 渠道运维总览
 
-- 生成时间：2026-08-24T13:21:46.568283+08:00
+- 生成时间：2026-08-24T13:26:02.966608+08:00
 - 渠道数：59
-- 健康/正常空闲：38
-- 异常渠道：7
-- 待处理缺口：233
+- 健康/正常空闲：39
+- 异常渠道：6
+- 待处理缺口：232
 
 ## 需要处理的渠道
 
@@ -37,7 +37,7 @@
 | 光伏测试网 | 2026-08-23 | idle | 0 | 0 | 0 | 0 | 25 | all observed candidates were published outside the target date (2026-08-07 to 2026-08-24) | repair_then_confirm |
 | 北极星储能网 | 2026-08-23 | idle | 0 | 0 | 0 | 0 | 15 | all observed candidates were published outside the target date (2026-07-21 to 2026-08-24) | repair_then_confirm |
 | 国际太阳能光伏网 | 2026-08-23 | idle | 0 | 0 | 0 | 0 | 3 | all observed candidates were published outside the target date (2026-08-20 to 2026-08-24) | repair_then_confirm |
-| 国际能源网 | 2026-08-23 | zero | 0 | 0 | 0 | 32 | 25 | no target-date articles were collected | repair_then_confirm |
+| 国际能源网 | 2026-08-23 | verified_no_news | 0 | 0 | 0 | 0 | 24 | 人工确认目标日期无新闻 | repair_then_confirm |
 | 我爱电车网 | 2026-08-23 | idle | 0 | 0 | 0 | 0 | 19 | all observed candidates were published outside the target date (2026-08-21 to 2026-08-23) | repair_then_confirm |
 | 电池网 | 2026-08-23 | idle | 0 | 0 | 0 | 0 | 23 | all observed candidates were published outside the target date (2026-07-03 to 2026-08-18) | repair_then_confirm |
 | 科学网新闻 | 2026-08-23 | zero | 0 | 0 | 0 | 4 | 2 | no target-date articles were collected | repair_then_reconfirm |
