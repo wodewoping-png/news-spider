@@ -265,19 +265,11 @@
 | pending_confirmation | 2026-08-22 | 北极星储能网 | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
 | pending_confirmation | 2026-08-22 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-08-22 | 电池网 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
-| pending_confirmation | 2026-08-23 | Batteries News | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
-| pending_confirmation | 2026-08-23 | Data Center Knowledge | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
 | pending_confirmation | 2026-08-23 | Electrek | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
 | pending_confirmation | 2026-08-23 | INSIDEEVs | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
 | pending_confirmation | 2026-08-23 | MIT Technology Review | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
-| pending_confirmation | 2026-08-23 | NE时代 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
-| pending_confirmation | 2026-08-23 | Supply Chain Digital | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
 | pending_confirmation | 2026-08-23 | pv magazine | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
-| pending_confirmation | 2026-08-23 | 中国核电信息网-国内 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
-| pending_confirmation | 2026-08-23 | 光伏测试网 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
-| pending_confirmation | 2026-08-23 | 北极星储能网 | 发现候选但未抓取正文，可能全部被日期过滤、URL 去重或候选日期解析错误 | - |
 | pending_confirmation | 2026-08-23 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
-| pending_confirmation | 2026-08-23 | 电池网 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
 
 处理方式：修复渠道后运行 `python -m src.recovery confirm --source "渠道名" --note "修复说明"`；后续任务会自动补抓所有已确认的原日期缺口。
 
