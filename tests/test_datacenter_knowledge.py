@@ -236,6 +236,34 @@ class DataCenterKnowledgeTests(unittest.TestCase):
         self.assertEqual([article["url"] for article in articles], [article_url])
         self.assertGreater(len(articles[0]["content"]), 1000)
 
+    def test_scraper_records_complete_non_target_date_evidence(self):
+        old_url = "https://www.datacenterknowledge.com/energy/old-story"
+        pages = {
+            source().url: listing(
+                featured=card(
+                    "ListContent-Content_featured",
+                    "ArticlePreview-Title",
+                    "ArticlePreview-Date",
+                    "/energy/old-story",
+                    "Aug 22, 2026",
+                )
+            ),
+            source().configured_rss_url: rss(
+                old_url,
+                "Sat, 22 Aug 2026 12:00:00 GMT",
+            ),
+        }
+        scraper = DataCenterKnowledgeScraper(StaticClient(pages), source())
+
+        articles = scraper.scrape(10, target_date=date(2026, 8, 23))
+
+        self.assertEqual(articles, [])
+        self.assertEqual(scraper.last_candidate_count, 1)
+        self.assertEqual(scraper.last_date_filtered_count, 1)
+        self.assertEqual(scraper.last_undated_candidate_count, 0)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-08-22")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-22")
+
 
 if __name__ == "__main__":
     unittest.main()

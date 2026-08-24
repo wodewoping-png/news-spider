@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from src.load_sources import Source
 from src.main import main
+from src.rss_discovery import FeedEntry
 
 
 def make_source(name: str) -> Source:
@@ -26,6 +27,72 @@ def make_source(name: str) -> Source:
 
 
 class SourceFailureContinuityTests(unittest.TestCase):
+    def test_rss_entries_from_other_dates_are_recorded_as_idle(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            output = root / "data" / "articles.jsonl"
+            csv_path = root / "data" / "articles-2026-08-24.csv"
+            logs = root / "logs"
+            args = SimpleNamespace(
+                sources=root / "sources.xlsx",
+                output=output,
+                csv=csv_path,
+                logs=logs,
+                limit_per_source=20,
+                candidate_limit=100,
+                sleep=0,
+                timeout=1,
+                user_agent="test",
+                ignore_robots=True,
+                rollover_hour=6,
+                min_content_chars=500,
+                target_date="2026-08-23",
+                date_filter="today",
+                only_source=None,
+                skip_audit=False,
+                skip_industry_classification=True,
+            )
+
+            def fake_setup_logging(log_dir: Path) -> Path:
+                log_dir.mkdir(parents=True, exist_ok=True)
+                return log_dir / "daily-news.log"
+
+            with (
+                patch("src.main.parse_args", return_value=args),
+                patch("src.main.setup_logging", side_effect=fake_setup_logging),
+                patch("src.main.load_sources", return_value=[make_source("rss")]),
+                patch("src.main.load_existing_content_quality", return_value={}),
+                patch("src.main.HttpClient", return_value=object()),
+                patch("src.main.discover_feed", return_value="https://rss.example.com/feed"),
+                patch(
+                    "src.main.fetch_feed_entries",
+                    return_value=[
+                        FeedEntry(
+                            title="Earlier article",
+                            url="https://rss.example.com/2026/08/22/article",
+                            published_at="Sat, 22 Aug 2026 12:00:00 +0000",
+                        )
+                    ],
+                ),
+                patch(
+                    "src.main.run_daily_audit",
+                    return_value={
+                        "overall": {"anomaly_level": "normal", "anomaly_reason": ""},
+                        "anomalies": [],
+                    },
+                ),
+            ):
+                result = main()
+
+            self.assertEqual(result, 0)
+            health = json.loads(
+                (logs / "channel-health.json").read_text(encoding="utf-8")
+            )["sources"][0]
+            self.assertEqual(health["status"], "idle")
+            self.assertEqual(health["date_filtered_candidates"], 1)
+            self.assertEqual(health["candidate_date_min"], "2026-08-22")
+            self.assertEqual(health["candidate_date_max"], "2026-08-22")
+
     def test_one_source_failure_is_recorded_and_next_source_completes(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

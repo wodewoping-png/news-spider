@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 
 from openpyxl import Workbook, load_workbook
 
@@ -62,6 +63,41 @@ def write_workbook(path: Path) -> None:
 
 
 class RIONewsTests(unittest.TestCase):
+    def test_public_fallback_propagates_no_news_date_evidence(self):
+        class EvidenceFallback:
+            def __init__(self, _client, _source):
+                self.last_candidate_count = 30
+                self.last_fetched_count = 10
+                self.last_date_filtered_count = 10
+                self.last_undated_candidate_count = 20
+                self.last_candidate_date_min = "2026-08-01"
+                self.last_candidate_date_max = "2026-08-22"
+                self.last_target_date_absent = True
+
+            def scrape(self, _limit, *, target_date=None, candidate_limit=None):
+                return []
+
+        with tempfile.TemporaryDirectory() as temp:
+            with (
+                patch.dict(os.environ, {"RIONEWS_DAILY_DIR": temp}),
+                patch.object(
+                    RIONewsBatteryScraper,
+                    "fallback_scraper_class",
+                    EvidenceFallback,
+                ),
+            ):
+                scraper = RIONewsBatteryScraper(object(), source("电池网"))
+                articles = scraper.scrape(target_date=date(2026, 8, 23))
+
+        self.assertEqual(articles, [])
+        self.assertEqual(scraper.last_candidate_count, 30)
+        self.assertEqual(scraper.last_fetched_count, 10)
+        self.assertEqual(scraper.last_date_filtered_count, 10)
+        self.assertEqual(scraper.last_undated_candidate_count, 20)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-08-01")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-22")
+        self.assertTrue(scraper.last_target_date_absent)
+
     def test_missing_daily_workbook_falls_back_without_input_failure(self):
         class EmptyClient:
             def get(self, _url, **_kwargs):

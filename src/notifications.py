@@ -77,9 +77,61 @@ def save_notification_state(
     temporary_path.replace(path)
 
 
+def _incident_source(incident_id: str, incident: dict) -> str:
+    source = str(incident.get("source") or "").strip()
+    if source:
+        return source
+    if "::" in incident_id:
+        return incident_id.split("::", 1)[1].strip()
+    return ""
+
+
+def _diagnosis_key(incident: dict) -> str:
+    return str(
+        incident.get("diagnosis_code")
+        or incident.get("error_type")
+        or incident.get("diagnosis")
+        or incident.get("technical_reason")
+        or ""
+    ).strip()
+
+
+def _notification_signature(
+    incident_id: str,
+    incident: dict,
+    *,
+    status: str | None = None,
+) -> tuple[str, str, str]:
+    return (
+        _incident_source(incident_id, incident),
+        str(status if status is not None else incident.get("status") or ""),
+        _diagnosis_key(incident),
+    )
+
+
 def select_status_changes(queue: dict, state: dict) -> list[dict]:
     previous = state.get("incidents", {})
+    queue_by_id = {
+        str(incident.get("id") or ""): incident
+        for incident in queue.get("incidents", [])
+        if incident.get("id")
+    }
+    previous_signatures: set[tuple[str, str, str]] = set()
+    for incident_id, previous_state in previous.items():
+        previous_status = str(previous_state.get("status") or "")
+        if previous_status not in NOTIFIABLE_STATUSES:
+            continue
+        incident = queue_by_id.get(str(incident_id), previous_state)
+        previous_signatures.add(
+            _notification_signature(
+                str(incident_id),
+                incident,
+                status=previous_status,
+            )
+        )
+
     selected: list[dict] = []
+    selected_signatures: set[tuple[str, str, str]] = set()
     for incident in queue.get("incidents", []):
         incident_id = str(incident.get("id") or "")
         status = str(incident.get("status") or "")
@@ -87,7 +139,11 @@ def select_status_changes(queue: dict, state: dict) -> list[dict]:
             continue
         if str(previous.get(incident_id, {}).get("status") or "") == status:
             continue
+        signature = _notification_signature(incident_id, incident)
+        if signature in previous_signatures or signature in selected_signatures:
+            continue
         selected.append(incident)
+        selected_signatures.add(signature)
     return sorted(
         selected,
         key=lambda item: (str(item.get("date")), str(item.get("source"))),
@@ -256,6 +312,8 @@ def notify_dingtalk_changes(
     for incident in changes:
         incident_states[str(incident["id"])] = {
             "status": str(incident.get("status") or ""),
+            "source": str(incident.get("source") or ""),
+            "diagnosis_code": _diagnosis_key(incident),
             "notified_at": notified_at,
         }
     save_notification_state(state_path, state, updated_at=notified_at)

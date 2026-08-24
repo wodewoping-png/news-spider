@@ -226,6 +226,32 @@ class NewChannelDiscoveryTests(unittest.TestCase):
             ["https://news.bjx.com.cn/html/20260729/1506229.shtml"],
         )
 
+    def test_testpv_uses_listing_dates_before_wechat_detail_fetch(self):
+        source = make_source(
+            "光伏测试网",
+            "http://www.testpv.com/portal.php?mod=list&catid=20",
+        )
+        html = """
+        <dl class="bbda cl">
+          <dt><a class="xi2" href="portal.php?mod=view&aid=31454">最新文章</a></dt>
+          <dd><span class="xg1">2026-8-24 09:15</span></dd>
+        </dl>
+        <dl class="bbda cl">
+          <dt><a class="xi2" href="portal.php?mod=view&aid=31453">较早文章</a></dt>
+          <dd><span class="xg1">2026-8-21 17:40</span></dd>
+        </dl>
+        """
+        scraper = TestPVScraper(StaticClient({source.url: html}), source)
+
+        articles = scraper.scrape(10, target_date=date(2026, 8, 23))
+
+        self.assertEqual(articles, [])
+        self.assertEqual(scraper.last_candidate_count, 2)
+        self.assertEqual(scraper.last_date_filtered_count, 2)
+        self.assertEqual(scraper.last_undated_candidate_count, 0)
+        self.assertEqual(scraper.last_candidate_date_min, "2026-08-21")
+        self.assertEqual(scraper.last_candidate_date_max, "2026-08-24")
+
     def test_insideevs_fallback_keeps_article_urls(self):
         source = make_source("INSIDEEVs", "https://insideevs.com/news/")
         html = """

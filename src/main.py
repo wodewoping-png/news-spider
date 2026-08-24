@@ -14,6 +14,7 @@ from .audit import run_daily_audit
 from .content_quality import FULL_CONTENT_STATUS, assess_content
 from .date_utils import (
     DEFAULT_TIMEZONE,
+    article_date,
     ensure_published_at,
     is_article_on_date,
     normalize_published_at,
@@ -295,6 +296,19 @@ def resolve_feed_access(
     return configured_feed_url, None, False, "rss_public"
 
 
+def has_confirmed_non_target_candidates(
+    candidates_seen: int,
+    date_filtered_candidates: int,
+    undated_candidates: int,
+) -> bool:
+    """Return true only when every observed candidate is dated outside the target day."""
+    return (
+        candidates_seen > 0
+        and date_filtered_candidates >= candidates_seen
+        and undated_candidates == 0
+    )
+
+
 def write_health_report(
     logs_dir: Path,
     target_date: date,
@@ -438,6 +452,12 @@ def main() -> int:
         new_articles: list[dict] = []
         candidates_seen = 0
         pages_fetched = 0
+        date_filtered_candidates = 0
+        undated_candidates = 0
+        candidate_date_min = ""
+        candidate_date_max = ""
+        observed_candidate_dates: list[date] = []
+        target_date_absent = False
         crawl_mode = "listing"
         try:
             source_key = source.name.strip().lower()
@@ -507,7 +527,11 @@ def main() -> int:
                         continue
                     if entry.published_at and args.date_filter == "today":
                         feed_article = {"published_at": entry.published_at, "url": entry.url}
-                        if not is_article_on_date(feed_article, target_date, DEFAULT_CSV_TIMEZONE):
+                        feed_date = article_date(feed_article, DEFAULT_CSV_TIMEZONE)
+                        if feed_date:
+                            observed_candidate_dates.append(feed_date)
+                        if feed_date != target_date:
+                            date_filtered_candidates += 1
                             logging.info(
                                 "Skip non-target-date RSS entry: %s (%s)",
                                 entry.url,
@@ -523,6 +547,19 @@ def main() -> int:
                         ),
                     )
                     pages_fetched += 1
+                    if article and args.date_filter == "today" and not entry.published_at:
+                        parsed_candidate_date = article_date(
+                            article,
+                            DEFAULT_CSV_TIMEZONE,
+                        )
+                        if parsed_candidate_date:
+                            observed_candidate_dates.append(parsed_candidate_date)
+                            if parsed_candidate_date != target_date:
+                                date_filtered_candidates += 1
+                        else:
+                            undated_candidates += 1
+                    elif not article and args.date_filter == "today" and not entry.published_at:
+                        undated_candidates += 1
                     article_key = canonicalize_url(article.get("url", "")) if article else ""
                     if article and article_key:
                         previous_article = existing_quality.get(article_key)
@@ -543,6 +580,9 @@ def main() -> int:
                         new_articles.append(article)
                         existing_urls.add(article_key)
                         existing_quality[article_key] = article
+                if observed_candidate_dates:
+                    candidate_date_min = min(observed_candidate_dates).isoformat()
+                    candidate_date_max = max(observed_candidate_dates).isoformat()
             else:
                 if feed_url:
                     logging.warning(
@@ -558,6 +598,29 @@ def main() -> int:
                 )
                 candidates_seen = getattr(scraper, "last_candidate_count", len(scraped_articles))
                 pages_fetched = getattr(scraper, "last_fetched_count", len(scraped_articles))
+                date_filtered_candidates = getattr(
+                    scraper,
+                    "last_date_filtered_count",
+                    0,
+                )
+                undated_candidates = getattr(
+                    scraper,
+                    "last_undated_candidate_count",
+                    0,
+                )
+                candidate_date_min = getattr(
+                    scraper,
+                    "last_candidate_date_min",
+                    "",
+                )
+                candidate_date_max = getattr(
+                    scraper,
+                    "last_candidate_date_max",
+                    "",
+                )
+                target_date_absent = bool(
+                    getattr(scraper, "last_target_date_absent", False)
+                )
                 for article in scraped_articles:
                     ensure_content_quality(article)
                     url = article.get("url")
@@ -619,7 +682,21 @@ def main() -> int:
         short_count = sum(
             length < args.min_content_chars for length in content_lengths
         )
-        if changed_count == 0 and not expects_output_on_date(source.frequency, target_date):
+        confirmed_no_news = has_confirmed_non_target_candidates(
+            candidates_seen,
+            date_filtered_candidates,
+            undated_candidates,
+        ) or target_date_absent
+        if changed_count == 0 and confirmed_no_news:
+            status = "idle"
+            date_range = candidate_date_max
+            if candidate_date_min and candidate_date_min != candidate_date_max:
+                date_range = f"{candidate_date_min} to {candidate_date_max}"
+            reason = (
+                "all observed candidates were published outside the target date"
+                + (f" ({date_range})" if date_range else "")
+            )
+        elif changed_count == 0 and not expects_output_on_date(source.frequency, target_date):
             status = "idle"
             reason = "no target-date articles were expected for this source schedule"
         elif changed_count == 0:
@@ -645,6 +722,10 @@ def main() -> int:
                 "crawl_mode": crawl_mode,
                 "candidates_seen": candidates_seen,
                 "pages_fetched": pages_fetched,
+                "date_filtered_candidates": date_filtered_candidates,
+                "undated_candidates": undated_candidates,
+                "candidate_date_min": candidate_date_min,
+                "candidate_date_max": candidate_date_max,
                 "new_articles": added_count,
                 "refreshed_articles": refreshed_count,
                 "usable_articles": usable_count,

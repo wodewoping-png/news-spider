@@ -107,6 +107,65 @@ class RecoveryQueueTests(unittest.TestCase):
         self.assertEqual(code, "authentication_failed")
         self.assertIn("认证", reason)
 
+    def test_diagnoses_known_non_target_dates_without_fetch_error(self):
+        code, reason = diagnose_incident(
+            {
+                "date": "2026-08-19",
+                "crawl_status": "zero",
+                "candidates_seen": 29,
+                "pages_fetched": 0,
+            },
+            {
+                "date_filtered_candidates": 29,
+                "undated_candidates": 0,
+                "candidate_date_min": "2026-08-08",
+                "candidate_date_max": "2026-08-08",
+            },
+        )
+
+        self.assertEqual(code, "non_target_date_candidates")
+        self.assertIn("2026-08-08", reason)
+        self.assertIn("正确过滤", reason)
+
+    def test_idle_rerun_closes_existing_zero_incident_as_no_news(self):
+        with tempfile.TemporaryDirectory() as temp:
+            queue = Path(temp) / "recovery-queue.json"
+            zero_row = {
+                "date": "2026-08-23",
+                "source": "Daily",
+                "frequency": "实时",
+                "expected_daily": "true",
+                "crawl_status": "zero",
+                "article_count": 0,
+                "candidates_seen": 2,
+                "pages_fetched": 0,
+            }
+            sync_recovery_queue(
+                queue,
+                [zero_row],
+                [{"source": "Daily", "status": "zero"}],
+                generated_at="2026-08-24T06:00:00+08:00",
+            )
+
+            idle_row = {**zero_row, "crawl_status": "idle"}
+            payload = sync_recovery_queue(
+                queue,
+                [idle_row],
+                [
+                    {
+                        "source": "Daily",
+                        "status": "idle",
+                        "reason": "all observed candidates were published outside the target date",
+                    }
+                ],
+                generated_at="2026-08-24T10:00:00+08:00",
+            )
+
+            incident = payload["incidents"][0]
+            self.assertEqual(incident["status"], "ignored")
+            self.assertIn("outside the target date", incident["confirmation_note"])
+            self.assertEqual(incident["ignored_at"], "2026-08-24T10:00:00+08:00")
+
     def test_human_confirmation_and_successful_backfill(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

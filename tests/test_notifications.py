@@ -100,6 +100,56 @@ class DingTalkNotificationTests(unittest.TestCase):
         queue["incidents"][0]["status"] = "recovery_failed"
         self.assertEqual(len(select_status_changes(queue, state)), 1)
 
+    def test_recurring_same_source_diagnosis_is_not_a_new_alert(self):
+        older = incident("pending_confirmation")
+        older["diagnosis_code"] = "candidates_filtered"
+        newer = {
+            **older,
+            "id": "2026-07-23::Daily",
+            "date": "2026-07-23",
+        }
+        queue = {"incidents": [older, newer]}
+        state = {
+            "incidents": {
+                older["id"]: {"status": "pending_confirmation"},
+            }
+        }
+
+        self.assertEqual(select_status_changes(queue, state), [])
+
+    def test_changed_diagnosis_for_same_source_is_alerted(self):
+        older = incident("pending_confirmation")
+        older["diagnosis_code"] = "candidates_filtered"
+        newer = {
+            **older,
+            "id": "2026-07-23::Daily",
+            "date": "2026-07-23",
+            "diagnosis_code": "no_candidates",
+            "diagnosis": "未发现任何候选文章",
+        }
+        queue = {"incidents": [older, newer]}
+        state = {
+            "incidents": {
+                older["id"]: {"status": "pending_confirmation"},
+            }
+        }
+
+        self.assertEqual(select_status_changes(queue, state), [newer])
+
+    def test_same_new_diagnosis_is_grouped_once_per_source(self):
+        older = incident("pending_confirmation")
+        older["diagnosis_code"] = "candidates_filtered"
+        newer = {
+            **older,
+            "id": "2026-07-23::Daily",
+            "date": "2026-07-23",
+        }
+
+        self.assertEqual(
+            select_status_changes({"incidents": [older, newer]}, {}),
+            [older],
+        )
+
     def test_successful_send_records_state_and_prevents_duplicate(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -139,6 +189,10 @@ class DingTalkNotificationTests(unittest.TestCase):
             self.assertEqual(
                 saved["incidents"]["2026-07-22::Daily"]["status"],
                 "recovered",
+            )
+            self.assertEqual(
+                saved["incidents"]["2026-07-22::Daily"]["source"],
+                "Daily",
             )
 
 

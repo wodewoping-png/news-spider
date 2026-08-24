@@ -129,6 +129,11 @@ class GenericListingScraper(BaseScraper):
         effective_candidate_limit = candidate_limit or max(limit * 5, limit)
         urls = self.discover_article_urls(effective_candidate_limit)
         self.last_candidate_count = len(urls)
+        listing_candidate_dates = getattr(self, "listing_candidate_dates", {})
+        candidate_dates: dict[str, date | None] = {
+            url: date_from_url(url) or listing_candidate_dates.get(url)
+            for url in urls
+        }
         if not urls:
             logging.warning(
                 "TODO scraper needed for %s: unable to identify article links from listing page. "
@@ -140,6 +145,7 @@ class GenericListingScraper(BaseScraper):
         consecutive_older = 0
         consecutive_failed = 0
         fetched_count = 0
+        target_date_absent = False
         for url in urls:
             url_date = date_from_url(url)
             if target_date and url_date and url_date != target_date:
@@ -154,11 +160,14 @@ class GenericListingScraper(BaseScraper):
             consecutive_failed = 0
             if article:
                 ensure_published_at(article)
+                parsed_date = article_date(article)
+                if parsed_date:
+                    candidate_dates[url] = parsed_date
                 if target_date:
-                    parsed_date = article_date(article)
                     if parsed_date and parsed_date < target_date:
                         consecutive_older += 1
                         if consecutive_older >= self.consecutive_older_limit:
+                            target_date_absent = True
                             break
                         continue
                     if parsed_date != target_date:
@@ -169,4 +178,19 @@ class GenericListingScraper(BaseScraper):
             if len(articles) >= limit:
                 break
         self.last_fetched_count = fetched_count
+        known_dates = [value for value in candidate_dates.values() if value]
+        self.last_date_filtered_count = sum(
+            bool(target_date and value and value != target_date)
+            for value in candidate_dates.values()
+        )
+        self.last_undated_candidate_count = sum(
+            value is None for value in candidate_dates.values()
+        )
+        self.last_candidate_date_min = (
+            min(known_dates).isoformat() if known_dates else ""
+        )
+        self.last_candidate_date_max = (
+            max(known_dates).isoformat() if known_dates else ""
+        )
+        self.last_target_date_absent = target_date_absent
         return articles
