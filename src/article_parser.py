@@ -235,6 +235,10 @@ NEXT_FLIGHT_CHUNK_RE = re.compile(
     re.S,
 )
 NEXT_FLIGHT_TEXT_RECORD_RE = re.compile(r"[0-9a-f]+:T([0-9a-f]+),", re.I)
+NEXT_FLIGHT_BODY_FIELD_RE = re.compile(
+    r'"body":"((?:\\.|[^"\\])*)"',
+    re.S,
+)
 
 MIN_PARAGRAPH_LENGTH = 8
 BODY_END_LINE_KEYWORDS = (
@@ -492,17 +496,31 @@ def extract_renewables_now_embedded_body(soup: BeautifulSoup) -> str:
 
     stream = "".join(chunks)
     candidates: list[str] = []
-    for match in NEXT_FLIGHT_TEXT_RECORD_RE.finditer(stream):
-        length = int(match.group(1), 16)
-        value = stream[match.end() : match.end() + length]
+
+    def add_candidate(value: str) -> None:
         if value.count("<p") < 2:
-            continue
+            return
         fragment = BeautifulSoup(value, "html.parser")
         for node in fragment.select(".article_reportLayer"):
             node.decompose()
         text = extract_node_body_text(fragment)
         if text:
             candidates.append(text)
+
+    # Some responses store the body as a JSON field split across multiple
+    # Flight script chunks instead of a length-prefixed text record.
+    for match in NEXT_FLIGHT_BODY_FIELD_RE.finditer(stream):
+        try:
+            body = json.loads(f'"{match.group(1)}"')
+        except (json.JSONDecodeError, TypeError):
+            continue
+        if isinstance(body, str):
+            add_candidate(body)
+
+    for match in NEXT_FLIGHT_TEXT_RECORD_RE.finditer(stream):
+        length = int(match.group(1), 16)
+        value = stream[match.end() : match.end() + length]
+        add_candidate(value)
     return max(candidates, key=len, default="")
 
 

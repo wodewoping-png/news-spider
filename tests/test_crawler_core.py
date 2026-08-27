@@ -711,6 +711,42 @@ class ListingScraperTests(unittest.TestCase):
             ("incomplete", "template_or_navigation_noise"),
         )
 
+    def test_renewables_now_extracts_body_field_split_across_flight_chunks(self):
+        source = make_source("Renewables Now", "https://renewablesnow.com/news/")
+        body = (
+            "<p>German solar developer started construction of a solar park.</p>"
+            "<p>The project will generate enough electricity for local homes.</p>"
+            "<p>Commissioning is targeted for the end of 2026.</p>"
+        )
+        split_at = body.index("local homes")
+        first = json.dumps(f'6c:{{"body":{json.dumps(body[:split_at])[0:-1]}')
+        second = json.dumps(
+            f'{json.dumps(body[split_at:])[1:]},"access":true}}\n'
+        )
+        html = f"""
+        <html><body>
+          <script>self.__next_f.push([1,{first}])</script>
+          <script>self.__next_f.push([1,{second}])</script>
+          <div class="info-article"><div class="paywall">
+            <p>German solar developer started construction of a solar park.</p>
+          </div></div>
+        </body></html>
+        """
+
+        parsed = parse_article_html(
+            html,
+            "https://renewablesnow.com/news/example-split-body-1299932/",
+            source,
+        )
+
+        self.assertIn("local homes", parsed["content"])
+        self.assertIn("end of 2026", parsed["content"])
+        self.assertEqual(parsed["content_status"], "full")
+        self.assertEqual(
+            parsed["content_extraction"],
+            "nextjs_embedded_full_text",
+        )
+
     def test_renewables_now_lead_only_fallback_is_not_marked_full(self):
         source = make_source("Renewables Now", "https://renewablesnow.com/news/")
         html = """
