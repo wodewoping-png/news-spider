@@ -107,6 +107,93 @@ class RecoveryQueueTests(unittest.TestCase):
         self.assertEqual(code, "authentication_failed")
         self.assertIn("认证", reason)
 
+    def test_degraded_content_creates_notifiable_incident_with_articles(self):
+        with tempfile.TemporaryDirectory() as temp:
+            queue = Path(temp) / "recovery-queue.json"
+            payload = sync_recovery_queue(
+                queue,
+                [
+                    {
+                        "date": "2026-08-25",
+                        "source": "Renewables Now",
+                        "frequency": "周度",
+                        "expected_daily": "false",
+                        "crawl_status": "degraded",
+                        "article_count": 1,
+                        "incomplete_articles": 1,
+                        "anomaly_level": "critical",
+                        "anomaly_codes": "content_quality_degraded",
+                    }
+                ],
+                [
+                    {
+                        "source": "Renewables Now",
+                        "status": "degraded",
+                        "reason": "1 articles were not verified as full text",
+                        "incomplete_articles": 1,
+                        "content_issues": "template_or_navigation_noise",
+                    }
+                ],
+                generated_at="2026-08-26T06:00:00+08:00",
+            )
+
+            incident = payload["incidents"][0]
+            self.assertEqual(incident["status"], "pending_confirmation")
+            self.assertEqual(
+                incident["diagnosis_code"],
+                "content_quality_degraded",
+            )
+            self.assertIn("模板/导航", incident["diagnosis"])
+            self.assertEqual(incident["incomplete_articles"], 1)
+
+    def test_quality_recovery_requires_usable_full_text(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            queue = root / "logs" / "recovery-queue.json"
+            output = root / "data" / "articles.jsonl"
+            save_queue(
+                queue,
+                {
+                    "incidents": [
+                        {
+                            "id": "2026-08-25::Renewables Now",
+                            "source": "Renewables Now",
+                            "date": "2026-08-25",
+                            "status": "confirmed",
+                            "diagnosis_code": "content_quality_degraded",
+                        }
+                    ]
+                },
+            )
+
+            def fake_runner(_command: list[str]) -> int:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                output.write_text(
+                    json.dumps(
+                        {
+                            "published_at": "2026-08-25",
+                            "source_name": "Renewables Now",
+                            "url": "https://renewablesnow.com/news/example-1/",
+                            "content": "Loading...\nLoading...\nabout 2 hours ago",
+                            "content_extraction": "trafilatura_full_text",
+                        }
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+                return 0
+
+            processed = run_confirmed_recoveries(
+                queue,
+                sources_path=root / "sources.xlsx",
+                output_path=output,
+                logs_dir=root / "logs",
+                command_runner=fake_runner,
+            )
+
+            self.assertEqual(processed[0]["status"], "recovery_failed")
+            self.assertIn("正文仍不完整", processed[0]["last_error"])
+
     def test_diagnoses_known_non_target_dates_without_fetch_error(self):
         code, reason = diagnose_incident(
             {

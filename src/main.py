@@ -681,6 +681,14 @@ def main() -> int:
             for article in new_articles
         )
         incomplete_count = max(changed_count - usable_count, 0)
+        content_issues = sorted(
+            {
+                str(article.get("content_issue") or "unknown_content_issue")
+                for article in new_articles
+                if str(article.get("content_status") or "").lower()
+                != FULL_CONTENT_STATUS
+            }
+        )
         short_count = sum(
             length < args.min_content_chars for length in content_lengths
         )
@@ -708,6 +716,7 @@ def main() -> int:
             status = "degraded"
             reason = (
                 f"{incomplete_count} articles were not verified as full text"
+                + (f" ({', '.join(content_issues)})" if content_issues else "")
             )
         else:
             status = "healthy"
@@ -732,6 +741,7 @@ def main() -> int:
                 "refreshed_articles": refreshed_count,
                 "usable_articles": usable_count,
                 "incomplete_articles": incomplete_count,
+                "content_issues": ",".join(content_issues),
                 "short_articles": short_count,
                 "min_content_chars": args.min_content_chars,
                 "content_chars_min": min(content_lengths, default=0),

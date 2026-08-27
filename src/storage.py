@@ -121,17 +121,25 @@ def load_existing_content_quality(jsonl_path: Path) -> dict[str, dict]:
             url_key = canonicalize_url(str(item.get("url") or ""))
             if not url_key:
                 continue
-            status, issue = assess_content(
-                str(item.get("content") or ""),
-                extraction_method=str(item.get("content_extraction") or ""),
-            )
-            if issue == "access_challenge":
-                item["content_status"] = status
-                item["content_issue"] = issue
+            item = _reassess_known_bad_content(item)
             current = quality.get(url_key)
             if current is None or is_better_article(item, current):
                 quality[url_key] = item
     return quality
+
+
+def _reassess_known_bad_content(article: dict) -> dict:
+    """Override stale ``full`` flags for content that is demonstrably unusable."""
+    status, issue = assess_content(
+        str(article.get("content") or ""),
+        extraction_method=str(article.get("content_extraction") or ""),
+    )
+    if issue not in {"access_challenge", "template_or_navigation_noise"}:
+        return article
+    reassessed = dict(article)
+    reassessed["content_status"] = status
+    reassessed["content_issue"] = issue
+    return reassessed
 
 
 def is_better_article(candidate: dict, existing: dict) -> bool:
@@ -232,7 +240,8 @@ def upsert_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> tuple[int, int]:
                 candidate = incoming.get(url_key)
                 if candidate is not None and url_key not in seen:
                     seen.add(url_key)
-                    if is_better_article(candidate, existing):
+                    effective_existing = _reassess_known_bad_content(existing)
+                    if is_better_article(candidate, effective_existing):
                         output_lines.append(
                             json.dumps(
                                 _preserve_industry_classification(candidate, existing),

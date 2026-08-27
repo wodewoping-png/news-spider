@@ -9,7 +9,7 @@ from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 from trafilatura import extract as extract_full_text
 
-from .content_quality import assess_content
+from .content_quality import INCOMPLETE_CONTENT_STATUS, assess_content
 from .date_utils import date_from_url
 from .http_client import HttpClient
 from .load_sources import Source
@@ -53,6 +53,9 @@ STRICT_SOURCE_ARTICLE_SELECTORS = {
     ),
     "data center knowledge": (
         ".ArticleBase-BodyContent_Article",
+    ),
+    "renewables now": (
+        ".info-article .paywall",
     ),
     "pv magazine c&i pv": (
         ".pvmagazine-post-content .entry-content",
@@ -164,6 +167,7 @@ REMOVE_SELECTORS = (
     ".sign-up",
     ".event",
     ".events",
+    ".article_reportLayer",
 )
 
 REMOVE_CLASS_ID_RE = re.compile(
@@ -225,6 +229,15 @@ DATE_CONTAINER_SELECTORS = (
     ".qr_code",
     ".date",
     ".time",
+)
+NEXT_FLIGHT_CHUNK_RE = re.compile(
+    r'self\.__next_f\.push\(\[1,("(?:\\.|[^"\\])*")\]\)',
+    re.S,
+)
+NEXT_FLIGHT_TEXT_RECORD_RE = re.compile(r"[0-9a-f]+:T([0-9a-f]+),", re.I)
+NEXT_FLIGHT_BODY_FIELD_RE = re.compile(
+    r'"body":"((?:\\.|[^"\\])*)"',
+    re.S,
 )
 
 MIN_PARAGRAPH_LENGTH = 8
@@ -466,6 +479,51 @@ def extract_structured_body(soup: BeautifulSoup) -> str:
     return max(candidates, key=len, default="")
 
 
+def extract_renewables_now_embedded_body(soup: BeautifulSoup) -> str:
+    """Extract the full article HTML embedded in Next.js Flight data."""
+    chunks: list[str] = []
+    for script in soup.find_all("script"):
+        script_text = script.string or script.get_text() or ""
+        for match in NEXT_FLIGHT_CHUNK_RE.finditer(script_text):
+            try:
+                chunk = json.loads(match.group(1))
+            except (json.JSONDecodeError, TypeError):
+                continue
+            if isinstance(chunk, str):
+                chunks.append(chunk)
+    if not chunks:
+        return ""
+
+    stream = "".join(chunks)
+    candidates: list[str] = []
+
+    def add_candidate(value: str) -> None:
+        if value.count("<p") < 2:
+            return
+        fragment = BeautifulSoup(value, "html.parser")
+        for node in fragment.select(".article_reportLayer"):
+            node.decompose()
+        text = extract_node_body_text(fragment)
+        if text:
+            candidates.append(text)
+
+    # Some responses store the body as a JSON field split across multiple
+    # Flight script chunks instead of a length-prefixed text record.
+    for match in NEXT_FLIGHT_BODY_FIELD_RE.finditer(stream):
+        try:
+            body = json.loads(f'"{match.group(1)}"')
+        except (json.JSONDecodeError, TypeError):
+            continue
+        if isinstance(body, str):
+            add_candidate(body)
+
+    for match in NEXT_FLIGHT_TEXT_RECORD_RE.finditer(stream):
+        length = int(match.group(1), 16)
+        value = stream[match.end() : match.end() + length]
+        add_candidate(value)
+    return max(candidates, key=len, default="")
+
+
 def extract_trafilatura_body(html: str, url: str = "") -> str:
     """Extract the complete main text with recall favored over brevity."""
     try:
@@ -540,10 +598,18 @@ def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional
     )
     title = extract_title(soup, source.name)
 
+    source_key = source.name.strip().lower()
+    embedded_body = (
+        extract_renewables_now_embedded_body(soup)
+        if source_key == "renewables now"
+        else ""
+    )
     selector_body = extract_body(soup, source.name)
     full_text_body = extract_trafilatura_body(html, canonical)
-    source_key = source.name.strip().lower()
-    if source_key in STRICT_SOURCE_ARTICLE_SELECTORS and selector_body:
+    if embedded_body:
+        content = embedded_body
+        extraction_method = "nextjs_embedded_full_text"
+    elif source_key in STRICT_SOURCE_ARTICLE_SELECTORS and selector_body:
         content = selector_body
         extraction_method = "dom_or_structured_full_text"
     elif len(full_text_body) > len(selector_body):
@@ -556,6 +622,13 @@ def parse_article_html(html: str, url: str, source: Source, crawled_at: Optional
         content,
         extraction_method=extraction_method,
     )
+    if (
+        source_key == "renewables now"
+        and extraction_method != "nextjs_embedded_full_text"
+        and len(content) < 500
+    ):
+        content_status = INCOMPLETE_CONTENT_STATUS
+        content_issue = "dynamic_full_text_unavailable"
     title = normalize_source_title(title, content, source.name)
 
     return {

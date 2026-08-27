@@ -88,6 +88,29 @@ class DingTalkNotificationTests(unittest.TestCase):
         self.assertNotIn("do-not-send", markdown)
         self.assertIn("[REDACTED]", markdown)
 
+    def test_message_reports_incomplete_or_template_noise_content(self):
+        item = incident("pending_confirmation")
+        item.update(
+            {
+                "source": "Renewables Now",
+                "diagnosis_code": "content_quality_degraded",
+                "diagnosis": "检测到 1 篇正文不完整或混入页面模板/导航内容",
+                "technical_reason": (
+                    "1 articles were not verified as full text "
+                    "(template_or_navigation_noise)"
+                ),
+            }
+        )
+
+        _title, markdown = build_dingtalk_markdown(
+            [item],
+            keyword="渠道抓取告警",
+        )
+
+        self.assertIn("Renewables Now", markdown)
+        self.assertIn("正文不完整", markdown)
+        self.assertIn("content_quality_degraded", markdown)
+
     def test_only_selects_status_transitions(self):
         queue = {"incidents": [incident("pending_confirmation")]}
         state = {
