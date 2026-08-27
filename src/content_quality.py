@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from html import unescape
 import re
 
 
@@ -33,6 +34,27 @@ TRUNCATION_END_RE = re.compile(
     r"(?:\.{3}|…|read more|continue reading|阅读全文|查看全文|点击展开)\s*$",
     re.I,
 )
+RELATIVE_TIME_LINE_RE = re.compile(
+    r"^(?:about\s+)?\d+\s+(?:minutes?|hours?|days?)\s+ago$",
+    re.I,
+)
+
+
+def _looks_like_template_or_navigation_noise(text: str) -> bool:
+    """Detect page chrome that is long enough to fool generic extractors."""
+    decoded = unescape(text).replace("\xa0", " ")
+    lowered = decoded.lower()
+    loading_count = lowered.count("loading...") + lowered.count("loading…")
+    if loading_count >= 2:
+        return True
+
+    lines = [line.strip() for line in decoded.splitlines() if line.strip()]
+    relative_times = sum(bool(RELATIVE_TIME_LINE_RE.fullmatch(line)) for line in lines)
+    event_markers = sum(
+        lowered.count(marker)
+        for marker in ("conference", "business breakfast", "upcoming events")
+    )
+    return len(lines) >= 6 and relative_times >= 2 and event_markers >= 2
 
 
 def assess_content(
@@ -54,6 +76,8 @@ def assess_content(
         return MISSING_CONTENT_STATUS, "access_challenge"
     if any(marker in lowered for marker in PAYWALL_MARKERS):
         return INCOMPLETE_CONTENT_STATUS, "paywall_or_login_wall"
+    if _looks_like_template_or_navigation_noise(text):
+        return INCOMPLETE_CONTENT_STATUS, "template_or_navigation_noise"
     if TRUNCATION_END_RE.search(text):
         return INCOMPLETE_CONTENT_STATUS, "truncated_ending"
     if extraction_method == "rss_excerpt" and not declared_full:

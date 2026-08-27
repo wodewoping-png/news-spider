@@ -9,12 +9,13 @@ from pathlib import Path
 from typing import Callable, Iterable
 from zoneinfo import ZoneInfo
 
+from .content_quality import FULL_CONTENT_STATUS, assess_content
 from .date_utils import DEFAULT_TIMEZONE, article_date
 
 
 QUEUE_VERSION = 1
 OPEN_STATUSES = {"pending_confirmation", "confirmed", "recovering", "recovery_failed"}
-RECOVERABLE_CRAWL_STATUSES = {"zero", "failed"}
+RECOVERABLE_CRAWL_STATUSES = {"zero", "failed", "degraded"}
 
 
 def _now(timezone_name: str = DEFAULT_TIMEZONE) -> str:
@@ -77,6 +78,18 @@ def diagnose_incident(row: dict, health: dict | None = None) -> tuple[str, str]:
     candidate_date_max = str(
         row.get("candidate_date_max") or health.get("candidate_date_max") or ""
     )
+
+    if crawl_status == "degraded":
+        incomplete = _as_int(
+            row.get("incomplete_articles", health.get("incomplete_articles"))
+        )
+        issues = str(health.get("content_issues") or "").strip()
+        detail = f"；类型：{issues}" if issues else ""
+        return (
+            "content_quality_degraded",
+            f"检测到 {incomplete or 1} 篇正文不完整或混入页面模板/导航内容{detail}，"
+            "请检查正文选择器和内容质量规则",
+        )
 
     if crawl_status == "failed":
         patterns = (
@@ -162,7 +175,7 @@ def sync_recovery_queue(
         crawl_status = str(row.get("crawl_status") or "")
         existing = incidents.get(incident_id)
 
-        if count > 0:
+        if count > 0 and crawl_status != "degraded":
             if existing and existing.get("status") in OPEN_STATUSES:
                 existing.update(
                     {
@@ -188,7 +201,9 @@ def sync_recovery_queue(
                     }
                 )
             continue
-        if not expected_daily or crawl_status not in RECOVERABLE_CRAWL_STATUSES:
+        if crawl_status not in RECOVERABLE_CRAWL_STATUSES:
+            continue
+        if crawl_status != "degraded" and not expected_daily:
             continue
 
         health = health_by_source.get(source, {})
@@ -248,6 +263,13 @@ def sync_recovery_queue(
                 "technical_reason": str(
                     health.get("reason") or row.get("anomaly_reason") or ""
                 ),
+                "incomplete_articles": _as_int(
+                    row.get(
+                        "incomplete_articles",
+                        health.get("incomplete_articles"),
+                    )
+                ),
+                "content_issues": str(health.get("content_issues") or ""),
                 "error_type": str(health.get("error_type") or ""),
                 "failed_at": str(health.get("failed_at") or ""),
                 "updated_at": timestamp,
@@ -350,6 +372,34 @@ def count_articles(jsonl_path: Path, source: str, day: str) -> int:
     return count
 
 
+def count_usable_articles(jsonl_path: Path, source: str, day: str) -> int:
+    if not jsonl_path.exists():
+        return 0
+    count = 0
+    with jsonl_path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            published = article_date(item, DEFAULT_TIMEZONE)
+            if (
+                str(item.get("source_name") or "") != source
+                or not published
+                or published.isoformat() != day
+            ):
+                continue
+            status, _issue = assess_content(
+                str(item.get("content") or ""),
+                extraction_method=str(item.get("content_extraction") or ""),
+            )
+            if status == FULL_CONTENT_STATUS:
+                count += 1
+    return count
+
+
 CommandRunner = Callable[[list[str]], int]
 
 
@@ -407,11 +457,17 @@ def run_confirmed_recoveries(
         ]
         return_code = command_runner(command)
         recovered = count_articles(output_path, source, day)
-        if return_code == 0 and recovered > 0:
+        quality_recovery = (
+            str(incident.get("diagnosis_code") or "")
+            == "content_quality_degraded"
+        )
+        usable_recovered = count_usable_articles(output_path, source, day)
+        recovery_count = usable_recovered if quality_recovery else recovered
+        if return_code == 0 and recovery_count > 0:
             incident.update(
                 {
                     "status": "recovered",
-                    "recovered_articles": recovered,
+                    "recovered_articles": recovery_count,
                     "recovered_at": now,
                     "last_error": "",
                     "updated_at": now,
@@ -430,7 +486,11 @@ def run_confirmed_recoveries(
                     or (
                         f"补抓命令退出码为 {return_code}"
                         if return_code
-                        else "补抓完成但目标日期仍无文章"
+                        else (
+                            "补抓完成但正文仍不完整或包含页面模板噪声"
+                            if quality_recovery
+                            else "补抓完成但目标日期仍无文章"
+                        )
                     ),
                     "updated_at": now,
                 }

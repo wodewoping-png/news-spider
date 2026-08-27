@@ -168,8 +168,17 @@ def _inventory(
             content_length = len(str(item.get("content") or "").strip())
             bucket["content_lengths"].append(content_length)
             content_status = str(item.get("content_status") or "").lower()
-            if not content_status:
-                content_status, _ = assess_content(str(item.get("content") or ""))
+            assessed_status, assessed_issue = assess_content(
+                str(item.get("content") or ""),
+                extraction_method=str(item.get("content_extraction") or ""),
+            )
+            if assessed_issue in {
+                "access_challenge",
+                "template_or_navigation_noise",
+            }:
+                content_status = assessed_status
+            elif not content_status:
+                content_status = assessed_status
             if content_status == FULL_CONTENT_STATUS:
                 bucket["usable_articles"] += 1
             else:
@@ -270,6 +279,13 @@ def _source_metrics(row: dict, all_rows: list[dict], target: date) -> dict:
 
     if crawl_status == "failed":
         add("fetch_failed", "抓取任务失败", "critical")
+    if crawl_status == "degraded":
+        incomplete = _as_int(row.get("incomplete_articles"))
+        add(
+            "content_quality_degraded",
+            f"检测到 {incomplete or 1} 篇正文不完整或包含页面模板噪声",
+            "critical" if count and usable == 0 else "warning",
+        )
     if crawl_status != "skipped" and expected_daily:
         if count == 0:
             if previous and previous > 0 or baseline and baseline > 0:

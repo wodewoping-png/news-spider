@@ -104,6 +104,43 @@ class StorageContentRefreshTests(unittest.TestCase):
             self.assertEqual(saved["content_status"], "full")
             self.assertEqual(len(saved["content"]), 900)
 
+    def test_verified_full_content_replaces_legacy_template_noise_marked_full(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "articles.jsonl"
+            original = article(
+                "https://renewablesnow.com/news/example/",
+                "\n".join(
+                    [
+                        "about 13 hours ago",
+                        "about 16 hours ago",
+                        "Loading...",
+                        "Loading...",
+                        "MESIA Business Breakfast on Smart Cities",
+                        "Sep 17, 2026",
+                        "Abu Dhabi",
+                        "Horizons Clean Energy Expansion India Conference",
+                    ]
+                ),
+            )
+            original["content_status"] = "full"
+            path.write_text(
+                json.dumps(original, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            replacement = article(
+                "https://renewablesnow.com/news/example/",
+                "This is the verified article body. " * 25,
+            )
+            replacement["content_status"] = "full"
+            replacement["content_issue"] = ""
+
+            added, updated = upsert_jsonl(path, [replacement])
+            saved = json.loads(path.read_text(encoding="utf-8"))
+
+            self.assertEqual((added, updated), (0, 1))
+            self.assertEqual(saved["content_status"], "full")
+            self.assertNotIn("Loading", saved["content"])
+
     def test_short_incomplete_result_does_not_replace_long_legacy_record(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "articles.jsonl"

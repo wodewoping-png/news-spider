@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from datetime import date, datetime
 from unittest.mock import Mock, patch
@@ -632,6 +633,103 @@ class ListingScraperTests(unittest.TestCase):
         self.assertEqual(
             urls,
             ["https://renewablesnow.com/news/real-project-headline-1298706/"],
+        )
+
+    def test_renewables_now_extracts_article_body_without_page_chrome(self):
+        source = make_source("Renewables Now", "https://renewablesnow.com/news/")
+        embedded_body = """
+        <p>German vertical bifacial photovoltaics firm Next2Sun AG is launching
+        a share issue to finance its next phase of growth.</p>
+        <p>The company seeks to accelerate implementation of its own solar
+        projects and scale its business model.</p>
+        <p class="article_reportLayer">Power your inbox with newsletters.</p>
+        <p>Next2Sun expects project volume of more than 70 MW in 2027.</p>
+        """.strip()
+        flight_record = f"6d:T{len(embedded_body):x},{embedded_body}6e:{{}}"
+        encoded_record = json.dumps(flight_record).replace("<", "\\u003c").replace(
+            ">", "\\u003e"
+        )
+        html = f"""
+        <html><body>
+          <script>self.__next_f.push([1,{encoded_record}])</script>
+          <div class="info-article">
+            <h1>Next2Sun launches EUR-5m share issue</h1>
+            <div>Aug 25, 2026, 4:58:20 PM</div>
+            <div class="paywall">
+              <div class="styles_leadArticleText__etnRf">
+                <div>German vertical bifacial photovoltaics firm Next2Sun AG
+                is launching a share issue to finance its next phase of growth.</div>
+              </div>
+              <div class="text-just">
+                <div class="styles_leadArticleText__etnRf">
+                  <p>The company seeks to accelerate implementation of its own
+                  solar projects and scale its business model.</p>
+                  <p class="article_reportLayer">Power your inbox with newsletters.</p>
+                  <p>Next2Sun expects project volume of more than 70 MW in 2027.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <aside>
+            <div>about 13 hours ago</div><div>Loading...</div><div>Loading...</div>
+            <div>MESIA Business Breakfast on Smart Cities</div>
+            <div>Horizons Clean Energy Expansion India Conference</div>
+          </aside>
+        </body></html>
+        """
+
+        parsed = parse_article_html(
+            html,
+            "https://renewablesnow.com/news/next2sun-launches-eur-5m-share-issue-1300157/",
+            source,
+        )
+
+        self.assertIn("German vertical bifacial", parsed["content"])
+        self.assertIn("more than 70 MW", parsed["content"])
+        self.assertNotIn("Loading", parsed["content"])
+        self.assertNotIn("Business Breakfast", parsed["content"])
+        self.assertNotIn("Power your inbox", parsed["content"])
+        self.assertEqual(parsed["content_status"], "full")
+        self.assertEqual(
+            parsed["content_extraction"],
+            "nextjs_embedded_full_text",
+        )
+
+    def test_content_quality_rejects_loading_and_event_template_noise(self):
+        content = """
+        about 13 hours ago
+        &#x20; about 16 hours ago
+        &#x20; Loading...
+        &#x20; Loading...
+        &#x20; about 13 hours ago
+        &#x20; MESIA Business Breakfast on Smart Cities
+        &#x20; Horizons Clean Energy Expansion India Conference
+        """
+
+        self.assertEqual(
+            assess_content(content, extraction_method="trafilatura_full_text"),
+            ("incomplete", "template_or_navigation_noise"),
+        )
+
+    def test_renewables_now_lead_only_fallback_is_not_marked_full(self):
+        source = make_source("Renewables Now", "https://renewablesnow.com/news/")
+        html = """
+        <div class="info-article"><div class="paywall">
+          <p>This is only the short server-rendered lead paragraph while the
+          actual article body is still waiting for its dynamic data.</p>
+        </div></div>
+        """
+
+        parsed = parse_article_html(
+            html,
+            "https://renewablesnow.com/news/example-story-1300157/",
+            source,
+        )
+
+        self.assertEqual(parsed["content_status"], "incomplete")
+        self.assertEqual(
+            parsed["content_issue"],
+            "dynamic_full_text_unavailable",
         )
 
     def test_ne_time_uses_first_content_line_when_page_title_is_site_name(self):
