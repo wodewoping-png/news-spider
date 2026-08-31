@@ -1,26 +1,33 @@
 # 新闻渠道自主审查报告
 
-- 审查日期：2026-08-29
-- 整体状态：normal
-- 收集总量：106 篇
-- 正文可用：106 篇（100%）
-- 有产出渠道：17/45
+- 审查日期：2026-08-30
+- 整体状态：warning
+- 收集总量：76 篇
+- 正文可用：75 篇（99%）
+- 有产出渠道：9/45
 - 7 日总量中位数：199.00
+
+## 整体异常
+
+总量仅为 7 日中位数的 0.38 倍；12/45 个活跃渠道当天为 0
 
 ## 渠道异常
 
 | 级别 | 渠道 | 今日 | 前次 | 7日中位数 | 连续为0 | 异常说明 |
 |---|---|---:|---:|---:|---:|---|
 | critical | Batteries News | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
-| critical | MIT Technology Review | 0 | 2 | 2.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | NE时代 | 0 | 5 | 0.00 | 1 | 日更渠道从有产出降为 0 |
-| critical | perovskite-info | 0 | 3 | 1.00 | 1 | 日更渠道从有产出降为 0 |
+| critical | Data Center Knowledge | 0 | 1 | 2.00 | 1 | 日更渠道从有产出降为 0 |
+| critical | INSIDEEVs | 0 | 5 | 4.00 | 1 | 日更渠道从有产出降为 0 |
+| critical | MIT Technology Review | 0 | - | 2.00 | 2 | 日更渠道从有产出降为 0；已连续 2 天为 0 |
+| critical | NE时代 | 0 | - | 0.00 | 2 | 日更渠道当天没有收集到文章；已连续 2 天为 0 |
+| critical | perovskite-info | 0 | - | 1.00 | 2 | 日更渠道从有产出降为 0；已连续 2 天为 0 |
+| critical | pv magazine | 0 | 1 | 8.00 | 1 | 日更渠道从有产出降为 0 |
+| critical | 中国核电信息网-国内 | 0 | 4 | 6.00 | 1 | 日更渠道从有产出降为 0 |
 | critical | 光伏测试网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
 | critical | 北极星储能网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
 | critical | 国际能源网 | 0 | - | 0.00 | 8 | 日更渠道当天没有收集到文章；已连续 8 天为 0 |
-| critical | 电池网 | 0 | 1 | 0.00 | 1 | 日更渠道从有产出降为 0 |
-| warning | pv magazine | 1 | 10 | 8.00 | 0 | 仅为 7 日中位数的 0.12 倍 |
-| warning | the information | 2 | 8 | 7.00 | 0 | 仅为 7 日中位数的 0.29 倍 |
+| critical | 电池网 | 0 | - | 0.00 | 2 | 日更渠道当天没有收集到文章；已连续 2 天为 0 |
+| warning | interesting engineering | 11 | 20 | 20.00 | 0 | 检测到 1 篇正文不完整或包含页面模板噪声 |
 
 ## 自反馈恢复队列
 
@@ -288,6 +295,10 @@
 | pending_confirmation | 2026-08-29 | Batteries News | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-08-29 | perovskite-info | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-08-29 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
+| pending_confirmation | 2026-08-30 | Batteries News | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
+| pending_confirmation | 2026-08-30 | interesting engineering | 检测到 1 篇正文不完整或混入页面模板/导航内容；类型：public_preview_only，请检查正文选择器和内容质量规则 | - |
+| pending_confirmation | 2026-08-30 | perovskite-info | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
+| pending_confirmation | 2026-08-30 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 
 处理方式：修复渠道后运行 `python -m src.recovery confirm --source "渠道名" --note "修复说明"`；后续任务会自动补抓所有已确认的原日期缺口。
 
