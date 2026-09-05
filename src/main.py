@@ -20,7 +20,7 @@ from .date_utils import (
     normalize_published_at,
     parse_target_date,
 )
-from .http_client import DEFAULT_USER_AGENT, HttpClient
+from .http_client import DEFAULT_USER_AGENT, HttpClient, RequiredFetchError
 from .industry_classifier import (
     DEFAULT_BATCH_SIZE as DEFAULT_CLASSIFICATION_BATCH_SIZE,
     DEFAULT_MAX_CONTENT_CHARS as DEFAULT_CLASSIFICATION_CONTENT_CHARS,
@@ -72,6 +72,7 @@ RSS_DISCOVERY_DISABLED_SOURCES = {
     "x-mol",
 }
 THE_INFORMATION_SOURCE_KEY = "the information"
+THE_INFORMATION_PUBLIC_FEED = "https://www.theinformation.com/feed"
 THE_INFORMATION_SUBSCRIBER_FEED = "https://www.theinformation.com/subscriber_feed"
 THE_INFORMATION_USERNAME_ENV = "THE_INFORMATION_RSS_USERNAME"
 THE_INFORMATION_PASSWORD_ENV = "THE_INFORMATION_RSS_PASSWORD"
@@ -296,6 +297,46 @@ def resolve_feed_access(
     return configured_feed_url, None, False, "rss_public"
 
 
+def fetch_feed_with_public_fallback(
+    client: HttpClient,
+    source_name: str,
+    feed_url: str,
+    limit: int,
+    *,
+    auth: tuple[str, str] | None,
+    required: bool,
+    crawl_mode: str,
+) -> tuple[list, str]:
+    """Use the official public feed if the authenticated feed is WAF-blocked."""
+    try:
+        entries = list(
+            fetch_feed_entries(
+                client,
+                feed_url,
+                limit,
+                auth=auth,
+                required=required,
+            )
+        )
+    except RequiredFetchError:
+        if source_name.strip().lower() != THE_INFORMATION_SOURCE_KEY or not auth:
+            raise
+        logging.warning(
+            "The Information subscriber RSS was unavailable; trying official public RSS"
+        )
+        entries = list(
+            fetch_feed_entries(
+                client,
+                THE_INFORMATION_PUBLIC_FEED,
+                limit,
+            )
+        )
+        if not entries:
+            raise
+        return entries, "rss_public_fallback"
+    return entries, crawl_mode
+
+
 def has_confirmed_non_target_candidates(
     candidates_seen: int,
     date_filtered_candidates: int,
@@ -489,14 +530,14 @@ def main() -> int:
                     )
                 elif source.configured_rss_url:
                     logging.info("Using configured RSS for %s: %s", source.name, feed_url)
-                entries = list(
-                    fetch_feed_entries(
-                        client,
-                        feed_url,
-                        candidate_limit,
-                        auth=feed_auth,
-                        required=feed_required,
-                    )
+                entries, feed_crawl_mode = fetch_feed_with_public_fallback(
+                    client,
+                    source.name,
+                    feed_url,
+                    candidate_limit,
+                    auth=feed_auth,
+                    required=feed_required,
+                    crawl_mode=feed_crawl_mode,
                 )
                 if feed_required and not entries:
                     raise RuntimeError(

@@ -21,6 +21,8 @@ BROWSER_USER_AGENT = (
     "AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/138.0 Safari/537.36"
 )
+CLOUDFLARE_CHALLENGE_MAX_ATTEMPTS = 3
+CLOUDFLARE_CHALLENGE_RETRY_DELAYS = (2, 5)
 # Backward-compatible name used by the dedicated ScienceNet scraper.
 SCIENCENET_BROWSER_USER_AGENT = BROWSER_USER_AGENT
 
@@ -38,6 +40,14 @@ def is_access_challenge_html(value: str) -> bool:
     return any(all(marker in probe for marker in group) for group in ACCESS_CHALLENGE_SIGNATURE_GROUPS)
 
 
+def is_cloudflare_challenge_response(response: requests.Response) -> bool:
+    """Return whether Cloudflare replaced the requested resource with a challenge."""
+    mitigated = str(response.headers.get("cf-mitigated") or "").lower()
+    if mitigated == "challenge":
+        return True
+    return response.status_code == 403 and is_access_challenge_html(response.text)
+
+
 def request_headers_for_url(
     url: str,
     user_agent: str = DEFAULT_USER_AGENT,
@@ -46,7 +56,11 @@ def request_headers_for_url(
     if user_agent != DEFAULT_USER_AGENT:
         return {}
     hostname = (urlparse(url).hostname or "").lower()
-    browser_ua_domains = ("sciencenet.cn", "insideevs.com")
+    browser_ua_domains = (
+        "sciencenet.cn",
+        "insideevs.com",
+        "theinformation.com",
+    )
     if any(
         hostname == domain or hostname.endswith(f".{domain}")
         for domain in browser_ua_domains
@@ -154,12 +168,36 @@ class HttpClient:
 
         time.sleep(self.sleep_seconds)
         try:
-            response = self.session.get(
-                url,
-                timeout=self.timeout,
-                headers=request_headers_for_url(url, self.user_agent),
-                auth=auth,
-            )
+            response = None
+            for attempt in range(CLOUDFLARE_CHALLENGE_MAX_ATTEMPTS):
+                response = self.session.get(
+                    url,
+                    timeout=self.timeout,
+                    headers=request_headers_for_url(url, self.user_agent),
+                    auth=auth,
+                )
+                if not is_cloudflare_challenge_response(response):
+                    break
+                if attempt < CLOUDFLARE_CHALLENGE_MAX_ATTEMPTS - 1:
+                    delay = CLOUDFLARE_CHALLENGE_RETRY_DELAYS[attempt]
+                    logging.warning(
+                        "Cloudflare challenge for %s; retrying in %ss (%s/%s)",
+                        url,
+                        delay,
+                        attempt + 1,
+                        CLOUDFLARE_CHALLENGE_MAX_ATTEMPTS,
+                    )
+                    time.sleep(delay)
+            if response is None:
+                raise requests.RequestException("request produced no response")
+            if is_cloudflare_challenge_response(response):
+                if required:
+                    raise RequiredFetchError(
+                        f"Required fetch failed: {url} "
+                        f"(HTTP {response.status_code}; Cloudflare challenge)"
+                    )
+                logging.warning("Cloudflare challenge response: %s", response.url)
+                return None
             response.raise_for_status()
         except requests.RequestException as exc:
             if required:
