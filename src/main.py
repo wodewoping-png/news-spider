@@ -53,6 +53,7 @@ RSS_DISCOVERY_DISABLED_SOURCES = {
     "batteries news",
     "volta foundation",
     "pv magazine c&i pv",
+    "量子位",
     "科学网新闻",
     "新华网科技",
     "h2 view",

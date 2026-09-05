@@ -314,17 +314,17 @@ class DateAndUrlTests(unittest.TestCase):
         self.assertEqual(added, 1)
 
     def test_uied_discovery_entry_keeps_original_publisher_name(self):
-        source = make_source("机器之心", "https://www.jiqizhixin.com/")
+        source = make_source("少数派", "https://sspai.com/")
         entry = FeedEntry(
             "AI research headline",
-            "https://www.jiqizhixin.com/articles/2026-09-05",
+            "https://sspai.com/post/114154",
             "Sat, 05 Sep 2026 08:00:00 +0800",
             "Original publisher summary with enough useful discovery context.",
         )
         with patch("src.main.fetch_and_parse_article", return_value=None):
             article = enrich_from_rss_entry(None, source, entry)
 
-        self.assertEqual(article["source_name"], "机器之心")
+        self.assertEqual(article["source_name"], "少数派")
         self.assertNotEqual(article["source_name"], "UIED AI新闻")
 
 
