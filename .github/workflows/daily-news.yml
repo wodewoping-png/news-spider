@@ -15,6 +15,11 @@ on:
         required: false
         default: false
         type: boolean
+      the_information_only:
+        description: "Run only the authenticated The Information recovery check"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: news-spider-data-${{ github.ref }}
@@ -25,6 +30,7 @@ permissions:
 
 jobs:
   crawl:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.the_information_only != true }}
     runs-on: ubuntu-latest
     outputs:
       retry_the_information: ${{ steps.the_information_status.outputs.retry }}
@@ -176,10 +182,12 @@ jobs:
           python -m src.channel_ops check --warn-only
 
   recover-the-information:
-    name: Retry The Information on a fresh runner
+    name: Retry The Information on alternate runner
     needs: crawl
-    if: ${{ needs.crawl.result == 'success' && needs.crawl.outputs.retry_the_information == 'true' }}
-    runs-on: ubuntu-latest
+    if: ${{ always() && ((github.event_name == 'workflow_dispatch' && inputs.the_information_only == true) || (needs.crawl.result == 'success' && needs.crawl.outputs.retry_the_information == 'true')) }}
+    # The normal crawl already runs on Azure-hosted Linux. A macOS runner uses a
+    # different standard GitHub egress path without solving or bypassing challenges.
+    runs-on: macos-latest
     permissions:
       contents: write
     env:
