@@ -29,11 +29,13 @@ from src.main import (
     expects_daily_output,
     fetch_feed_with_public_fallback,
     has_confirmed_non_target_candidates,
+    is_uied_aggregator_feed,
+    merge_feed_entries,
     resolve_feed_access,
 )
 from src.rss_discovery import FeedEntry, parse_feed
 from src.scrapers.generic import GenericListingScraper
-from src.scrapers.multi_page import H2ViewScraper
+from src.scrapers.multi_page import H2ViewScraper, PerovskiteInfoScraper
 from src.scrapers.renewables_now import RenewablesNowScraper
 from src.scrapers.science_net import ScienceNetScraper
 from src.scrapers.xinhua_tech import XinhuaTechScraper
@@ -272,6 +274,59 @@ class DateAndUrlTests(unittest.TestCase):
         )
         self.assertEqual(source.configured_rss_url, "https://example.com/feed")
 
+    def test_configured_rss_urls_include_uied_supplement_in_note_order(self):
+        source = Source(
+            name="IT之家",
+            media_type="",
+            domain="",
+            sub_domain="",
+            frequency="",
+            description="",
+            note=(
+                "RSS: https://www.ithome.com/rss/；"
+                "聚合备用RSS: https://uiedtool.com/rss-proxy/rss；"
+                "聚合备用RSS: https://uiedtool.com/rss-proxy/rss"
+            ),
+            url="https://www.ithome.com/",
+        )
+        self.assertEqual(
+            source.configured_rss_urls,
+            (
+                "https://www.ithome.com/rss/",
+                "https://uiedtool.com/rss-proxy/rss",
+            ),
+        )
+
+    def test_uied_feed_is_identified_as_discovery_platform(self):
+        self.assertTrue(
+            is_uied_aggregator_feed("https://uiedtool.com/rss-proxy/rss")
+        )
+        self.assertFalse(is_uied_aggregator_feed("https://www.ithome.com/rss/"))
+
+    def test_feed_merge_deduplicates_original_article_urls(self):
+        first = FeedEntry("one", "https://example.com/a", "")
+        duplicate = FeedEntry("one duplicate", "https://www.example.com/a/", "")
+        second = FeedEntry("two", "https://example.com/b", "")
+
+        merged, added = merge_feed_entries([first], [duplicate, second])
+
+        self.assertEqual(merged, [first, second])
+        self.assertEqual(added, 1)
+
+    def test_uied_discovery_entry_keeps_original_publisher_name(self):
+        source = make_source("机器之心", "https://www.jiqizhixin.com/")
+        entry = FeedEntry(
+            "AI research headline",
+            "https://www.jiqizhixin.com/articles/2026-09-05",
+            "Sat, 05 Sep 2026 08:00:00 +0800",
+            "Original publisher summary with enough useful discovery context.",
+        )
+        with patch("src.main.fetch_and_parse_article", return_value=None):
+            article = enrich_from_rss_entry(None, source, entry)
+
+        self.assertEqual(article["source_name"], "机器之心")
+        self.assertNotEqual(article["source_name"], "UIED AI新闻")
+
 
     def test_compact_xinhua_date_is_read_from_url(self):
         url = "https://www.news.cn/tech/20260720/abc/c.html"
@@ -478,6 +533,29 @@ class ListingScraperTests(unittest.TestCase):
         urls = H2ViewScraper(client, source).discover_article_urls(20)
         self.assertEqual(len(urls), 1)
         self.assertIn("2250675.article", urls[0])
+
+    def test_perovskite_info_discovers_drupal_story_teasers(self):
+        source = make_source(
+            "perovskite-info",
+            "https://www.perovskite-info.com/perovskite-solar",
+        )
+        html = """
+        <div class="view-content">
+          <article class="node node--type-story node--view-mode-teaser">
+            <h2 class="field--name-title">
+              <a href="/stable-perovskite-cell">Stable perovskite cell reaches milestone</a>
+            </h2>
+          </article>
+        </div>
+        """
+        client = StaticClient({source.url: html})
+
+        urls = PerovskiteInfoScraper(client, source).discover_article_urls(20)
+
+        self.assertEqual(
+            urls,
+            ["https://www.perovskite-info.com/stable-perovskite-cell"],
+        )
 
     def test_nested_json_ld_publish_date_is_parsed(self):
         source = make_source("perovskite-info", "https://www.perovskite-info.com/")
