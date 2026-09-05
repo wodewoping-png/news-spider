@@ -12,6 +12,7 @@ from src.article_parser import normalize_source_date, parse_article_html
 from src.content_quality import assess_content
 from src.date_utils import date_from_url, default_target_date, parse_target_date
 from src.http_client import (
+    BROWSER_USER_AGENT,
     FetchResult,
     HttpClient,
     RequiredFetchError,
@@ -21,14 +22,16 @@ from src.http_client import (
 from src.load_sources import Source, expects_output_on_date
 from src.main import (
     DEFAULT_MIN_CONTENT_CHARS,
+    THE_INFORMATION_PUBLIC_FEED,
     THE_INFORMATION_SUBSCRIBER_FEED,
     default_csv_path,
     enrich_from_rss_entry,
     expects_daily_output,
+    fetch_feed_with_public_fallback,
     has_confirmed_non_target_candidates,
     resolve_feed_access,
 )
-from src.rss_discovery import parse_feed
+from src.rss_discovery import FeedEntry, parse_feed
 from src.scrapers.generic import GenericListingScraper
 from src.scrapers.multi_page import H2ViewScraper
 from src.scrapers.renewables_now import RenewablesNowScraper
@@ -178,6 +181,73 @@ class DateAndUrlTests(unittest.TestCase):
         client = HttpClient(sleep_seconds=0, respect_robots=False)
         with patch.object(client.session, "get", return_value=response):
             self.assertIsNone(client.get(response.url, allow_non_html=False))
+
+    def test_the_information_uses_browser_user_agent(self):
+        headers = request_headers_for_url(THE_INFORMATION_SUBSCRIBER_FEED)
+
+        self.assertEqual(headers["User-Agent"], BROWSER_USER_AGENT)
+
+    def test_required_cloudflare_challenge_is_retried_and_diagnosed(self):
+        response = Mock()
+        response.status_code = 403
+        response.url = THE_INFORMATION_SUBSCRIBER_FEED
+        response.headers = {
+            "content-type": "text/html; charset=UTF-8",
+            "cf-mitigated": "challenge",
+            "server": "cloudflare",
+        }
+        response.text = "<title>Just a moment...</title>"
+        client = HttpClient(sleep_seconds=0, respect_robots=False)
+
+        with (
+            patch.object(client.session, "get", return_value=response) as request,
+            patch("src.http_client.time.sleep"),
+            self.assertRaisesRegex(RequiredFetchError, "Cloudflare challenge"),
+        ):
+            client.get(
+                THE_INFORMATION_SUBSCRIBER_FEED,
+                auth=("subscriber@example.com", "secret"),
+                required=True,
+            )
+
+        self.assertEqual(request.call_count, 3)
+
+    def test_cloudflare_retry_can_recover_without_losing_auth(self):
+        challenge = Mock()
+        challenge.status_code = 403
+        challenge.url = THE_INFORMATION_SUBSCRIBER_FEED
+        challenge.headers = {"cf-mitigated": "challenge"}
+        challenge.text = "<title>Just a moment...</title>"
+        success = Mock()
+        success.status_code = 200
+        success.url = THE_INFORMATION_SUBSCRIBER_FEED
+        success.headers = {"content-type": "application/atom+xml"}
+        success.encoding = "utf-8"
+        success.text = "<feed><title>The Information</title></feed>"
+        success.raise_for_status.return_value = None
+        client = HttpClient(sleep_seconds=0, respect_robots=False)
+
+        with (
+            patch.object(
+                client.session,
+                "get",
+                side_effect=[challenge, success],
+            ) as request,
+            patch("src.http_client.time.sleep"),
+        ):
+            result = client.get(
+                THE_INFORMATION_SUBSCRIBER_FEED,
+                auth=("subscriber@example.com", "secret"),
+                required=True,
+            )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(request.call_count, 2)
+        for call in request.call_args_list:
+            self.assertEqual(
+                call.kwargs["auth"],
+                ("subscriber@example.com", "secret"),
+            )
 
     def test_low_frequency_source_is_not_expected_daily(self):
         self.assertFalse(expects_daily_output("\u6bcf\u5468"))
@@ -594,6 +664,34 @@ class ListingScraperTests(unittest.TestCase):
         self.assertIsNone(auth)
         self.assertFalse(required)
         self.assertEqual(crawl_mode, "rss_public")
+
+    def test_the_information_falls_back_to_official_public_feed(self):
+        public_entry = FeedEntry(
+            title="Public headline",
+            url="https://www.theinformation.com/articles/public-headline",
+            published_at="Fri, 04 Sep 2026 12:00:00 +0000",
+        )
+        with patch(
+            "src.main.fetch_feed_entries",
+            side_effect=[
+                RequiredFetchError("Cloudflare challenge"),
+                [public_entry],
+            ],
+        ) as fetch:
+            entries, crawl_mode = fetch_feed_with_public_fallback(
+                object(),
+                "the information",
+                THE_INFORMATION_SUBSCRIBER_FEED,
+                100,
+                auth=("subscriber@example.com", "secret"),
+                required=True,
+                crawl_mode="rss_authenticated",
+            )
+
+        self.assertEqual(entries, [public_entry])
+        self.assertEqual(crawl_mode, "rss_public_fallback")
+        self.assertEqual(fetch.call_args_list[1].args[1], THE_INFORMATION_PUBLIC_FEED)
+        self.assertEqual(fetch.call_args_list[1].kwargs, {})
 
     def test_required_authenticated_fetch_forwards_auth_without_leaking_it(self):
         response = Mock()
