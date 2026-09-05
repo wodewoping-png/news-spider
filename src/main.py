@@ -7,6 +7,7 @@ import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from statistics import median
+from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
 from .article_parser import fetch_and_parse_article, utc_now_iso
@@ -51,7 +52,6 @@ DEFAULT_CSV_TIMEZONE = DEFAULT_TIMEZONE
 RSS_DISCOVERY_DISABLED_SOURCES = {
     "batteries news",
     "volta foundation",
-    "perovskite-info",
     "pv magazine c&i pv",
     "科学网新闻",
     "新华网科技",
@@ -77,6 +77,27 @@ THE_INFORMATION_SUBSCRIBER_FEED = "https://www.theinformation.com/subscriber_fee
 THE_INFORMATION_USERNAME_ENV = "THE_INFORMATION_RSS_USERNAME"
 THE_INFORMATION_PASSWORD_ENV = "THE_INFORMATION_RSS_PASSWORD"
 DEFAULT_MIN_CONTENT_CHARS = 500
+UIED_AGGREGATOR_HOST = "uiedtool.com"
+
+
+def is_uied_aggregator_feed(url: str) -> bool:
+    host = urlparse(url).netloc.lower().split(":", 1)[0]
+    return host == UIED_AGGREGATOR_HOST or host.endswith(f".{UIED_AGGREGATOR_HOST}")
+
+
+def merge_feed_entries(primary: list, supplemental: list) -> tuple[list, int]:
+    """Merge discovery feeds by canonical article URL without changing attribution."""
+    merged = list(primary)
+    seen = {canonicalize_url(entry.url) for entry in primary if entry.url}
+    added = 0
+    for entry in supplemental:
+        key = canonicalize_url(entry.url)
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        merged.append(entry)
+        added += 1
+    return merged, added
 
 
 def default_csv_path(
@@ -506,7 +527,11 @@ def main() -> int:
             scraper_handles_feed = bool(
                 getattr(scraper_class, "handles_configured_feed", False)
             )
-            feed_url = None if scraper_handles_feed else source.configured_rss_url
+            configured_feed_urls = (
+                () if scraper_handles_feed else source.configured_rss_urls
+            )
+            feed_url = configured_feed_urls[0] if configured_feed_urls else None
+            supplemental_feed_urls = configured_feed_urls[1:]
             feed_auth = None
             feed_required = False
             feed_crawl_mode = "rss"
@@ -529,7 +554,15 @@ def main() -> int:
                         source.name,
                     )
                 elif source.configured_rss_url:
-                    logging.info("Using configured RSS for %s: %s", source.name, feed_url)
+                    if is_uied_aggregator_feed(feed_url):
+                        logging.info(
+                            "Using UIED discovery feed for original source %s: %s",
+                            source.name,
+                            feed_url,
+                        )
+                        feed_crawl_mode = "rss_aggregator"
+                    else:
+                        logging.info("Using configured RSS for %s: %s", source.name, feed_url)
                 entries, feed_crawl_mode = fetch_feed_with_public_fallback(
                     client,
                     source.name,
@@ -539,6 +572,31 @@ def main() -> int:
                     required=feed_required,
                     crawl_mode=feed_crawl_mode,
                 )
+                primary_entry_count = len(entries)
+                for supplemental_url in supplemental_feed_urls:
+                    supplemental_entries = list(
+                        fetch_feed_entries(
+                            client,
+                            supplemental_url,
+                            candidate_limit,
+                        )
+                    )
+                    entries, added = merge_feed_entries(
+                        entries,
+                        supplemental_entries,
+                    )
+                    if added:
+                        logging.info(
+                            "UIED discovery supplemented %s with %s candidates: %s",
+                            source.name,
+                            added,
+                            supplemental_url,
+                        )
+                        feed_crawl_mode = (
+                            "rss_aggregator_fallback"
+                            if primary_entry_count == 0
+                            else "rss_with_aggregator"
+                        )
                 if feed_required and not entries:
                     raise RuntimeError(
                         "Authenticated subscriber RSS returned no entries"

@@ -53,13 +53,23 @@ class Source:
 
     @property
     def configured_rss_url(self) -> str:
-        match = re.search(
+        return self.configured_rss_urls[0] if self.configured_rss_urls else ""
+
+    @property
+    def configured_rss_urls(self) -> tuple[str, ...]:
+        """Return primary and supplemental RSS URLs in note order."""
+        matches = re.findall(
             r"(?:RSS|rss)\s*[:\uFF1A]\s*(https?://[^\s\u3002\uFF1B;,\uFF0C]+)",
             self.note,
         )
-        if not match:
-            return ""
-        return match.group(1).rstrip("。；;，,")
+        urls: list[str] = []
+        seen: set[str] = set()
+        for match in matches:
+            url = match.rstrip("。；;，,")
+            if url and url not in seen:
+                seen.add(url)
+                urls.append(url)
+        return tuple(urls)
 
 
 def default_sources_path() -> Path:
