@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-09-05T08:27:35.360739+08:00",
+  "updated_at": "2026-09-05T14:26:20.444737+08:00",
   "incidents": [
     {
       "id": "2026-07-20::4C Offshore",
@@ -9001,10 +9001,10 @@
       "source": "Batteries News",
       "date": "2026-09-04",
       "frequency": "实时",
-      "status": "pending_confirmation",
+      "status": "ignored",
       "detected_at": "2026-09-05T08:27:35.360739+08:00",
       "confirmed_at": "",
-      "confirmation_note": "",
+      "confirmation_note": "all observed candidates were published outside the target date (2026-08-08 to 2026-09-01)",
       "attempts": 0,
       "last_attempt_at": "",
       "recovered_articles": 0,
@@ -9026,7 +9026,8 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00",
+      "ignored_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::H2 View",
@@ -9058,21 +9059,21 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::perovskite-info",
       "source": "perovskite-info",
       "date": "2026-09-04",
       "frequency": "实时",
-      "status": "pending_confirmation",
+      "status": "recovered",
       "detected_at": "2026-09-05T08:27:35.360739+08:00",
       "confirmed_at": "",
       "confirmation_note": "",
       "attempts": 0,
       "last_attempt_at": "",
-      "recovered_articles": 0,
-      "recovered_at": "",
+      "recovered_articles": 1,
+      "recovered_at": "2026-09-05T14:26:20.444737+08:00",
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero",
       "crawl_status": "zero",
@@ -9090,7 +9091,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::the information",
@@ -9117,12 +9118,12 @@
       "candidate_date_max": "",
       "diagnosis_code": "access_denied",
       "diagnosis": "站点拒绝访问（HTTP 403），检查反爬、请求头或访问权限",
-      "technical_reason": "Required fetch failed: https://www.theinformation.com/subscriber_feed (HTTP 403)",
+      "technical_reason": "Required fetch failed: https://www.theinformation.com/subscriber_feed (HTTP 403; Cloudflare challenge)",
       "incomplete_articles": 0,
       "content_issues": "",
       "error_type": "RequiredFetchError",
-      "failed_at": "2026-09-05T07:51:52.360735+08:00",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "failed_at": "2026-09-05T13:55:44.148101+08:00",
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::中国电力新闻网-新能源",
@@ -9154,7 +9155,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::中国电力新闻网-科技",
@@ -9186,7 +9187,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::中国能源网",
@@ -9218,7 +9219,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::光伏测试网",
@@ -9250,7 +9251,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::北极星储能网",
@@ -9282,7 +9283,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     },
     {
       "id": "2026-09-04::国际能源网",
@@ -9314,7 +9315,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-05T08:27:35.360739+08:00"
+      "updated_at": "2026-09-05T14:26:20.444737+08:00"
     }
   ]
 }
