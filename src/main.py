@@ -177,6 +177,11 @@ def parse_args() -> argparse.Namespace:
         help="Only crawl the exact source name; may be repeated (used by recovery jobs).",
     )
     parser.add_argument(
+        "--exclude-source",
+        action="append",
+        help="Skip an exact source name; may be repeated for externally supplied channels.",
+    )
+    parser.add_argument(
         "--skip-audit",
         action="store_true",
         help="Skip daily statistics/audit update (used by isolated historical recovery jobs).",
@@ -441,6 +446,18 @@ def main() -> int:
         if missing_sources:
             logging.error("Requested sources not found: %s", missing_sources)
             return 2
+    excluded_sources = {
+        str(name).strip().lower()
+        for name in (getattr(args, "exclude_source", None) or [])
+        if name
+    }
+    if excluded_sources:
+        sources = [
+            source
+            for source in sources
+            if source.name.strip().lower() not in excluded_sources
+        ]
+        logging.info("Externally supplied sources excluded: %s", sorted(excluded_sources))
     existing_quality = load_existing_content_quality(args.output)
     existing_urls = set(existing_quality)
     client = HttpClient(

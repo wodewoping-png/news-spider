@@ -89,9 +89,13 @@ jobs:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL || 'glm-5.2' }}
           ZAI_API_URL: ${{ vars.ZAI_API_URL || 'https://open.bigmodel.cn/api/anthropic' }}
+          THE_INFORMATION_LOCAL_ENABLED: ${{ vars.THE_INFORMATION_LOCAL_ENABLED }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           args=(--sources sources.xlsx)
+          if [ "$THE_INFORMATION_LOCAL_ENABLED" = "true" ]; then
+            args+=(--exclude-source "the information")
+          fi
           if [ -n "$TARGET_DATE" ]; then
             args+=(--target-date "$TARGET_DATE")
           fi
