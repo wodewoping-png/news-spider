@@ -306,6 +306,7 @@ class ChannelOperationsTests(unittest.TestCase):
                 output_path=root / "data" / "articles.jsonl",
                 logs_dir=logs,
                 target_date="2026-07-28",
+                exclude_sources=("the information",),
                 command_runner=runner,
                 send_notifications=False,
             )
@@ -313,6 +314,9 @@ class ChannelOperationsTests(unittest.TestCase):
             self.assertEqual(result, 0)
             self.assertEqual(len(commands), 1)
             self.assertIn("--target-date", commands[0])
+            self.assertEqual(
+                commands[0][-2:], ["--exclude-source", "the information"]
+            )
             self.assertTrue((logs / "channel-ops-report.json").exists())
 
 

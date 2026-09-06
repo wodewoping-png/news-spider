@@ -39,16 +39,53 @@ Excel 表头必须包含：
 
 ### The Information 订阅 RSS
 
-The Information 提供官方认证订阅 Feed。需要全文时，在 GitHub Actions Secrets 中配置：
+The Information 提供官方认证订阅 Feed。由于 GitHub 托管 Runner 的出口地址可能被站点
+安全策略拒绝，本项目默认由本地 Windows 计划任务抓取订阅全文，再由 GitHub 幂等汇总；
+日常云端全渠道任务会跳过该来源。GitHub 中保留的订阅 Secrets 仅用于手动应急恢复，不参与
+每日主任务。
+
+本地 Windows 账户需要配置：
 
 - `THE_INFORMATION_RSS_USERNAME`
 - `THE_INFORMATION_RSS_PASSWORD`
 
-两项都存在时，程序仅对官方
+两项都存在时，本地程序仅对官方
 `https://www.theinformation.com/subscriber_feed` 使用 HTTP Basic 认证，并直接采用 Feed
 内的订阅正文；凭据不会写入源码、Excel、日志或抓取数据。两项均未配置时继续使用公开
 `/feed` 摘要。只配置其中一项、认证被拒绝或认证 Feed 为空时，该渠道会记录为失败并进入
 现有告警/修复流程，同时不影响其他渠道继续抓取。
+
+本地发布脚本固定抓取前一自然日，并把经过完整性校验的日分片提交到
+`the-information-inbox` 分支；它不直接修改 `main` 的总库或当日 CSV：
+
+```powershell
+.\tools\publish_local_the_information.ps1
+```
+
+第一次启用时，可注册每天北京时间 07:15 执行的 Windows 计划任务：
+
+```powershell
+.\tools\register_the_information_task.ps1 -DailyAt "07:15"
+```
+
+确认本地任务能够成功上传后，在 GitHub 仓库 Variables 中将
+`THE_INFORMATION_LOCAL_ENABLED` 设为 `true`。启用前，云端仍沿用原抓取方式且不会执行
+10:30 的本地分片缺失检查；启用后，云端每日主任务才会跳过 The Information。
+
+`ingest-local-the-information.yml` 在 inbox 分支更新后立即运行，并与每日主任务共用
+`news-spider-data-main` 并发锁。无论本地抓取先运行还是 GitHub 主任务先运行，最终都会按
+规范化原文 URL 合并到 `data/articles.jsonl`、更新对应的 `articles-YYYY-MM-DD.csv`，且完整
+订阅正文会替换已有公开摘要。重复上传同一分片不会生成重复文章。
+
+工作流每天北京时间 10:30 还会检查前一日 Manifest。未收到本地分片时才发送钉钉告警；
+“认证成功但当天确实零篇”由 Manifest 明确记录，不会被误判为本地任务漏跑。历史日期可用：
+
+```powershell
+.\tools\publish_local_the_information.ps1 -TargetDate "2026-09-04"
+```
+
+日分片包含付费订阅正文，仓库必须保持私有；不要把 `the-information-inbox` 分支或
+`data/articles.jsonl` 发布到公开仓库。
 
 ### RIOnews 渠道输入
 

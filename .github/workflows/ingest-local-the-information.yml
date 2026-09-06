@@ -1,0 +1,154 @@
+name: Ingest Local The Information
+
+on:
+  push:
+    branches:
+      - the-information-inbox
+    paths:
+      - incoming/the-information/**
+  schedule:
+    # 10:30 Asia/Shanghai: deadline check for the previous publication day.
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: "Publication date to ingest (YYYY-MM-DD); defaults to yesterday in Asia/Shanghai"
+        required: false
+        type: string
+
+concurrency:
+  group: news-spider-data-main
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  ingest:
+    if: ${{ github.event_name != 'schedule' || vars.THE_INFORMATION_LOCAL_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+      ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    steps:
+      - name: Checkout main data
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch inbox and resolve target date
+        id: capture
+        env:
+          REQUESTED_DATE: ${{ inputs.target_date }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          git fetch origin the-information-inbox:refs/remotes/origin/the-information-inbox || true
+          target_date="$REQUESTED_DATE"
+          if [ -z "$target_date" ] && [ "$EVENT_NAME" = "push" ]; then
+            target_date="$(
+              git diff-tree --no-commit-id --name-only -r "$EVENT_SHA" 2>/dev/null \
+                | sed -n 's#^incoming/the-information/\([0-9-]*\)\.manifest\.json$#\1#p' \
+                | tail -n 1
+            )"
+          fi
+          if [ -z "$target_date" ]; then
+            target_date="$(TZ=Asia/Shanghai date -d yesterday +%F)"
+          fi
+          if ! [[ "$target_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "Invalid target date: $target_date" >&2
+            exit 2
+          fi
+          echo "target_date=$target_date" >> "$GITHUB_OUTPUT"
+
+          capture_dir="$RUNNER_TEMP/the-information-capture"
+          mkdir -p "$capture_dir"
+          fragment="incoming/the-information/$target_date.jsonl"
+          manifest="incoming/the-information/$target_date.manifest.json"
+          if git cat-file -e "origin/the-information-inbox:$fragment" 2>/dev/null \
+            && git cat-file -e "origin/the-information-inbox:$manifest" 2>/dev/null; then
+            git show "origin/the-information-inbox:$fragment" > "$capture_dir/$target_date.jsonl"
+            git show "origin/the-information-inbox:$manifest" > "$capture_dir/$target_date.manifest.json"
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify missing local capture at deadline
+        if: ${{ steps.capture.outputs.available != 'true' && github.event_name == 'schedule' }}
+        env:
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD || secrets.DINGTALK_KEYWORD }}
+        run: |
+          python -m src.local_the_information notify \
+            --target-date "${{ steps.capture.outputs.target_date }}" \
+            --kind missing
+          exit 1
+
+      - name: Stop when a manually requested capture is unavailable
+        if: ${{ steps.capture.outputs.available != 'true' && github.event_name != 'schedule' }}
+        run: |
+          echo "The Information capture is not available for ${{ steps.capture.outputs.target_date }}" >&2
+          exit 1
+
+      - name: Merge authenticated local capture
+        if: ${{ steps.capture.outputs.available == 'true' }}
+        env:
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          ZAI_MODEL: ${{ vars.ZAI_MODEL || 'glm-5.2' }}
+          ZAI_API_URL: ${{ vars.ZAI_API_URL || 'https://open.bigmodel.cn/api/anthropic' }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD || secrets.DINGTALK_KEYWORD }}
+        run: |
+          target_date="${{ steps.capture.outputs.target_date }}"
+          capture_dir="$RUNNER_TEMP/the-information-capture"
+          if ! python -m src.local_the_information ingest \
+            --fragment "$capture_dir/$target_date.jsonl" \
+            --manifest "$capture_dir/$target_date.manifest.json" \
+            --target-date "$target_date"; then
+            python -m src.local_the_information notify \
+              --target-date "$target_date" \
+              --kind invalid
+            exit 1
+          fi
+          python -m src.channel_ops notify
+
+      - name: Upload merged data and logs
+        if: ${{ steps.capture.outputs.available == 'true' }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: the-information-local-ingest-${{ steps.capture.outputs.target_date }}
+          path: |
+            data/
+            logs/
+          if-no-files-found: error
+
+      - name: Commit merged daily data
+        if: ${{ steps.capture.outputs.available == 'true' }}
+        run: |
+          branch="${{ github.event.repository.default_branch }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data logs
+          if git diff --cached --quiet; then
+            echo "Capture was already ingested; no data changes to commit."
+          else
+            git commit -m "chore: ingest local The Information ${{ steps.capture.outputs.target_date }}"
+            git pull --rebase --autostash origin "$branch"
+            git push origin "HEAD:$branch"
+          fi

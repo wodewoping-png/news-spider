@@ -644,6 +644,7 @@ def run_cycle(
     target_date: str = "",
     limit_per_source: int = 20,
     candidate_limit: int = 100,
+    exclude_sources: tuple[str, ...] = (),
     command_runner: CommandRunner = _run_command,
     send_notifications: bool = True,
     auto_backfill_missing_runs: bool = True,
@@ -676,6 +677,8 @@ def run_cycle(
     ]
     if target_date:
         command.extend(["--target-date", target_date])
+    for source in exclude_sources:
+        command.extend(["--exclude-source", source])
     return_code = command_runner(command)
     current_health_digest = _file_digest(health_path)
     if current_health_digest and current_health_digest != previous_health_digest:
@@ -751,6 +754,12 @@ def parse_args() -> argparse.Namespace:
     cycle.add_argument("--target-date", default="")
     cycle.add_argument("--limit-per-source", type=int, default=20)
     cycle.add_argument("--candidate-limit", type=int, default=100)
+    cycle.add_argument(
+        "--exclude-source",
+        action="append",
+        default=[],
+        help="由外部日分片供应、无需云端直接抓取的渠道；可重复指定",
+    )
     cycle.add_argument("--no-notify", action="store_true")
     cycle.add_argument(
         "--no-auto-backfill",
@@ -793,6 +802,7 @@ def main() -> int:
             target_date=args.target_date,
             limit_per_source=args.limit_per_source,
             candidate_limit=args.candidate_limit,
+            exclude_sources=tuple(args.exclude_source),
             send_notifications=not args.no_notify,
             auto_backfill_missing_runs=not args.no_auto_backfill,
         )
