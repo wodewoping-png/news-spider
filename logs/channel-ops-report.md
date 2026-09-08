@@ -1,10 +1,10 @@
 # 渠道运维总览
 
-- 生成时间：2026-09-08T08:50:44.472746+08:00
+- 生成时间：2026-09-08T17:32:56.885102+08:00
 - 渠道数：61
-- 健康/正常空闲：40
-- 异常渠道：7
-- 待处理缺口：318
+- 健康/正常空闲：41
+- 异常渠道：6
+- 待处理缺口：317
 
 ## 需要处理的渠道
 
@@ -28,7 +28,7 @@
 | Renewables Now | 2026-09-07 | healthy | 1358 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
 | scitechdaily | 2026-09-07 | healthy | 6603 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
 | Supply Chain Digital | 2026-09-07 | healthy | 5190 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
-| the information | 2026-09-07 | failed | 0 | 0 | 0 | 5 | 4 | Required fetch failed: https://www.theinformation.com/subscriber_feed (HTTP 403; Cloudflare challenge) | repair_then_confirm |
+| the information | 2026-09-07 | healthy | 645 | 0 | 1 | 0 | 3 | - | repair_then_confirm |
 | 中国核电信息网-国内 | 2026-09-07 | healthy | 682 | 0 | 0 | 0 | 3 | - | repair_then_reconfirm |
 | 中国核电信息网-国际 | 2026-09-07 | healthy | 659 | 0 | 6 | 0 | 2 | - | repair_then_reconfirm |
 | 中国电力新闻网-新能源 | 2026-09-07 | healthy | 785 | 0 | 0 | 0 | 6 | - | repair_then_confirm |
