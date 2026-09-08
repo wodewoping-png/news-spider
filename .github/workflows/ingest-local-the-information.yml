@@ -105,7 +105,7 @@ jobs:
           echo "The Information capture is not available for ${{ steps.capture.outputs.target_date }}" >&2
           exit 1
 
-      - name: Merge authenticated local capture
+      - name: Merge local public RSS capture
         if: ${{ steps.capture.outputs.available == 'true' }}
         env:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}

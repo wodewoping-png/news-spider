@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 from .audit import run_daily_audit
 from .channel_ops import reconcile
+from .content_quality import PUBLIC_RSS_SUMMARY_POLICY, is_usable_article
 from .date_utils import DEFAULT_TIMEZONE, article_date
 from .industry_classifier import ZAIIndustryClassifier, classify_jsonl
 from .notifications import NotificationError, send_dingtalk
@@ -18,7 +19,13 @@ from .storage import export_csv, upsert_jsonl
 
 
 SOURCE_NAME = "the information"
-MANIFEST_VERSION = 1
+MANIFEST_VERSION = 2
+SUPPORTED_MANIFEST_VERSIONS = {1, MANIFEST_VERSION}
+PUBLIC_CAPTURE_MODES = {
+    "rss_public",
+    "rss_public_fallback",
+    "rss_public_reader",
+}
 
 
 class LocalCaptureError(RuntimeError):
@@ -73,6 +80,7 @@ def _validate_records(
     target_date: date,
     *,
     require_full_text: bool,
+    require_public_summary: bool = False,
 ) -> None:
     for index, item in enumerate(records, start=1):
         source = str(item.get("source_name") or "").strip().lower()
@@ -88,6 +96,14 @@ def _validate_records(
             raise LocalCaptureError(f"record {index} has no URL")
         if require_full_text and str(item.get("content_status") or "").lower() != "full":
             raise LocalCaptureError(f"record {index} is not verified as full text")
+        if require_public_summary and (
+            str(item.get("content_policy") or "").strip().lower()
+            != PUBLIC_RSS_SUMMARY_POLICY
+            or not is_usable_article(item)
+        ):
+            raise LocalCaptureError(
+                f"record {index} is not a valid public RSS summary"
+            )
 
 
 def package_capture(
@@ -97,7 +113,6 @@ def package_capture(
     target_date: date,
 ) -> tuple[Path, Path, dict]:
     records = _read_jsonl(articles_path)
-    _validate_records(records, target_date, require_full_text=True)
     try:
         health = json.loads(health_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -116,11 +131,19 @@ def package_capture(
         raise LocalCaptureError("capture health has no The Information record")
     crawl_mode = str(source_health.get("crawl_mode") or "").lower()
     status = str(source_health.get("status") or "").lower()
-    if crawl_mode != "rss_authenticated" or status == "failed":
+    is_authenticated = crawl_mode == "rss_authenticated"
+    is_public = crawl_mode in PUBLIC_CAPTURE_MODES
+    if not (is_authenticated or is_public) or status == "failed":
         raise LocalCaptureError(
-            "local capture did not use the authenticated subscriber feed: "
+            "local capture did not use a supported The Information feed: "
             f"status={status or '-'}, crawl_mode={crawl_mode or '-'}"
         )
+    _validate_records(
+        records,
+        target_date,
+        require_full_text=is_authenticated,
+        require_public_summary=is_public,
+    )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     fragment_path = output_dir / f"{target_date.isoformat()}.jsonl"
@@ -132,12 +155,20 @@ def package_capture(
         "target_date": target_date.isoformat(),
         "generated_at": datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).isoformat(),
         "fetch_succeeded": True,
-        "crawl_mode": "rss_authenticated",
+        "crawl_mode": crawl_mode,
+        "content_policy": (
+            "subscriber_full_text" if is_authenticated else PUBLIC_RSS_SUMMARY_POLICY
+        ),
         "capture_status": status,
         "article_count": len(records),
         "candidates_seen": int(source_health.get("candidates_seen", len(records))),
-        "usable_articles": sum(
-            str(item.get("content_status") or "").lower() == "full"
+        "usable_articles": sum(is_usable_article(item) for item in records),
+        "full_articles": sum(
+            str(item.get("content_status") or "").lower() == "full" for item in records
+        ),
+        "public_summary_articles": sum(
+            str(item.get("content_policy") or "").lower()
+            == PUBLIC_RSS_SUMMARY_POLICY
             for item in records
         ),
         "fragment_sha256": hashlib.sha256(fragment_payload).hexdigest(),
@@ -155,7 +186,8 @@ def load_verified_fragment(
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise LocalCaptureError(f"unable to read manifest: {manifest_path}") from exc
-    if manifest.get("version") != MANIFEST_VERSION:
+    version = manifest.get("version")
+    if version not in SUPPORTED_MANIFEST_VERSIONS:
         raise LocalCaptureError("unsupported local capture manifest version")
     if str(manifest.get("source") or "").strip().lower() != SOURCE_NAME:
         raise LocalCaptureError("manifest source is not The Information")
@@ -163,8 +195,11 @@ def load_verified_fragment(
         raise LocalCaptureError("manifest target date does not match requested date")
     if manifest.get("fetch_succeeded") is not True:
         raise LocalCaptureError("manifest reports an unsuccessful local capture")
-    if str(manifest.get("crawl_mode") or "").lower() != "rss_authenticated":
-        raise LocalCaptureError("manifest was not produced from the subscriber feed")
+    crawl_mode = str(manifest.get("crawl_mode") or "").lower()
+    is_authenticated = crawl_mode == "rss_authenticated"
+    is_public = version >= 2 and crawl_mode in PUBLIC_CAPTURE_MODES
+    if not (is_authenticated or is_public):
+        raise LocalCaptureError("manifest was not produced from a supported feed")
 
     try:
         fragment_payload = fragment_path.read_bytes()
@@ -174,7 +209,12 @@ def load_verified_fragment(
     if actual_hash != str(manifest.get("fragment_sha256") or ""):
         raise LocalCaptureError("fragment checksum does not match manifest")
     records = _read_jsonl(fragment_path)
-    _validate_records(records, target_date, require_full_text=True)
+    _validate_records(
+        records,
+        target_date,
+        require_full_text=is_authenticated,
+        require_public_summary=is_public,
+    )
     if int(manifest.get("article_count", -1)) != len(records):
         raise LocalCaptureError("fragment article count does not match manifest")
     return records, manifest
@@ -208,12 +248,16 @@ def ingest_capture(
     export_csv(output_path, csv_path, target_date, DEFAULT_TIMEZONE)
 
     content_lengths = [len(str(item.get("content") or "").strip()) for item in records]
+    public_capture = str(manifest.get("crawl_mode") or "").lower() in PUBLIC_CAPTURE_MODES
     health_record = {
         "source": SOURCE_NAME,
         "frequency": "实时",
         "status": "healthy" if records else "idle",
-        "reason": "" if records else "authenticated local feed had no target-date entries",
-        "crawl_mode": "local_authenticated_ingest",
+        "reason": "" if records else "local feed had no target-date entries",
+        "crawl_mode": (
+            "local_public_rss_ingest" if public_capture else "local_authenticated_ingest"
+        ),
+        "content_policy": manifest.get("content_policy", "subscriber_full_text"),
         "candidates_seen": int(manifest.get("candidates_seen", len(records))),
         "pages_fetched": len(records),
         "date_filtered_candidates": 0,
@@ -249,6 +293,7 @@ def ingest_capture(
     receipt = {
         "source": SOURCE_NAME,
         "target_date": target_date.isoformat(),
+        "content_policy": manifest.get("content_policy", "subscriber_full_text"),
         "fragment_sha256": manifest["fragment_sha256"],
         "article_count": len(records),
         "added": added,
@@ -284,7 +329,7 @@ def notify_capture_problem(target_date: date, kind: str) -> bool:
             "### 本地抓取异常｜The Information",
             f"- 缺失日期：{target_date.isoformat()}",
             f"- 诊断：{reason}",
-            "- 处理建议：检查本地计划任务、订阅凭据及 inbox 分支推送。",
+            "- 处理建议：检查本地计划任务、公开 RSS 阅读器及 inbox 分支推送。",
             "",
             f"[查看 GitHub Actions 运行详情]({run_url})" if run_url else "",
         ]
@@ -304,7 +349,7 @@ def _target(value: str) -> date:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Package and ingest authenticated local The Information captures"
+        description="Package and ingest local The Information feed captures"
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     package = subparsers.add_parser("package")

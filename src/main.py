@@ -12,7 +12,12 @@ from zoneinfo import ZoneInfo
 
 from .article_parser import fetch_and_parse_article, utc_now_iso
 from .audit import run_daily_audit
-from .content_quality import FULL_CONTENT_STATUS, assess_content
+from .content_quality import (
+    FULL_CONTENT_STATUS,
+    PUBLIC_RSS_SUMMARY_POLICY,
+    assess_content,
+    is_usable_article,
+)
 from .date_utils import (
     DEFAULT_TIMEZONE,
     article_date,
@@ -37,7 +42,11 @@ from .load_sources import (
     expects_output_on_date,
     load_sources,
 )
-from .rss_discovery import discover_feed, fetch_feed_entries
+from .rss_discovery import (
+    discover_feed,
+    fetch_feed_entries,
+    fetch_feedly_stream_entries,
+)
 from .scrapers import get_scraper_class
 from .storage import (
     canonicalize_url,
@@ -192,6 +201,14 @@ def parse_args() -> argparse.Namespace:
         help="Do not call Z.AI even when ZAI_API_KEY is configured.",
     )
     parser.add_argument(
+        "--the-information-public-only",
+        action="store_true",
+        help=(
+            "Use only The Information's public RSS payload and never select the "
+            "authenticated subscriber feed (used by the local scheduled publisher)."
+        ),
+    )
+    parser.add_argument(
         "--industry-taxonomy",
         type=Path,
         default=DEFAULT_TAXONOMY_PATH,
@@ -227,8 +244,9 @@ def enrich_from_rss_entry(
     entry,
     *,
     feed_declared_full: bool = False,
+    skip_article_fetch: bool = False,
 ) -> dict | None:
-    article = fetch_and_parse_article(client, entry.url, source)
+    article = None if skip_article_fetch else fetch_and_parse_article(client, entry.url, source)
     feed_declared_full = bool(
         feed_declared_full or getattr(entry, "content_is_full", False)
     )
@@ -301,10 +319,14 @@ def resolve_feed_access(
     configured_feed_url: str | None,
     *,
     environ: dict[str, str] | None = None,
+    force_public: bool = False,
 ) -> tuple[str | None, tuple[str, str] | None, bool, str]:
     """Resolve source-specific feed authentication without exposing credentials."""
     if source_name.strip().lower() != THE_INFORMATION_SOURCE_KEY:
         return configured_feed_url, None, False, "rss"
+
+    if force_public:
+        return THE_INFORMATION_PUBLIC_FEED, None, False, "rss_public_reader"
 
     environment = environ if environ is not None else os.environ
     username = str(environment.get(THE_INFORMATION_USERNAME_ENV) or "").strip()
@@ -334,7 +356,17 @@ def fetch_feed_with_public_fallback(
     required: bool,
     crawl_mode: str,
 ) -> tuple[list, str]:
-    """Use the official public feed if the authenticated feed is WAF-blocked."""
+    """Use official public RSS via a standard feed reader when direct access is blocked."""
+    if (
+        source_name.strip().lower() == THE_INFORMATION_SOURCE_KEY
+        and crawl_mode == "rss_public_reader"
+    ):
+        return (
+            fetch_feedly_stream_entries(client, THE_INFORMATION_PUBLIC_FEED, limit),
+            crawl_mode,
+        )
+
+    authenticated_failure: RequiredFetchError | None = None
     try:
         entries = list(
             fetch_feed_entries(
@@ -345,9 +377,10 @@ def fetch_feed_with_public_fallback(
                 required=required,
             )
         )
-    except RequiredFetchError:
+    except RequiredFetchError as exc:
         if source_name.strip().lower() != THE_INFORMATION_SOURCE_KEY or not auth:
             raise
+        authenticated_failure = exc
         logging.warning(
             "The Information subscriber RSS was unavailable; trying official public RSS"
         )
@@ -358,9 +391,19 @@ def fetch_feed_with_public_fallback(
                 limit,
             )
         )
-        if not entries:
-            raise
-        return entries, "rss_public_fallback"
+        if entries:
+            return entries, "rss_public_fallback"
+    if entries or source_name.strip().lower() != THE_INFORMATION_SOURCE_KEY:
+        return entries, crawl_mode
+
+    logging.warning(
+        "The Information public RSS was unavailable directly; trying Feedly reader"
+    )
+    entries = fetch_feedly_stream_entries(client, THE_INFORMATION_PUBLIC_FEED, limit)
+    if entries:
+        return entries, "rss_public_reader"
+    if authenticated_failure is not None:
+        raise authenticated_failure
     return entries, crawl_mode
 
 
@@ -557,6 +600,10 @@ def main() -> int:
                 feed_url, feed_auth, feed_required, feed_crawl_mode = resolve_feed_access(
                     source.name,
                     feed_url,
+                    force_public=(
+                        bool(getattr(args, "the_information_public_only", False))
+                        and source_key == THE_INFORMATION_SOURCE_KEY
+                    ),
                 )
             if (
                 not scraper_handles_feed
@@ -664,7 +711,27 @@ def main() -> int:
                         feed_declared_full=(
                             feed_crawl_mode == "rss_authenticated"
                         ),
+                        skip_article_fetch=(
+                            source_key == THE_INFORMATION_SOURCE_KEY
+                            and feed_crawl_mode
+                            in {
+                                "rss_public",
+                                "rss_public_fallback",
+                                "rss_public_reader",
+                            }
+                        ),
                     )
+                    if (
+                        article
+                        and source_key == THE_INFORMATION_SOURCE_KEY
+                        and feed_crawl_mode
+                        in {
+                            "rss_public",
+                            "rss_public_fallback",
+                            "rss_public_reader",
+                        }
+                    ):
+                        article["content_policy"] = PUBLIC_RSS_SUMMARY_POLICY
                     pages_fetched += 1
                     if article and args.date_filter == "today" and not entry.published_at:
                         parsed_candidate_date = article_date(
@@ -792,18 +859,13 @@ def main() -> int:
             len(str(article.get("content") or "").strip())
             for article in new_articles
         ]
-        usable_count = sum(
-            str(article.get("content_status") or "").lower()
-            == FULL_CONTENT_STATUS
-            for article in new_articles
-        )
+        usable_count = sum(is_usable_article(article) for article in new_articles)
         incomplete_count = max(changed_count - usable_count, 0)
         content_issues = sorted(
             {
                 str(article.get("content_issue") or "unknown_content_issue")
                 for article in new_articles
-                if str(article.get("content_status") or "").lower()
-                != FULL_CONTENT_STATUS
+                if not is_usable_article(article)
             }
         )
         short_count = sum(
