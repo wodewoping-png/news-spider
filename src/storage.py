@@ -18,6 +18,7 @@ FIELDNAMES = (
     "content_status",
     "content_issue",
     "content_extraction",
+    "content_policy",
     "url",
     "source_name",
     "domain",

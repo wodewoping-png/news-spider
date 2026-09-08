@@ -35,6 +35,16 @@ def article(*, content: str = "Subscriber full text " * 60) -> dict:
     }
 
 
+def public_article() -> dict:
+    return {
+        **article(content="Public RSS summary with useful context."),
+        "content_status": "incomplete",
+        "content_issue": "rss_excerpt_only",
+        "content_extraction": "rss_excerpt",
+        "content_policy": "public_rss_summary",
+    }
+
+
 def write_jsonl(path: Path, records: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -85,13 +95,31 @@ class LocalTheInformationTests(unittest.TestCase):
                 hashlib.sha256(fragment.read_bytes()).hexdigest(),
             )
 
-    def test_package_rejects_public_feed_fallback(self):
+    def test_package_accepts_public_reader_summary_without_claiming_full_text(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            articles = root / "capture.jsonl"
+            health = root / "health.json"
+            write_jsonl(articles, [public_article()])
+            write_health(health, crawl_mode="rss_public_reader")
+
+            fragment, manifest_path, manifest = package_capture(
+                articles, health, root / "package", TARGET_DATE
+            )
+
+            self.assertTrue(fragment.exists())
+            self.assertTrue(manifest_path.exists())
+            self.assertEqual(manifest["content_policy"], "public_rss_summary")
+            self.assertEqual(manifest["public_summary_articles"], 1)
+            self.assertEqual(manifest["full_articles"], 0)
+
+    def test_package_rejects_public_reader_record_without_policy_marker(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             articles = root / "capture.jsonl"
             health = root / "health.json"
             write_jsonl(articles, [article()])
-            write_health(health, crawl_mode="rss_public_fallback")
+            write_health(health, crawl_mode="rss_public_reader")
 
             with self.assertRaises(LocalCaptureError):
                 package_capture(articles, health, root / "package", TARGET_DATE)

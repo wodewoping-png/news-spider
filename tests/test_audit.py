@@ -198,6 +198,39 @@ class DailyAuditTests(unittest.TestCase):
             self.assertEqual(daily["content_chars_median"], "460")
             self.assertEqual(daily["content_chars_max"], "800")
 
+    def test_explicit_public_rss_summary_policy_counts_as_usable(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            data = root / "articles.jsonl"
+            logs = root / "logs"
+            rows = [
+                {
+                    **article("2026-07-28", "the information", 1),
+                    "content": "Public RSS summary.",
+                    "content_status": "incomplete",
+                    "content_issue": "rss_excerpt_only",
+                    "content_extraction": "rss_excerpt",
+                    "content_policy": "public_rss_summary",
+                }
+            ]
+            self.write_articles(data, rows)
+
+            report = run_daily_audit(
+                data,
+                logs,
+                date(2026, 7, 28),
+                [health("the information", "healthy")],
+            )
+
+            self.assertEqual(report["overall"]["usable_articles"], 1)
+            with (logs / "channel-daily-stats.csv").open(
+                "r", encoding="utf-8-sig", newline=""
+            ) as handle:
+                saved = list(csv.DictReader(handle))
+            row = next(item for item in saved if item["source"] == "the information")
+            self.assertEqual(row["usable_articles"], "1")
+            self.assertEqual(row["incomplete_articles"], "0")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,6 +8,7 @@ FULL_CONTENT_STATUS = "full"
 INCOMPLETE_CONTENT_STATUS = "incomplete"
 MISSING_CONTENT_STATUS = "missing"
 UNKNOWN_CONTENT_STATUS = "unknown"
+PUBLIC_RSS_SUMMARY_POLICY = "public_rss_summary"
 
 ACCESS_CHALLENGE_MARKER_GROUPS = (
     ("cf_app_waf", "requestinfo"),
@@ -96,4 +97,19 @@ def content_rank(status: str) -> int:
         INCOMPLETE_CONTENT_STATUS: 2,
         FULL_CONTENT_STATUS: 3,
     }.get(str(status or "").strip().lower(), 1)
+
+
+def is_usable_article(article: dict) -> bool:
+    """Return whether a record satisfies its explicitly declared content policy."""
+    if str(article.get("content_status") or "").strip().lower() == FULL_CONTENT_STATUS:
+        return True
+    return (
+        str(article.get("content_policy") or "").strip().lower()
+        == PUBLIC_RSS_SUMMARY_POLICY
+        and str(article.get("content_extraction") or "").strip().lower()
+        == "rss_excerpt"
+        and str(article.get("content_issue") or "").strip().lower()
+        in {"rss_excerpt_only", "truncated_ending"}
+        and bool(str(article.get("content") or "").strip())
+    )
 

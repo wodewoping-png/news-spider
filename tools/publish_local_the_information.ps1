@@ -21,10 +21,6 @@ try {
 } catch {
     throw "TargetDate must use YYYY-MM-DD: $TargetDate"
 }
-if (-not $env:THE_INFORMATION_RSS_USERNAME -or -not $env:THE_INFORMATION_RSS_PASSWORD) {
-    throw "THE_INFORMATION_RSS_USERNAME and THE_INFORMATION_RSS_PASSWORD must be configured for this Windows account."
-}
-
 $captureRoot = Join-Path ([IO.Path]::GetTempPath()) (
     "news-spider-the-information-" + [guid]::NewGuid().ToString("N")
 )
@@ -50,6 +46,7 @@ try {
             --output $captureData `
             --csv $captureCsv `
             --logs $captureLogs `
+            --the-information-public-only `
             --skip-industry-classification `
             --skip-audit
         if ($LASTEXITCODE -ne 0) {
@@ -62,7 +59,7 @@ try {
             --output-dir $packageDir `
             --target-date $TargetDate
         if ($LASTEXITCODE -ne 0) {
-            throw "The Information capture did not pass authenticated-feed validation."
+            throw "The Information capture did not pass public-feed validation."
         }
 
         & git fetch $Remote main
@@ -105,7 +102,7 @@ try {
         if ($LASTEXITCODE -ne 0) {
             throw "Unable to push the local capture to $InboxBranch."
         }
-        Write-Host "Published authenticated The Information capture for $TargetDate."
+        Write-Host "Published public The Information RSS capture for $TargetDate."
     } finally {
         Pop-Location
     }

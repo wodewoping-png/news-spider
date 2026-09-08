@@ -8,7 +8,7 @@ from pathlib import Path
 from statistics import median
 from zoneinfo import ZoneInfo
 
-from .content_quality import FULL_CONTENT_STATUS, assess_content
+from .content_quality import assess_content, is_usable_article
 from .date_utils import DEFAULT_TIMEZONE, article_date
 from .load_sources import expects_output_on_date
 from .recovery import sync_recovery_queue
@@ -179,7 +179,9 @@ def _inventory(
                 content_status = assessed_status
             elif not content_status:
                 content_status = assessed_status
-            if content_status == FULL_CONTENT_STATUS:
+            assessed_item = dict(item)
+            assessed_item["content_status"] = content_status
+            if is_usable_article(assessed_item):
                 bucket["usable_articles"] += 1
             else:
                 bucket["incomplete_articles"] += 1

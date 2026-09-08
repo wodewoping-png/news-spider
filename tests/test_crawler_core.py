@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 import requests
 
 from src.article_parser import normalize_source_date, parse_article_html
-from src.content_quality import assess_content
+from src.content_quality import assess_content, is_usable_article
 from src.date_utils import date_from_url, default_target_date, parse_target_date
 from src.http_client import (
     BROWSER_USER_AGENT,
@@ -33,7 +33,7 @@ from src.main import (
     merge_feed_entries,
     resolve_feed_access,
 )
-from src.rss_discovery import FeedEntry, parse_feed
+from src.rss_discovery import FeedEntry, fetch_feedly_stream_entries, parse_feed
 from src.scrapers.generic import GenericListingScraper
 from src.scrapers.multi_page import H2ViewScraper, PerovskiteInfoScraper
 from src.scrapers.renewables_now import RenewablesNowScraper
@@ -188,6 +188,15 @@ class DateAndUrlTests(unittest.TestCase):
         headers = request_headers_for_url(THE_INFORMATION_SUBSCRIBER_FEED)
 
         self.assertEqual(headers["User-Agent"], BROWSER_USER_AGENT)
+
+    def test_feedly_stream_api_honors_published_robots_allow_exception(self):
+        client = HttpClient(sleep_seconds=0)
+
+        self.assertTrue(
+            client.robots.can_fetch(
+                "https://cloud.feedly.com/v3/streams/contents?streamId=feed%2Fexample"
+            )
+        )
 
     def test_required_cloudflare_challenge_is_retried_and_diagnosed(self):
         response = Mock()
@@ -743,7 +752,24 @@ class ListingScraperTests(unittest.TestCase):
         self.assertFalse(required)
         self.assertEqual(crawl_mode, "rss_public")
 
+    def test_the_information_public_only_ignores_configured_subscriber_secrets(self):
+        feed_url, auth, required, crawl_mode = resolve_feed_access(
+            "the information",
+            "https://www.theinformation.com/feed",
+            environ={
+                "THE_INFORMATION_RSS_USERNAME": "subscriber@example.com",
+                "THE_INFORMATION_RSS_PASSWORD": "secret",
+            },
+            force_public=True,
+        )
+
+        self.assertEqual(feed_url, THE_INFORMATION_PUBLIC_FEED)
+        self.assertIsNone(auth)
+        self.assertFalse(required)
+        self.assertEqual(crawl_mode, "rss_public_reader")
+
     def test_the_information_falls_back_to_official_public_feed(self):
+        client = object()
         public_entry = FeedEntry(
             title="Public headline",
             url="https://www.theinformation.com/articles/public-headline",
@@ -757,7 +783,7 @@ class ListingScraperTests(unittest.TestCase):
             ],
         ) as fetch:
             entries, crawl_mode = fetch_feed_with_public_fallback(
-                object(),
+                client,
                 "the information",
                 THE_INFORMATION_SUBSCRIBER_FEED,
                 100,
@@ -770,6 +796,125 @@ class ListingScraperTests(unittest.TestCase):
         self.assertEqual(crawl_mode, "rss_public_fallback")
         self.assertEqual(fetch.call_args_list[1].args[1], THE_INFORMATION_PUBLIC_FEED)
         self.assertEqual(fetch.call_args_list[1].kwargs, {})
+
+    def test_the_information_uses_feedly_when_direct_public_feed_is_blocked(self):
+        client = object()
+        public_entry = FeedEntry(
+            title="Public headline",
+            url="https://www.theinformation.com/articles/public-headline",
+            published_at="2026-09-06T15:00:00+00:00",
+            summary="Public RSS summary.",
+        )
+        with (
+            patch("src.main.fetch_feed_entries", return_value=[]),
+            patch(
+                "src.main.fetch_feedly_stream_entries",
+                return_value=[public_entry],
+            ) as reader,
+        ):
+            entries, crawl_mode = fetch_feed_with_public_fallback(
+                client,
+                "the information",
+                THE_INFORMATION_PUBLIC_FEED,
+                100,
+                auth=None,
+                required=False,
+                crawl_mode="rss_public",
+            )
+
+        self.assertEqual(entries, [public_entry])
+        self.assertEqual(crawl_mode, "rss_public_reader")
+        reader.assert_called_once_with(client, THE_INFORMATION_PUBLIC_FEED, 100)
+
+    def test_feedly_public_stream_preserves_original_link_and_marks_excerpt(self):
+        response = FetchResult(
+            url="https://feedly.com/v3/streams/contents",
+            status_code=200,
+            content_type="application/json",
+            text=json.dumps(
+                {
+                    "id": "feed/https://www.theinformation.com/feed",
+                    "items": [
+                        {
+                            "title": "Public story",
+                            "published": 1788706800000,
+                            "alternate": [
+                                {
+                                    "href": "https://www.theinformation.com/articles/public-story",
+                                    "type": "text/html",
+                                }
+                            ],
+                            "content": {
+                                "content": "<p>First public paragraph.</p><p>Second paragraph.</p>"
+                            },
+                        }
+                    ]
+                }
+            ),
+        )
+        client = Mock()
+        client.get.return_value = response
+
+        entries = fetch_feedly_stream_entries(
+            client,
+            THE_INFORMATION_PUBLIC_FEED,
+            20,
+        )
+
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(
+            entries[0].url,
+            "https://www.theinformation.com/articles/public-story",
+        )
+        self.assertEqual(
+            entries[0].summary,
+            "First public paragraph. Second paragraph.",
+        )
+        self.assertFalse(entries[0].content_is_full)
+
+    def test_feedly_public_stream_rejects_cross_domain_items(self):
+        response = FetchResult(
+            url="https://feedly.com/v3/streams/contents",
+            status_code=200,
+            content_type="application/json",
+            text=json.dumps(
+                {
+                    "id": "feed/https://www.theinformation.com/feed",
+                    "items": [
+                        {
+                            "title": "Injected story",
+                            "published": 1788706800000,
+                            "alternate": [
+                                {"href": "https://example.com/injected", "type": "text/html"}
+                            ],
+                            "summary": {"content": "Not from the publisher."},
+                        }
+                    ],
+                }
+            ),
+        )
+        client = Mock()
+        client.get.return_value = response
+
+        self.assertEqual(
+            fetch_feedly_stream_entries(client, THE_INFORMATION_PUBLIC_FEED, 20),
+            [],
+        )
+
+    def test_public_rss_summary_policy_is_usable_without_claiming_full_text(self):
+        item = {
+            "content": "Public RSS summary.",
+            "content_status": "incomplete",
+            "content_issue": "rss_excerpt_only",
+            "content_extraction": "rss_excerpt",
+            "content_policy": "public_rss_summary",
+        }
+
+        self.assertTrue(is_usable_article(item))
+        self.assertNotEqual(item["content_status"], "full")
+
+        item["content_issue"] = "truncated_ending"
+        self.assertTrue(is_usable_article(item))
 
     def test_required_authenticated_fetch_forwards_auth_without_leaking_it(self):
         response = Mock()

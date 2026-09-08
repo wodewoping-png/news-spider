@@ -33,6 +33,14 @@ ACCESS_CHALLENGE_SIGNATURE_GROUPS = (
     ("verify you are human", "cloudflare"),
 )
 
+# urllib.robotparser applies the first matching rule, while Feedly publishes a
+# broader `/v3/` disallow before this narrower explicit allow. Preserve the
+# publisher's stated exception instead of incorrectly blocking its reader API.
+ROBOTS_EXPLICIT_ALLOW_PREFIXES = (
+    "https://cloud.feedly.com/v3/streams/contents",
+    "https://feedly.com/v3/streams/contents",
+)
+
 
 def is_access_challenge_html(value: str) -> bool:
     """Detect access-control interstitials that returned HTTP 200 as if they were pages."""
@@ -92,6 +100,15 @@ class RobotsCache:
         parsed = urlparse(url)
         if not parsed.scheme or not parsed.netloc:
             return False
+
+        normalized_url = urlunparse(
+            (parsed.scheme.lower(), parsed.netloc.lower(), parsed.path, "", "", "")
+        )
+        if any(
+            normalized_url.startswith(prefix)
+            for prefix in ROBOTS_EXPLICIT_ALLOW_PREFIXES
+        ):
+            return True
 
         root = f"{parsed.scheme}://{parsed.netloc}"
         parser = self._cache.get(root)

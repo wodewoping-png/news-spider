@@ -37,25 +37,18 @@ Excel 表头必须包含：
 
 这些来源不会抓取，但会写入日志，例如 `logs/daily-news.log`。
 
-### The Information 订阅 RSS
+### The Information 公开 RSS
 
-The Information 提供官方认证订阅 Feed。由于 GitHub 托管 Runner 的出口地址可能被站点
-安全策略拒绝，本项目默认由本地 Windows 计划任务抓取订阅全文，再由 GitHub 幂等汇总；
-日常云端全渠道任务会跳过该来源。GitHub 中保留的订阅 Secrets 仅用于手动应急恢复，不参与
-每日主任务。
+The Information 的日常本地任务只读取官方公开 `/feed` 中的标题、发布时间、原文链接和
+公开摘要，不读取订阅页，也不需要用户名或密码。站点对本机和 GitHub 托管 Runner 的直接
+请求均可能返回 Cloudflare 403，因此本地任务通过 Feedly 的标准公开阅读器接口取得同一
+官方 Feed 的公开载荷；记录仍保留原始 `theinformation.com` 链接和来源名称。
 
-本地 Windows 账户需要配置：
+公开摘要会如实保存为 `content_status=incomplete`，并额外标记
+`content_policy=public_rss_summary`。运维审查按这个明确策略将其视为可用，不会把正常的 RSS
+摘要误报成“正文抓取失败”，但也不会冒充订阅全文。
 
-- `THE_INFORMATION_RSS_USERNAME`
-- `THE_INFORMATION_RSS_PASSWORD`
-
-两项都存在时，本地程序仅对官方
-`https://www.theinformation.com/subscriber_feed` 使用 HTTP Basic 认证，并直接采用 Feed
-内的订阅正文；凭据不会写入源码、Excel、日志或抓取数据。两项均未配置时继续使用公开
-`/feed` 摘要。只配置其中一项、认证被拒绝或认证 Feed 为空时，该渠道会记录为失败并进入
-现有告警/修复流程，同时不影响其他渠道继续抓取。
-
-本地发布脚本固定抓取前一自然日，并把经过完整性校验的日分片提交到
+本地发布脚本固定抓取前一自然日，并把经过来源、日期、摘要策略和校验和验证的日分片提交到
 `the-information-inbox` 分支；它不直接修改 `main` 的总库或当日 CSV：
 
 ```powershell
@@ -74,18 +67,18 @@ The Information 提供官方认证订阅 Feed。由于 GitHub 托管 Runner 的�
 
 `ingest-local-the-information.yml` 在 inbox 分支更新后立即运行，并与每日主任务共用
 `news-spider-data-main` 并发锁。无论本地抓取先运行还是 GitHub 主任务先运行，最终都会按
-规范化原文 URL 合并到 `data/articles.jsonl`、更新对应的 `articles-YYYY-MM-DD.csv`，且完整
-订阅正文会替换已有公开摘要。重复上传同一分片不会生成重复文章。
+规范化原文 URL 合并到 `data/articles.jsonl`、更新对应的 `articles-YYYY-MM-DD.csv`。重复
+上传同一分片不会生成重复文章；已有经过验证的完整正文不会被公开摘要降级覆盖。
 
 工作流每天北京时间 10:30 还会检查前一日 Manifest。未收到本地分片时才发送钉钉告警；
-“认证成功但当天确实零篇”由 Manifest 明确记录，不会被误判为本地任务漏跑。历史日期可用：
+“公开 Feed 读取成功但当天确实零篇”由 Manifest 明确记录，不会被误判为本地任务漏跑。
+历史日期可用：
 
 ```powershell
 .\tools\publish_local_the_information.ps1 -TargetDate "2026-09-04"
 ```
 
-日分片包含付费订阅正文，仓库必须保持私有；不要把 `the-information-inbox` 分支或
-`data/articles.jsonl` 发布到公开仓库。
+日分片只包含公开 RSS 数据，可以继续使用公开仓库；不得把订阅页全文或认证凭据写入分片。
 
 ### RIOnews 渠道输入
 
