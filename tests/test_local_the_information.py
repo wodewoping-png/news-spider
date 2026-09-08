@@ -74,6 +74,16 @@ def write_health(path: Path, *, crawl_mode: str = "rss_authenticated") -> None:
 
 
 class LocalTheInformationTests(unittest.TestCase):
+    def test_local_publisher_uses_fully_qualified_inbox_branch_ref(self):
+        script = (
+            Path(__file__).resolve().parents[1]
+            / "tools"
+            / "publish_local_the_information.ps1"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn('"HEAD:refs/heads/$InboxBranch"', script)
+        self.assertNotIn('"HEAD:$InboxBranch"', script)
+
     def test_package_requires_authenticated_feed_and_writes_manifest(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

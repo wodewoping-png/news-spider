@@ -98,7 +98,10 @@ try {
         if ($LASTEXITCODE -ne 0) {
             throw "Unable to commit the local capture."
         }
-        & git -C $worktreePath push $Remote "HEAD:$InboxBranch"
+        # The temporary worktree is detached, so Git cannot infer that a new
+        # remote destination is a branch. Use a fully qualified refspec for
+        # both the first publish and subsequent updates.
+        & git -C $worktreePath push $Remote "HEAD:refs/heads/$InboxBranch"
         if ($LASTEXITCODE -ne 0) {
             throw "Unable to push the local capture to $InboxBranch."
         }
