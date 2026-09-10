@@ -85,31 +85,32 @@ class IndustryClassifierTests(unittest.TestCase):
         cls.taxonomy = IndustryTaxonomy.load(DEFAULT_TAXONOMY_PATH)
 
     def test_taxonomy_contains_xmind_leaves_and_cross_industry_extensions(self):
-        self.assertEqual(len(self.taxonomy.categories), 98)
+        self.assertEqual(len(self.taxonomy.categories), 125)
         self.assertIn(
             ("AI与智能科技", "AI硬件层", "数据中心"),
             self.taxonomy.allowed_paths,
         )
         self.assertIn(
-            ("生命科学与健康", "生物医药", "药物研发与产业"),
+            ("AI与智能科技", "AI硬件层", "算力能源基础设施"),
             self.taxonomy.allowed_paths,
         )
         self.assertIn(
-            ("公共政策与社会治理", "政策法规", "产业与能源政策"),
+            ("AI与智能科技", "AI软件层", "AI4S"),
             self.taxonomy.allowed_paths,
         )
         self.assertIn(
-            ("数字科技与消费", "数字安全", "网络安全与数据治理"),
+            ("通用技术", "通信和运输", "物质运输", "陆路运输"),
             self.taxonomy.allowed_paths,
         )
         self.assertIn(
             (
                 "零碳产业",
-                "能量循环",
+                "能量转化",
                 "能量存储",
                 "电化学储能",
                 "二次电池",
-                "锂电池",
+                "传统蓄电池",
+                "固态电池",
             ),
             self.taxonomy.allowed_paths,
         )
@@ -117,11 +118,12 @@ class IndustryClassifierTests(unittest.TestCase):
     def test_validates_model_paths_and_confidence(self):
         valid_path = [
             "零碳产业",
-            "能量循环",
+            "能量转化",
             "能量存储",
             "电化学储能",
             "二次电池",
-            "锂电池",
+            "传统蓄电池",
+            "固态电池",
         ]
         session = FakeSession(
             api_payload(
@@ -160,7 +162,7 @@ class IndustryClassifierTests(unittest.TestCase):
 
         self.assertEqual(item["industry_classification_status"], "classified")
         self.assertEqual(item["industry_top_level"], "零碳产业")
-        self.assertEqual(item["industry_leaf"], "锂电池")
+        self.assertEqual(item["industry_leaf"], "固态电池")
         self.assertEqual(len(item["industry_classifications"]), 1)
         self.assertEqual(item["industry_classifications"][0]["path"], valid_path)
         request = session.calls[0]["json"]
