@@ -320,16 +320,24 @@ def notify_capture_problem(target_date: date, kind: str) -> bool:
     reason = {
         "missing": "截止时间仍未收到本地日分片",
         "invalid": "本地日分片校验或汇总失败",
-    }.get(kind, "本地日分片处理失败")
+        "online_recovery_failed": "普通 GitHub Runner 和 macOS 备用 Runner 均未取得鉴权订阅源全文",
+    }.get(kind, "The Information 抓取处理失败")
+    online_failure = kind == "online_recovery_failed"
+    heading = "在线全文抓取异常" if online_failure else "本地抓取异常"
+    suggestion = (
+        "检查订阅账号权限、GitHub Actions Secrets、订阅 Feed 可用性和运行日志；其他渠道无需停止。"
+        if online_failure
+        else "检查本地计划任务、订阅 RSS 访问及 inbox 分支推送。"
+    )
     run_url = os.environ.get("ALERT_RUN_URL", "").strip()
     markdown = "\n".join(
         [
             f"## {keyword}",
             "",
-            "### 本地抓取异常｜The Information",
+            f"### {heading}｜The Information",
             f"- 缺失日期：{target_date.isoformat()}",
             f"- 诊断：{reason}",
-            "- 处理建议：检查本地计划任务、公开 RSS 阅读器及 inbox 分支推送。",
+            f"- 处理建议：{suggestion}",
             "",
             f"[查看 GitHub Actions 运行详情]({run_url})" if run_url else "",
         ]
@@ -337,7 +345,7 @@ def notify_capture_problem(target_date: date, kind: str) -> bool:
     send_dingtalk(
         webhook,
         secret=os.environ.get("DINGTALK_SECRET", "").strip(),
-        title=f"{keyword}：The Information 本地抓取异常",
+        title=f"{keyword}：The Information {heading}",
         markdown=markdown,
     )
     return True
@@ -369,7 +377,11 @@ def parse_args() -> argparse.Namespace:
 
     notify = subparsers.add_parser("notify")
     notify.add_argument("--target-date", default="")
-    notify.add_argument("--kind", choices=("missing", "invalid"), required=True)
+    notify.add_argument(
+        "--kind",
+        choices=("missing", "invalid", "online_recovery_failed"),
+        required=True,
+    )
     return parser.parse_args()
 
 

@@ -46,7 +46,6 @@ try {
             --output $captureData `
             --csv $captureCsv `
             --logs $captureLogs `
-            --the-information-public-only `
             --skip-industry-classification `
             --skip-audit
         if ($LASTEXITCODE -ne 0) {

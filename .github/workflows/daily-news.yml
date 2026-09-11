@@ -89,13 +89,9 @@ jobs:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL || 'glm-5.2' }}
           ZAI_API_URL: ${{ vars.ZAI_API_URL || 'https://open.bigmodel.cn/api/anthropic' }}
-          THE_INFORMATION_LOCAL_ENABLED: ${{ vars.THE_INFORMATION_LOCAL_ENABLED }}
           ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           args=(--sources sources.xlsx)
-          if [ "$THE_INFORMATION_LOCAL_ENABLED" = "true" ]; then
-            args+=(--exclude-source "the information")
-          fi
           if [ -n "$TARGET_DATE" ]; then
             args+=(--target-date "$TARGET_DATE")
           fi
@@ -111,21 +107,21 @@ jobs:
           from pathlib import Path
 
           path = Path("logs/channel-health.json")
-          retry = False
+          # A missing health row or any result other than a healthy/idle
+          # authenticated feed must be retried on the alternate runner. Public
+          # RSS is a useful data fallback, but it is not a successful paid-feed
+          # full-text capture.
+          retry = True
           if path.exists():
               payload = json.loads(path.read_text(encoding="utf-8"))
               for item in payload.get("sources", []):
                   if str(item.get("source") or "").strip().lower() != "the information":
                       continue
-                  detail = " ".join(
-                      str(item.get(key) or "")
-                      for key in ("reason", "error", "technical_reason")
-                  ).lower()
                   status = str(item.get("status") or "").lower()
                   crawl_mode = str(item.get("crawl_mode") or "").lower()
-                  retry = crawl_mode == "rss_public_fallback" or (
-                      status == "failed"
-                      and ("cloudflare challenge" in detail or "http 403" in detail)
+                  retry = not (
+                      crawl_mode == "rss_authenticated"
+                      and status in {"healthy", "idle"}
                   )
                   break
           print("true" if retry else "false")
@@ -192,6 +188,9 @@ jobs:
     # The normal crawl already runs on Azure-hosted Linux. A macOS runner uses a
     # different standard GitHub egress path without solving or bypassing challenges.
     runs-on: macos-latest
+    # Full-text recovery is best-effort. Its failure is reported below but must
+    # not fail the daily multi-source collection workflow.
+    continue-on-error: true
     permissions:
       contents: write
     env:
@@ -215,6 +214,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Retry authenticated subscriber feed
+        id: subscriber_retry
+        continue-on-error: true
         env:
           TARGET_DATE: ${{ inputs.target_date }}
           THE_INFORMATION_RSS_USERNAME: ${{ secrets.THE_INFORMATION_RSS_USERNAME }}
@@ -260,6 +261,7 @@ jobs:
           PY
 
       - name: Commit recovered full-text data
+        if: ${{ steps.subscriber_retry.outcome == 'success' }}
         run: |
           branch="${GITHUB_REF_NAME:-$(git branch --show-current)}"
           git config user.name "github-actions[bot]"
@@ -272,3 +274,31 @@ jobs:
             git pull --rebase --autostash origin "$branch"
             git push origin "HEAD:$branch"
           fi
+
+      - name: Report failed full-text recovery
+        if: ${{ always() && steps.subscriber_retry.outcome == 'failure' }}
+        continue-on-error: true
+        env:
+          TARGET_DATE: ${{ inputs.target_date }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DINGTALK_KEYWORD: ${{ vars.DINGTALK_KEYWORD || secrets.DINGTALK_KEYWORD }}
+          ALERT_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          echo "::error title=The Information full-text recovery failed::The normal runner and macOS alternate runner did not obtain the authenticated subscriber feed. Other channels remain unaffected."
+          {
+            echo "## The Information full-text recovery failed"
+            echo ""
+            echo "The normal runner and the macOS alternate runner did not obtain the authenticated subscriber feed. Public RSS data, if available, is retained; other channels are unaffected."
+          } >> "$GITHUB_STEP_SUMMARY"
+          python -m src.local_the_information notify \
+            --target-date "$TARGET_DATE" \
+            --kind online_recovery_failed
+
+      - name: Upload The Information recovery diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: the-information-recovery-${{ github.run_id }}
+          path: ${{ runner.temp }}/the-information-recovery/
+          if-no-files-found: warn
