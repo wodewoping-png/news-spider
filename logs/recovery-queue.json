@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-09-11T08:34:48.096762+08:00",
+  "updated_at": "2026-09-11T09:58:20.419114+08:00",
   "incidents": [
     {
       "id": "2026-07-20::4C Offshore",
@@ -10275,7 +10275,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00"
     },
     {
       "id": "2026-09-10::Renewables Now",
@@ -10307,21 +10307,21 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00"
     },
     {
       "id": "2026-09-10::pv magazine C&I PV",
       "source": "pv magazine C&I PV",
       "date": "2026-09-10",
       "frequency": "工作日",
-      "status": "pending_confirmation",
+      "status": "recovered",
       "detected_at": "2026-09-11T08:34:48.096762+08:00",
       "confirmed_at": "",
       "confirmation_note": "",
       "attempts": 0,
       "last_attempt_at": "",
-      "recovered_articles": 0,
-      "recovered_at": "",
+      "recovered_articles": 5,
+      "recovered_at": "2026-09-11T09:58:20.419114+08:00",
       "anomaly_level": "warning",
       "anomaly_codes": "content_quality_degraded",
       "crawl_status": "degraded",
@@ -10339,7 +10339,7 @@
       "content_issues": "truncated_ending",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00"
     },
     {
       "id": "2026-09-10::中国能源网",
@@ -10371,7 +10371,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00"
     },
     {
       "id": "2026-09-10::光伏测试网",
@@ -10395,7 +10395,7 @@
       "date_filtered_candidates": 10,
       "undated_candidates": 0,
       "candidate_date_min": "2026-08-21",
-      "candidate_date_max": "2026-09-10",
+      "candidate_date_max": "2026-09-11",
       "diagnosis_code": "no_target_articles",
       "diagnosis": "已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新",
       "technical_reason": "no target-date articles were collected",
@@ -10403,7 +10403,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00"
     },
     {
       "id": "2026-09-10::北极星储能网",
@@ -10435,7 +10435,7 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00"
     },
     {
       "id": "2026-09-10::国际能源网",
@@ -10467,17 +10467,17 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00"
     },
     {
       "id": "2026-09-10::电池网",
       "source": "电池网",
       "date": "2026-09-10",
       "frequency": "实时",
-      "status": "pending_confirmation",
+      "status": "ignored",
       "detected_at": "2026-09-11T08:34:48.096762+08:00",
       "confirmed_at": "",
-      "confirmation_note": "",
+      "confirmation_note": "all observed candidates were published outside the target date (2026-08-07 to 2026-09-06)",
       "attempts": 0,
       "last_attempt_at": "",
       "recovered_articles": 0,
@@ -10499,7 +10499,8 @@
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-09-11T08:34:48.096762+08:00"
+      "updated_at": "2026-09-11T09:58:20.419114+08:00",
+      "ignored_at": "2026-09-11T09:58:20.419114+08:00"
     }
   ]
 }
