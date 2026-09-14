@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from src.industry_classifier import (
+    DEFAULT_MODEL,
     DEFAULT_TAXONOMY_PATH,
     IndustryClassificationError,
     IndustryTaxonomy,
@@ -114,6 +115,9 @@ class IndustryClassifierTests(unittest.TestCase):
             ),
             self.taxonomy.allowed_paths,
         )
+
+    def test_default_model_uses_glm_53_flash(self):
+        self.assertEqual(DEFAULT_MODEL, "glm-5.3-flash")
 
     def test_validates_model_paths_and_confidence(self):
         valid_path = [
@@ -351,7 +355,7 @@ class IndustryClassifierTests(unittest.TestCase):
 
         mark_classification_error(
             [item],
-            model="glm-5.2",
+            model=DEFAULT_MODEL,
             taxonomy_version=self.taxonomy.version,
             error="",
         )

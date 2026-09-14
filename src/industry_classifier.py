@@ -17,7 +17,7 @@ from .date_utils import DEFAULT_TIMEZONE, article_date
 
 
 DEFAULT_API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-DEFAULT_MODEL = "glm-5.2"
+DEFAULT_MODEL = "glm-5.3-flash"
 DEFAULT_TAXONOMY_PATH = (
     Path(__file__).resolve().parents[1] / "configs" / "industry_taxonomy.json"
 )
