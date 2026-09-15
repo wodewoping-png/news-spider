@@ -4,7 +4,7 @@
 
 当前默认输入文件是 `sources.xlsx`。本目录里的原始表格 `news web.xlsx` 已复制为 `sources.xlsx`，后续只维护 `sources.xlsx` 即可。
 
-`sources.xlsx` 已合并 `else/news-search-main` 和 `sources II.xlsx` 中的网页渠道。当前共有 57 条来源记录，其中 44 条会进入抓取流程，13 条因公众号、无法访问、需订阅、需账号登录或空链接而默认跳过。
+`sources.xlsx` 已合并 `else/news-search-main` 和 `sources II.xlsx` 中的网页渠道，并加入通过人工审核的部委通知公告渠道。因公众号、无法访问、需订阅、需账号登录或空链接而标记的来源仍默认跳过。
 
 ## 采集字段
 
@@ -248,6 +248,7 @@ SCRAPER_REGISTRY = {
 - `EnergyTrend储能`: `src/scrapers/energytrend.py`（官方 RSS，仅保留 `/news/` 新闻）
 - `NE时代`: `src/scrapers/ne_time.py`
 - `X-MOL`: `src/scrapers/xmol.py`（当前需账号登录，默认跳过）
+- 国家能源局、工信部、科技部、自然资源部、交通运输部、商务部、应急管理部、国家数据局、市场监管总局的通知公告：`src/scrapers/government_announcements.py`（固定 HTTPS/同域路径；自然资源部仅元数据；不下载附件、图片或政策解读）
 
 这些模块先使用来源页面的文章链接选择器，再进入详情页使用通用正文解析器。对 WordPress 或公开 RSS 支持良好的网站，运行时通常会优先走 RSS。
 

@@ -1,6 +1,6 @@
 # 候选抓取验收结果
 
-验收时间：2026-09-10（Asia/Shanghai）。所有渠道均保持 `production_enabled=false`。
+验收时间：2026-09-10（Asia/Shanghai）。人工审核于 2026-09-15 通过，表中 10 个 PASS 渠道已接入生产适配器；HOLD 渠道仍不启用。
 
 | 渠道 | 结果 | 列表记录 | 正文验证 | 处置 |
 |---|---|---:|---|---|
@@ -23,4 +23,4 @@
 
 在线验收每站只请求一个列表数据入口和列表首条正文，请求串行且间隔至少 1.25 秒。抓取过程中没有请求附件、图片、音视频、政策解读或站外链接。完整机器可读报告位于 `tmp/government-announcement-live-test.json`；最终正文清洗规则的国家能源局定向回归位于 `tmp/government-announcement-sanitization-live-test.json`，其中附件与政策解读链接文字均未进入正文。
 
-人工审核通过前，不应把本目录注册到生产抓取器或写入 `sources.xlsx`。
+生产适配器继续复用本目录的严格合同。任何 HOLD 渠道在重新完成 robots、页面合同和定向验收前，不得写入生产注册表或 `sources.xlsx`。

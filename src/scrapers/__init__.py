@@ -10,6 +10,18 @@ from .electrek import ElectrekScraper
 from .electrive import ElectriveScraper
 from .energytrend import EnergyTrendScraper
 from .generic import GenericListingScraper
+from .government_announcements import (
+    MemNoticesScraper,
+    MiitPublicNoticesScraper,
+    MnrNoticesScraper,
+    MofcomPolicyReleasesScraper,
+    MostNoticesScraper,
+    MotPolicyDocumentsScraper,
+    NeaAnnouncementsScraper,
+    NeaNoticesScraper,
+    NdaPolicyReleasesScraper,
+    SamrAntitrustNoticesScraper,
+)
 from .insideevs import InsideEVsScraper
 from .interesting_engineering import InterestingEngineeringScraper
 from .multi_page import (
@@ -72,6 +84,16 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "perovskite-info": PerovskiteInfoScraper,
     "全球风电网": ChinaNengyuanWindScraper,
     "中国新能源网-新闻": ChinaNengyuanScraper,
+    "国家能源局—通知": NeaNoticesScraper,
+    "国家能源局—公告": NeaAnnouncementsScraper,
+    "工业和信息化部—文件公示": MiitPublicNoticesScraper,
+    "科学技术部—通知通告": MostNoticesScraper,
+    "自然资源部—通知公告": MnrNoticesScraper,
+    "交通运输部—其他政策性文件": MotPolicyDocumentsScraper,
+    "商务部—政策发布": MofcomPolicyReleasesScraper,
+    "应急管理部—通知公告": MemNoticesScraper,
+    "国家数据局—政策发布": NdaPolicyReleasesScraper,
+    "市场监管总局—反垄断通知公告": SamrAntitrustNoticesScraper,
 }
 
 

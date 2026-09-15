@@ -95,8 +95,9 @@ class RobotsCache:
         self.user_agent = user_agent
         self.timeout = timeout
         self._cache: dict[str, RobotFileParser] = {}
+        self._gate_status: dict[str, str] = {}
 
-    def can_fetch(self, url: str) -> bool:
+    def can_fetch(self, url: str, *, fail_closed: bool = False) -> bool:
         parsed = urlparse(url)
         if not parsed.scheme or not parsed.netloc:
             return False
@@ -122,16 +123,24 @@ class RobotsCache:
                     timeout=self.timeout,
                     headers=request_headers_for_url(robots_url, self.user_agent),
                 )
-                if response.status_code >= 400:
+                if response.status_code == 404:
+                    self._gate_status[root] = "not_found"
+                    parser.parse([])
+                elif response.status_code >= 400:
                     logging.warning("robots.txt unavailable for %s: HTTP %s", root, response.status_code)
+                    self._gate_status[root] = "unavailable"
                     parser.parse([])
                 else:
+                    self._gate_status[root] = "found"
                     parser.parse(response.text.splitlines())
             except requests.RequestException as exc:
                 logging.warning("robots.txt fetch failed for %s: %s", root, exc)
+                self._gate_status[root] = "unavailable"
                 parser.parse([])
             self._cache[root] = parser
 
+        if fail_closed and self._gate_status.get(root) == "unavailable":
+            return False
         return parser.can_fetch(self.user_agent, url)
 
 
@@ -176,8 +185,12 @@ class HttpClient:
         allow_non_html: bool = True,
         auth: tuple[str, str] | None = None,
         required: bool = False,
+        strict_robots: bool = False,
     ) -> Optional[FetchResult]:
-        if self.respect_robots and not self.robots.can_fetch(url):
+        if self.respect_robots and not self.robots.can_fetch(
+            url,
+            fail_closed=strict_robots,
+        ):
             if required:
                 raise RequiredFetchError(f"Required fetch blocked by robots.txt: {url}")
             logging.warning("Blocked by robots.txt: %s", url)

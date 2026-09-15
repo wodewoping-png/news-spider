@@ -1,6 +1,6 @@
 # Government announcement candidates
 
-这是一个默认关闭、等待人工审核的候选模块，没有注册到 `src/`、`SCRAPER_REGISTRY` 或 `sources.xlsx`。
+本目录保留经过人工审核前验证的固定路径、同域和正文清洗合同。2026-09-15 起，通过验收的 10 个渠道已由 `src/scrapers/government_announcements.py` 接入生产，其中自然资源部仅保存元数据，其余 9 个保存机关文件纯文本。
 
 当前可运行候选共 10 个：国家能源局“通知”“公告”、工信部“文件公示”，以及科技部、自然资源部、交通运输部、商务部、应急管理部、国家数据局、市场监管总局相关栏目。自然资源部暂为仅元数据，其余 9 个支持经严格路径和官网标识校验的机关文件纯文本。
 
@@ -16,4 +16,4 @@ python -m candidate_sources.government_announcements.probe --catalog ministries
 python -m candidate_sources.government_announcements.live_test
 ```
 
-两个命令只向 `tmp/` 写证据/测试报告，不修改生产配置。
+两个命令只向 `tmp/` 写证据/测试报告，不修改生产配置。生产接入由 `src/`、`SCRAPER_REGISTRY` 和 `sources.xlsx` 控制。
