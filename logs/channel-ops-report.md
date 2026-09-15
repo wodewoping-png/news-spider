@@ -1,48 +1,48 @@
 # 渠道运维总览
 
-- 生成时间：2026-09-14T08:30:07.782468+08:00
+- 生成时间：2026-09-15T09:09:44.238865+08:00
 - 渠道数：61
-- 健康/正常空闲：41
-- 异常渠道：6
-- 待处理缺口：354
+- 健康/正常空闲：39
+- 异常渠道：8
+- 待处理缺口：362
 
 ## 需要处理的渠道
 
 | 渠道 | 最近目标日期 | 状态 | 正文中位字符 | 不完整正文 | 短正文 | 连续异常 | 待补日期数 | 原因 | 下一步 |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
-| 4C Offshore | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 7 | all observed candidates were published outside the target date (2026-09-10 to 2026-09-11) | repair_then_confirm |
-| Batteries News | 2026-09-13 | zero | 0 | 0 | 0 | 1 | 23 | no target-date articles were collected | repair_then_confirm |
-| Data Center Knowledge | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 2 | all observed candidates were published outside the target date (2026-08-06 to 2026-09-12) | repair_then_confirm |
-| Electrek | 2026-09-13 | zero | 0 | 0 | 0 | 1 | 3 | no target-date articles were collected | repair_then_confirm |
-| electrive | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 4 | all observed candidates were published outside the target date (2026-08-24 to 2026-09-12) | repair_then_reconfirm |
-| EnergyTrend储能 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 8 | all observed candidates were published outside the target date (2026-09-03 to 2026-09-11) | repair_then_confirm |
-| H2 View | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 14 | no target-date articles were expected for this source schedule | repair_then_reconfirm |
-| Informationsdienst Wissenschaft-idw | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 9 | no target-date articles were expected for this source schedule | repair_then_reconfirm |
-| interesting engineering | 2026-09-13 | degraded | 3585 | 1 | 0 | 1 | 8 | 1 articles were not verified as full text (public_preview_only) | repair_then_reconfirm |
-| IT之家 | 2026-09-13 | healthy | 648 | 0 | 8 | 0 | 3 | - | repair_then_reconfirm |
-| MIT Technology Review | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 10 | all observed candidates were published outside the target date (2026-09-09 to 2026-09-12) | repair_then_reconfirm |
-| NE时代 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 7 | all observed candidates were published outside the target date (2026-09-11) | repair_then_confirm |
-| perovskite-info | 2026-09-13 | zero | 0 | 0 | 0 | 1 | 12 | no target-date articles were collected | repair_then_reconfirm |
-| pv magazine | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 7 | all observed candidates were published outside the target date (2026-09-11 to 2026-09-12) | repair_then_reconfirm |
-| pv magazine C&I PV | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 14 | all observed candidates were published outside the target date (2026-09-05 to 2026-09-12) | repair_then_reconfirm |
-| Renewables Now | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 5 | no target-date articles were expected for this source schedule | repair_then_reconfirm |
-| scitechdaily | 2026-09-13 | healthy | 7873 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
-| Supply Chain Digital | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 4 | all observed candidates were published outside the target date (2026-09-07 to 2026-09-11) | repair_then_confirm |
-| the information | 2026-09-13 | healthy | 6172 | 0 | 0 | 0 | 3 | - | repair_then_confirm |
-| 中国核电信息网-国内 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 3 | all observed candidates were published outside the target date (2026-08-31 to 2026-09-12) | repair_then_reconfirm |
-| 中国核电信息网-国际 | 2026-09-13 | healthy | 746 | 0 | 2 | 0 | 2 | - | repair_then_reconfirm |
-| 中国电力新闻网-新能源 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 6 | no target-date articles were expected for this source schedule | repair_then_confirm |
-| 中国电力新闻网-科技 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 13 | no target-date articles were expected for this source schedule | repair_then_reconfirm |
-| 中国能源网 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 21 | no target-date articles were expected for this source schedule | repair_then_confirm |
-| 光伏测试网 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 33 | all observed candidates were published outside the target date (2026-08-21 to 2026-09-11) | repair_then_confirm |
-| 北极星储能网 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 30 | all observed candidates were published outside the target date (2026-08-10 to 2026-09-14) | repair_then_confirm |
-| 国际太阳能光伏网 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 3 | all observed candidates were published outside the target date (2026-09-08 to 2026-09-11) | repair_then_confirm |
-| 国际能源网 | 2026-09-13 | zero | 0 | 0 | 0 | 23 | 45 | no target-date articles were collected | repair_then_confirm |
-| 少数派 | 2026-09-13 | zero | 0 | 0 | 0 | 1 | 2 | no target-date articles were collected | repair_then_confirm |
-| 我爱电车网 | 2026-09-13 | healthy | 727 | 0 | 0 | 0 | 20 | - | repair_then_confirm |
-| 电池网 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 25 | all observed candidates were published outside the target date (2026-07-20 to 2026-08-30) | repair_then_confirm |
-| 科学网新闻 | 2026-09-13 | healthy | 2150 | 0 | 0 | 0 | 4 | - | repair_then_reconfirm |
-| 索比光伏 | 2026-09-13 | idle | 0 | 0 | 0 | 0 | 3 | all observed candidates were published outside the target date (2026-08-25 to 2026-09-11) | repair_then_reconfirm |
+| 4C Offshore | 2026-09-14 | healthy | 1150 | 0 | 0 | 0 | 7 | - | repair_then_confirm |
+| Batteries News | 2026-09-14 | healthy | 3442 | 0 | 0 | 0 | 23 | - | repair_then_confirm |
+| Data Center Knowledge | 2026-09-14 | idle | 0 | 0 | 0 | 0 | 2 | all observed candidates were published outside the target date (2026-08-06 to 2026-09-15) | repair_then_confirm |
+| Electrek | 2026-09-14 | healthy | 6426 | 0 | 0 | 0 | 3 | - | repair_then_confirm |
+| electrive | 2026-09-14 | healthy | 2695 | 0 | 0 | 0 | 4 | - | repair_then_reconfirm |
+| EnergyTrend储能 | 2026-09-14 | healthy | 1323 | 0 | 0 | 0 | 8 | - | repair_then_confirm |
+| H2 View | 2026-09-14 | zero | 0 | 0 | 0 | 1 | 15 | no target-date articles were collected | repair_then_reconfirm |
+| Informationsdienst Wissenschaft-idw | 2026-09-14 | healthy | 6124 | 0 | 0 | 0 | 9 | - | repair_then_reconfirm |
+| interesting engineering | 2026-09-14 | healthy | 3749 | 0 | 0 | 0 | 8 | - | repair_then_reconfirm |
+| IT之家 | 2026-09-14 | healthy | 413 | 0 | 6 | 0 | 3 | - | repair_then_reconfirm |
+| MIT Technology Review | 2026-09-14 | healthy | 6557 | 0 | 0 | 0 | 10 | - | repair_then_reconfirm |
+| NE时代 | 2026-09-14 | healthy | 3315 | 0 | 0 | 0 | 7 | - | repair_then_confirm |
+| perovskite-info | 2026-09-14 | healthy | 5314 | 0 | 0 | 0 | 12 | - | repair_then_reconfirm |
+| pv magazine | 2026-09-14 | healthy | 3465 | 0 | 0 | 0 | 7 | - | repair_then_reconfirm |
+| pv magazine C&I PV | 2026-09-14 | degraded | 2636 | 1 | 1 | 1 | 15 | 1 articles were not verified as full text (truncated_ending) | repair_then_reconfirm |
+| Renewables Now | 2026-09-14 | zero | 0 | 0 | 0 | 1 | 6 | no target-date articles were collected | repair_then_reconfirm |
+| scitechdaily | 2026-09-14 | healthy | 7498 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
+| Supply Chain Digital | 2026-09-14 | healthy | 4306 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
+| the information | 2026-09-14 | healthy | 8074 | 0 | 0 | 0 | 3 | - | repair_then_confirm |
+| 中国核电信息网-国内 | 2026-09-14 | healthy | 807 | 0 | 1 | 0 | 3 | - | repair_then_reconfirm |
+| 中国核电信息网-国际 | 2026-09-14 | healthy | 590 | 0 | 6 | 0 | 2 | - | repair_then_reconfirm |
+| 中国电力新闻网-新能源 | 2026-09-14 | healthy | 944 | 0 | 0 | 0 | 6 | - | repair_then_confirm |
+| 中国电力新闻网-科技 | 2026-09-14 | zero | 0 | 0 | 0 | 1 | 14 | no target-date articles were collected | repair_then_reconfirm |
+| 中国能源网 | 2026-09-14 | zero | 0 | 0 | 0 | 1 | 22 | no target-date articles were collected | repair_then_confirm |
+| 光伏测试网 | 2026-09-14 | zero | 0 | 0 | 0 | 1 | 34 | no target-date articles were collected | repair_then_confirm |
+| 北极星储能网 | 2026-09-14 | zero | 0 | 0 | 0 | 1 | 31 | no target-date articles were collected | repair_then_confirm |
+| 国际太阳能光伏网 | 2026-09-14 | healthy | 890 | 0 | 0 | 0 | 3 | - | repair_then_confirm |
+| 国际能源网 | 2026-09-14 | zero | 0 | 0 | 0 | 24 | 46 | no target-date articles were collected | repair_then_confirm |
+| 少数派 | 2026-09-14 | healthy | 4782 | 0 | 0 | 0 | 2 | - | repair_then_confirm |
+| 我爱电车网 | 2026-09-14 | healthy | 763 | 0 | 1 | 0 | 20 | - | repair_then_confirm |
+| 电池网 | 2026-09-14 | idle | 0 | 0 | 0 | 0 | 25 | all observed candidates were published outside the target date (2026-08-07 to 2026-09-10) | repair_then_confirm |
+| 科学网新闻 | 2026-09-14 | healthy | 1224 | 0 | 0 | 0 | 4 | - | repair_then_reconfirm |
+| 索比光伏 | 2026-09-14 | healthy | 1338 | 0 | 0 | 0 | 3 | - | repair_then_reconfirm |
 
 ## 运维闭环
 
