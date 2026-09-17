@@ -81,6 +81,12 @@ class H2ViewScraper(MultiPageListingScraper):
         return [url for url in urls if self.article_path_re.match(urlparse(url).path)][:limit]
 
 
+class IDWScraper(MultiPageListingScraper):
+    """Fail quickly when idw detail pages stall so later channels still run."""
+
+    consecutive_older_limit = 2
+
+
 class SolarInEnScraper(MultiPageListingScraper):
     additional_listing_urls = (
         "https://solar.in-en.com/news/SolarPV/",

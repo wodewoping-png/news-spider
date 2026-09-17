@@ -31,6 +31,7 @@ ACCESS_CHALLENGE_SIGNATURE_GROUPS = (
     ("cf-chl-", "challenge-platform"),
     ("checking your browser", "enable javascript and cookies"),
     ("verify you are human", "cloudflare"),
+    ("aliyun_waf_aa", "renderdata"),
 )
 
 # urllib.robotparser applies the first matching rule, while Feedly publishes a
@@ -65,6 +66,11 @@ def request_headers_for_url(
         return {}
     hostname = (urlparse(url).hostname or "").lower()
     browser_ua_domains = (
+        "batteriesnews.com",
+        "bjx.com.cn",
+        "china5e.com",
+        "nachrichten.idw-online.de",
+        "renewablesnow.com",
         "sciencenet.cn",
         "insideevs.com",
         "theinformation.com",
@@ -156,6 +162,7 @@ class HttpClient:
         self.timeout = timeout
         self.sleep_seconds = sleep_seconds
         self.respect_robots = respect_robots
+        self.last_failure_reason = ""
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -176,6 +183,21 @@ class HttpClient:
         adapter = HTTPAdapter(max_retries=retry)
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
+        # idw detail pages intermittently accept connections but never finish
+        # sending a response. Do not multiply that per-page timeout by the
+        # general retry policy and delay every source that follows it.
+        self.session.mount(
+            "https://nachrichten.idw-online.de/",
+            HTTPAdapter(
+                max_retries=Retry(
+                    total=0,
+                    connect=0,
+                    read=0,
+                    redirect=0,
+                    status=0,
+                )
+            ),
+        )
         self.robots = RobotsCache(self.session, user_agent, timeout)
 
     def get(
@@ -187,6 +209,7 @@ class HttpClient:
         required: bool = False,
         strict_robots: bool = False,
     ) -> Optional[FetchResult]:
+        self.last_failure_reason = ""
         if self.respect_robots and not self.robots.can_fetch(
             url,
             fail_closed=strict_robots,
@@ -194,6 +217,7 @@ class HttpClient:
             if required:
                 raise RequiredFetchError(f"Required fetch blocked by robots.txt: {url}")
             logging.warning("Blocked by robots.txt: %s", url)
+            self.last_failure_reason = "blocked by robots.txt"
             return None
 
         time.sleep(self.sleep_seconds)
@@ -227,6 +251,7 @@ class HttpClient:
                         f"(HTTP {response.status_code}; Cloudflare challenge)"
                     )
                 logging.warning("Cloudflare challenge response: %s", response.url)
+                self.last_failure_reason = "Cloudflare access challenge"
                 return None
             response.raise_for_status()
         except requests.RequestException as exc:
@@ -237,11 +262,22 @@ class HttpClient:
                     f"Required fetch failed: {url} ({reason})"
                 ) from exc
             logging.warning("Fetch failed: %s (%s)", url, exc)
+            status_code = getattr(getattr(exc, "response", None), "status_code", None)
+            error_text = str(exc).lower()
+            if status_code:
+                self.last_failure_reason = f"HTTP {status_code}"
+            elif "read timed out" in error_text:
+                self.last_failure_reason = "ReadTimeout"
+            elif "connect timeout" in error_text or "connection timed out" in error_text:
+                self.last_failure_reason = "ConnectTimeout"
+            else:
+                self.last_failure_reason = type(exc).__name__
             return None
 
         content_type = response.headers.get("content-type", "")
         if not allow_non_html and "html" not in content_type.lower():
             logging.info("Skip non-html response: %s (%s)", url, content_type)
+            self.last_failure_reason = f"non-HTML response ({content_type or 'unknown'})"
             return None
 
         if not response.encoding or response.encoding.lower() == "iso-8859-1":
@@ -250,6 +286,7 @@ class HttpClient:
         stripped_text = response_text.strip()
         if not stripped_text:
             logging.warning("Empty response body: %s", response.url)
+            self.last_failure_reason = "empty response body"
             return None
         lowered_probe = stripped_text[:2000].lower()
         if (
@@ -257,9 +294,11 @@ class HttpClient:
             or "页面不存在" in stripped_text[:2000]
         ):
             logging.warning("Soft 404 response: %s", response.url)
+            self.last_failure_reason = "soft 404"
             return None
         if is_access_challenge_html(response_text):
             logging.warning("Access challenge response: %s", response.url)
+            self.last_failure_reason = "access challenge"
             return None
         return FetchResult(
             url=response.url,

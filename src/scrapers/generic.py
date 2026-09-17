@@ -130,11 +130,21 @@ class GenericListingScraper(BaseScraper):
         urls = self.discover_article_urls(effective_candidate_limit)
         self.last_candidate_count = len(urls)
         listing_candidate_dates = getattr(self, "listing_candidate_dates", {})
+        listing_candidate_titles = getattr(self, "listing_candidate_titles", {})
         candidate_dates: dict[str, date | None] = {
             url: date_from_url(url) or listing_candidate_dates.get(url)
             for url in urls
         }
         if not urls:
+            issue = str(getattr(self.client, "last_failure_reason", "") or "")
+            self.last_fetched_count = 0
+            self.last_failed_fetch_count = 1 if issue else 0
+            self.last_fetch_issues = f"{issue} (1)" if issue else ""
+            self.last_date_filtered_count = 0
+            self.last_undated_candidate_count = 0
+            self.last_candidate_date_min = ""
+            self.last_candidate_date_max = ""
+            self.last_target_date_absent = False
             logging.warning(
                 "TODO scraper needed for %s: unable to identify article links from listing page. "
                 "Please provide article-list CSS selectors or API details.",
@@ -144,6 +154,7 @@ class GenericListingScraper(BaseScraper):
 
         consecutive_older = 0
         consecutive_failed = 0
+        fetch_issues: dict[str, int] = {}
         fetched_count = 0
         target_date_absent = False
         for url in urls:
@@ -157,12 +168,27 @@ class GenericListingScraper(BaseScraper):
             article = fetch_and_parse_article(self.client, url, self.source)
             fetched_count += 1
             if not article:
+                issue = str(getattr(self.client, "last_failure_reason", "") or "")
+                if issue:
+                    fetch_issues[issue] = fetch_issues.get(issue, 0) + 1
                 consecutive_failed += 1
                 if consecutive_failed >= self.consecutive_older_limit:
                     break
                 continue
             consecutive_failed = 0
             if article:
+                listing_title = listing_candidate_titles.get(url, "").strip()
+                parsed_title = str(article.get("title") or "").strip()
+                placeholder_titles = {
+                    "",
+                    self.source.name.strip(),
+                    f"- {self.source.name.strip()}",
+                    f"{self.source.name.strip()} -",
+                }
+                if listing_title and parsed_title in placeholder_titles:
+                    article["title"] = listing_title
+                if known_candidate_date and not article.get("published_at"):
+                    article["published_at"] = known_candidate_date.isoformat()
                 ensure_published_at(article)
                 parsed_date = article_date(article)
                 if parsed_date:
@@ -182,6 +208,10 @@ class GenericListingScraper(BaseScraper):
             if len(articles) >= limit:
                 break
         self.last_fetched_count = fetched_count
+        self.last_failed_fetch_count = sum(fetch_issues.values())
+        self.last_fetch_issues = ", ".join(
+            f"{issue} ({count})" for issue, count in sorted(fetch_issues.items())
+        )
         known_dates = [value for value in candidate_dates.values() if value]
         self.last_date_filtered_count = sum(
             bool(target_date and value and value != target_date)

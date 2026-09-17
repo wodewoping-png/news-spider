@@ -18,9 +18,11 @@ from src.scrapers.interesting_engineering import InterestingEngineeringScraper
 from src.scrapers.international_energy import InternationalEnergyScraper
 from src.scrapers.itdcw import ITDCWScraper
 from src.scrapers.ne_time import NETimeScraper
+from src.scrapers.multi_page import IDWScraper
 from src.scrapers.pv_magazine import PVMagazineCIPVScraper
 from src.scrapers.rionews import (
     RIONewsBatteryScraper,
+    RIONewsBJXStorageScraper,
     RIONewsChinaEnergyScraper,
     RIONewsInternationalEnergyScraper,
     RIONewsXEVCarScraper,
@@ -70,12 +72,13 @@ class NewChannelRegistryTests(unittest.TestCase):
             "国际能源网": RIONewsInternationalEnergyScraper,
             "中国能源网": RIONewsChinaEnergyScraper,
             "我爱电车网": RIONewsXEVCarScraper,
-            "北极星储能网": BJXStorageScraper,
+            "北极星储能网": RIONewsBJXStorageScraper,
             "INSIDEEVs": InsideEVsScraper,
             "interesting engineering": InterestingEngineeringScraper,
             "EnergyTrend储能": EnergyTrendScraper,
             "NE时代": NETimeScraper,
             "电池网": RIONewsBatteryScraper,
+            "Informationsdienst Wissenschaft-idw": IDWScraper,
             "X-MOL": XMolScraper,
             "Batteries News": BatteriesNewsScraper,
             "Data Center Knowledge": DataCenterKnowledgeScraper,
@@ -260,6 +263,44 @@ class NewChannelDiscoveryTests(unittest.TestCase):
         self.assertEqual(
             urls,
             ["https://www.china5e.com/news/news-1207060-1.html"],
+        )
+
+    def test_china_energy_uses_target_date_periodical(self):
+        source = make_source("中国能源网", "https://www.china5e.com/news/")
+        issue_url = "https://www.china5e.com/periodical/show_9100.html"
+        index_html = f"""
+        <select>
+          <option value="{issue_url}">能源日讯[4246期]2026-09-16</option>
+        </select>
+        """
+        issue_html = """
+        <a href="/news/news-1209260-1.html">8月经济运行平稳、发展向新向优</a>
+        <a href="/news/news-1209260-1.html">[详细内容]</a>
+        """
+        scraper = ChinaEnergyScraper(
+            StaticClient(
+                {
+                    ChinaEnergyScraper.periodical_index_url: index_html,
+                    issue_url: issue_html,
+                }
+            ),
+            source,
+        )
+        scraper._target_date = date(2026, 9, 16)
+
+        urls = scraper.discover_article_urls(20)
+
+        self.assertEqual(
+            urls,
+            ["https://www.china5e.com/news/news-1209260-1.html"],
+        )
+        self.assertEqual(
+            scraper.listing_candidate_dates[urls[0]],
+            date(2026, 9, 16),
+        )
+        self.assertEqual(
+            scraper.listing_candidate_titles[urls[0]],
+            "8月经济运行平稳、发展向新向优",
         )
 
     def test_xevcar_keeps_homepage_article_cards(self):

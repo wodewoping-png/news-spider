@@ -66,6 +66,7 @@ RSS_DISCOVERY_DISABLED_SOURCES = {
     "科学网新闻",
     "新华网科技",
     "h2 view",
+    "informationsdienst wissenschaft-idw",
     "国际太阳能光伏网",
     "新能源网",
     "全球风电网",
@@ -581,6 +582,8 @@ def main() -> int:
         candidate_date_max = ""
         observed_candidate_dates: list[date] = []
         target_date_absent = False
+        failed_fetch_count = 0
+        fetch_issues = ""
         crawl_mode = "listing"
         try:
             source_key = source.name.strip().lower()
@@ -807,6 +810,12 @@ def main() -> int:
                 target_date_absent = bool(
                     getattr(scraper, "last_target_date_absent", False)
                 )
+                failed_fetch_count = int(
+                    getattr(scraper, "last_failed_fetch_count", 0) or 0
+                )
+                fetch_issues = str(
+                    getattr(scraper, "last_fetch_issues", "") or ""
+                )
                 for article in scraped_articles:
                     ensure_content_quality(article)
                     url = article.get("url")
@@ -890,13 +899,25 @@ def main() -> int:
             reason = "no target-date articles were expected for this source schedule"
         elif changed_count == 0:
             status = "zero"
-            reason = "no target-date articles were collected"
-        elif incomplete_count:
-            status = "degraded"
             reason = (
-                f"{incomplete_count} articles were not verified as full text"
-                + (f" ({', '.join(content_issues)})" if content_issues else "")
+                f"article fetch failures: {fetch_issues}"
+                if failed_fetch_count and fetch_issues
+                else "no target-date articles were collected"
             )
+        elif incomplete_count or failed_fetch_count:
+            status = "degraded"
+            degradation_reasons = []
+            if incomplete_count:
+                degradation_reasons.append(
+                    f"{incomplete_count} articles were not verified as full text"
+                    + (f" ({', '.join(content_issues)})" if content_issues else "")
+                )
+            if failed_fetch_count:
+                degradation_reasons.append(
+                    f"{failed_fetch_count} article pages failed"
+                    + (f" ({fetch_issues})" if fetch_issues else "")
+                )
+            reason = "; ".join(degradation_reasons)
         else:
             status = "healthy"
             reason = ""
@@ -912,6 +933,8 @@ def main() -> int:
                 "crawl_mode": crawl_mode,
                 "candidates_seen": candidates_seen,
                 "pages_fetched": pages_fetched,
+                "failed_page_fetches": failed_fetch_count,
+                "fetch_issues": fetch_issues,
                 "date_filtered_candidates": date_filtered_candidates,
                 "undated_candidates": undated_candidates,
                 "candidate_date_min": candidate_date_min,

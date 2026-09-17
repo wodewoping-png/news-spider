@@ -22,6 +22,7 @@ class TestPVScraper(GenericListingScraper):
         soup = BeautifulSoup(result.text, "html.parser")
         urls: list[str] = []
         dates = {}
+        titles = {}
         seen: set[str] = set()
         for link in soup.select("a.xi2[href*='portal.php?mod=view']"):
             url = urldefrag(urljoin(result.url, str(link.get("href") or "")))[0]
@@ -41,7 +42,9 @@ class TestPVScraper(GenericListingScraper):
                 date_node.get_text(" ", strip=True) if date_node else ""
             )
             dates[url] = published.date() if published else None
+            titles[url] = link.get_text(" ", strip=True).removesuffix("...").strip()
             if len(urls) >= limit:
                 break
         self.listing_candidate_dates = dates
+        self.listing_candidate_titles = titles
         return urls

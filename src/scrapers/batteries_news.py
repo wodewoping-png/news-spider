@@ -96,6 +96,7 @@ class BatteriesNewsScraper(BaseScraper):
         date_filtered_count = 0
         undated_candidate_count = 0
         candidate_dates: list[date] = []
+        fetch_issues: dict[str, int] = {}
 
         for _ in range(self.max_pages):
             if not page_url or page_url in seen_pages or candidates_seen >= effective_candidate_limit:
@@ -128,8 +129,14 @@ class BatteriesNewsScraper(BaseScraper):
                 article = fetch_and_parse_article(self.client, card.url, self.source)
                 fetched_count += 1
                 if not article:
+                    issue = str(getattr(self.client, "last_failure_reason", "") or "")
+                    if issue:
+                        fetch_issues[issue] = fetch_issues.get(issue, 0) + 1
                     continue
-                if card.published_date and not article.get("published_at"):
+                # The visible Latest-module date is the publisher's calendar date.
+                # Preserve it instead of shifting a UTC metadata timestamp into the
+                # crawler's Asia/Shanghai date and dropping late-afternoon stories.
+                if card.published_date:
                     article["published_at"] = card.published_date.isoformat()
                 if target_date and article_date(article) != target_date:
                     continue
@@ -143,6 +150,10 @@ class BatteriesNewsScraper(BaseScraper):
 
         self.last_candidate_count = candidates_seen
         self.last_fetched_count = fetched_count
+        self.last_failed_fetch_count = sum(fetch_issues.values())
+        self.last_fetch_issues = ", ".join(
+            f"{issue} ({count})" for issue, count in sorted(fetch_issues.items())
+        )
         self.last_date_filtered_count = date_filtered_count
         self.last_undated_candidate_count = undated_candidate_count
         self.last_candidate_date_min = (

@@ -141,6 +141,25 @@ class BatteriesNewsTests(unittest.TestCase):
         self.assertEqual([article["title"] for article in articles], ["Target story"])
         self.assertIn("https://batteriesnews.com/page/2/", client.requested)
 
+    def test_listing_date_wins_over_utc_metadata_crossing_shanghai_midnight(self):
+        article_url = "https://batteriesnews.com/late-afternoon-story/"
+        pages = {
+            "https://batteriesnews.com/": listing(
+                [(article_url, "September 16, 2026")]
+            ),
+            article_url: detail(
+                "Late afternoon story",
+                "2026-09-16T17:06:45+00:00",
+                "Complete article body " * 80,
+            ),
+        }
+        scraper = BatteriesNewsScraper(StaticClient(pages), source())
+
+        articles = scraper.scrape(target_date=date(2026, 9, 16))
+
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0]["published_at"], "2026-09-16")
+
 
 if __name__ == "__main__":
     unittest.main()

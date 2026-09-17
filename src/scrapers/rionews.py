@@ -7,6 +7,7 @@ from pathlib import Path
 
 from ..rionews import load_rionews_articles
 from .base import BaseScraper
+from .bjx_storage import BJXStorageScraper
 from .china_energy import ChinaEnergyScraper
 from .international_energy import InternationalEnergyScraper
 from .itdcw import ITDCWScraper
@@ -26,6 +27,8 @@ class RIONewsSourceScraper(BaseScraper):
         "last_candidate_date_min",
         "last_candidate_date_max",
         "last_target_date_absent",
+        "last_failed_fetch_count",
+        "last_fetch_issues",
     )
 
     def _daily_dir(self) -> Path:
@@ -102,3 +105,8 @@ class RIONewsXEVCarScraper(RIONewsSourceScraper):
 class RIONewsInternationalEnergyScraper(RIONewsSourceScraper):
     media_prefix = "国际能源网_"
     fallback_scraper_class = InternationalEnergyScraper
+
+
+class RIONewsBJXStorageScraper(RIONewsSourceScraper):
+    media_prefix = "北极星储能网_"
+    fallback_scraper_class = BJXStorageScraper

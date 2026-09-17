@@ -45,6 +45,9 @@ STRICT_SOURCE_ARTICLE_SELECTORS = {
     "中国能源网": (
         "#showcontent",
     ),
+    "光伏测试网": (
+        "#article_content",
+    ),
     "interesting engineering": (
         ".body-content",
     ),

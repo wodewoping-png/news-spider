@@ -14,6 +14,7 @@ from src.rionews import split_rionews_workbook_by_date
 from src.scrapers import get_scraper_class
 from src.scrapers.rionews import (
     RIONewsBatteryScraper,
+    RIONewsBJXStorageScraper,
     RIONewsChinaEnergyScraper,
     RIONewsInternationalEnergyScraper,
     RIONewsXEVCarScraper,
@@ -56,6 +57,7 @@ def write_workbook(path: Path) -> None:
     sheet.append(["电池企业动态", "2026-08-04 10:40:00", "电池网_新闻_企业", "https://www.itdcw.com/news/qiye/1.html", "", "电池网正文" * 100, "", "", ""])
     sheet.append(["电动车动态", "2026-08-04 10:50:00", "我爱电车网_首页", "https://www.xevcar.com/gongsi/1.html", "", "我爱电车网正文" * 100, "", "", ""])
     sheet.append(["能源宏观动态", "2026-08-04 11:00:00", "国际能源网_宏观", "https://www.in-en.com/article/1.html", "", "国际能源网正文" * 100, "", "", ""])
+    sheet.append(["储能项目动态", "2026-08-04 11:10:00", "北极星储能网_项目", "https://news.bjx.com.cn/html/20260804/1.shtml", "", "北极星储能网正文" * 100, "", "", ""])
     sheet.append(["其他媒体文章", "2026-08-04 11:30:00", "储能网", "https://example.com/other", "", "不应导入", "", "", ""])
     sheet.append(["其他日期文章", "2026-08-03 09:30:00", "中国能源网_资讯_新能源", "https://www.china5e.com/news/news-3-1.html", "", "不应导入", "", "", ""])
     workbook.save(path)
@@ -127,6 +129,7 @@ class RIONewsTests(unittest.TestCase):
             "电池网": RIONewsBatteryScraper,
             "我爱电车网": RIONewsXEVCarScraper,
             "国际能源网": RIONewsInternationalEnergyScraper,
+            "北极星储能网": RIONewsBJXStorageScraper,
         }
         for name, scraper_class in expected.items():
             with self.subTest(name=name):
@@ -158,6 +161,7 @@ class RIONewsTests(unittest.TestCase):
             ("电池网", RIONewsBatteryScraper, "itdcw.com"),
             ("我爱电车网", RIONewsXEVCarScraper, "xevcar.com"),
             ("国际能源网", RIONewsInternationalEnergyScraper, "in-en.com"),
+            ("北极星储能网", RIONewsBJXStorageScraper, "bjx.com.cn"),
         )
         with tempfile.TemporaryDirectory() as temp:
             daily_dir = Path(temp)

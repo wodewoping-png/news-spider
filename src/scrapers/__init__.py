@@ -29,6 +29,7 @@ from .multi_page import (
     ChinaNengyuanTechScraper,
     ChinaNengyuanWindScraper,
     H2ViewScraper,
+    IDWScraper,
     PerovskiteInfoScraper,
     SolarInEnScraper,
 )
@@ -36,6 +37,7 @@ from .ne_time import NETimeScraper
 from .pv_magazine import PVMagazineCIPVScraper, PVMagazineScraper
 from .rionews import (
     RIONewsBatteryScraper,
+    RIONewsBJXStorageScraper,
     RIONewsChinaEnergyScraper,
     RIONewsInternationalEnergyScraper,
     RIONewsXEVCarScraper,
@@ -58,7 +60,7 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "国际能源网": RIONewsInternationalEnergyScraper,
     "中国能源网": RIONewsChinaEnergyScraper,
     "我爱电车网": RIONewsXEVCarScraper,
-    "北极星储能网": BJXStorageScraper,
+    "北极星储能网": RIONewsBJXStorageScraper,
     "insideevs": InsideEVsScraper,
     "interesting engineering": InterestingEngineeringScraper,
     "energytrend储能": EnergyTrendScraper,
@@ -79,6 +81,7 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "科学网新闻": ScienceNetScraper,
     "新华网科技": XinhuaTechScraper,
     "h2 view": H2ViewScraper,
+    "informationsdienst wissenschaft-idw": IDWScraper,
     "国际太阳能光伏网": SolarInEnScraper,
     "新能源网": ChinaNengyuanTechScraper,
     "perovskite-info": PerovskiteInfoScraper,

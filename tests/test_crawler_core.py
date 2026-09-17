@@ -35,7 +35,7 @@ from src.main import (
 )
 from src.rss_discovery import FeedEntry, fetch_feedly_stream_entries, parse_feed
 from src.scrapers.generic import GenericListingScraper
-from src.scrapers.multi_page import H2ViewScraper, PerovskiteInfoScraper
+from src.scrapers.multi_page import H2ViewScraper, IDWScraper, PerovskiteInfoScraper
 from src.scrapers.renewables_now import RenewablesNowScraper
 from src.scrapers.science_net import ScienceNetScraper
 from src.scrapers.xinhua_tech import XinhuaTechScraper
@@ -101,6 +101,17 @@ class DateAndUrlTests(unittest.TestCase):
             request_headers_for_url("https://insideevs.com/news/", "custom-agent"), {}
         )
 
+    def test_fragile_news_sites_use_browser_user_agent_by_default(self):
+        for url in (
+            "https://www.batteriesnews.com/latest/",
+            "https://news.bjx.com.cn/html/20260916/1513084.shtml",
+            "https://www.china5e.com/",
+            "https://nachrichten.idw-online.de/groups/technologie",
+            "https://renewablesnow.com/news/",
+        ):
+            with self.subTest(url=url):
+                self.assertIn("Mozilla/5.0", request_headers_for_url(url)["User-Agent"])
+
     def test_public_fallback_channel_date_containers_are_parsed(self):
         cases = (
             (
@@ -158,6 +169,12 @@ class DateAndUrlTests(unittest.TestCase):
             ),
             ("missing", "access_challenge"),
         )
+        self.assertTrue(
+            is_access_challenge_html(
+                '<textarea id="renderData"></textarea>'
+                '<meta name="aliyun_waf_aa" content="redacted">'
+            )
+        )
 
     def test_4c_offshore_uses_day_month_year_dates(self):
         self.assertEqual(
@@ -183,6 +200,16 @@ class DateAndUrlTests(unittest.TestCase):
         client = HttpClient(sleep_seconds=0, respect_robots=False)
         with patch.object(client.session, "get", return_value=response):
             self.assertIsNone(client.get(response.url, allow_non_html=False))
+        self.assertEqual(client.last_failure_reason, "access challenge")
+
+    def test_http_client_preserves_wrapped_read_timeout_reason(self):
+        client = HttpClient(sleep_seconds=0, respect_robots=False)
+        error = requests.ConnectionError(
+            "Max retries exceeded (Caused by ReadTimeoutError: read timed out)"
+        )
+        with patch.object(client.session, "get", side_effect=error):
+            self.assertIsNone(client.get("https://example.com/article"))
+        self.assertEqual(client.last_failure_reason, "ReadTimeout")
 
     def test_the_information_uses_browser_user_agent(self):
         headers = request_headers_for_url(THE_INFORMATION_SUBSCRIBER_FEED)
@@ -348,6 +375,37 @@ class DateAndUrlTests(unittest.TestCase):
 
 
 class ListingScraperTests(unittest.TestCase):
+    def test_listing_fetch_failure_is_exposed_to_channel_health(self):
+        source = make_source("example", "https://example.com/list")
+
+        class FailedClient(StaticClient):
+            last_failure_reason = "ReadTimeout"
+
+        scraper = GenericListingScraper(FailedClient({}), source)
+
+        self.assertEqual(scraper.scrape(target_date=date(2026, 9, 16)), [])
+        self.assertEqual(scraper.last_failed_fetch_count, 1)
+        self.assertEqual(scraper.last_fetch_issues, "ReadTimeout (1)")
+
+    def test_idw_stops_after_two_consecutive_detail_failures(self):
+        source = make_source(
+            "Informationsdienst Wissenschaft-idw",
+            "https://nachrichten.idw-online.de/groups/technologie",
+        )
+        scraper = IDWScraper(StaticClient({}), source)
+        urls = [
+            f"https://nachrichten.idw-online.de/2026/09/16/story-{index}"
+            for index in range(10)
+        ]
+        with (
+            patch.object(scraper, "discover_article_urls", return_value=urls),
+            patch("src.scrapers.generic.fetch_and_parse_article", return_value=None) as fetch,
+        ):
+            articles = scraper.scrape(20, target_date=date(2026, 9, 16))
+
+        self.assertEqual(articles, [])
+        self.assertEqual(fetch.call_count, 2)
+
     def test_same_site_accepts_sibling_subdomains(self):
         self.assertTrue(
             GenericListingScraper.same_site(
@@ -436,6 +494,29 @@ class ListingScraperTests(unittest.TestCase):
             )
         self.assertEqual(len(articles), 2)
         self.assertTrue(all("20260720" in item["url"] for item in articles))
+
+    def test_listing_metadata_fills_missing_detail_title_and_date(self):
+        source = make_source("example", "https://example.com/list")
+        url = "https://example.com/article?id=1"
+        scraper = GenericListingScraper(StaticClient({}), source)
+        scraper.listing_candidate_dates = {url: date(2026, 9, 16)}
+        scraper.listing_candidate_titles = {url: "Listing title"}
+        detail = {
+            "title": "- example",
+            "published_at": "",
+            "content": "Complete article body. " * 40,
+            "url": url,
+        }
+
+        with (
+            patch.object(scraper, "discover_article_urls", return_value=[url]),
+            patch("src.scrapers.generic.fetch_and_parse_article", return_value=detail),
+        ):
+            articles = scraper.scrape(5, target_date=date(2026, 9, 16))
+
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0]["title"], "Listing title")
+        self.assertEqual(articles[0]["published_at"], "2026-09-16")
 
     def test_url_dated_candidates_confirm_target_day_had_no_articles(self):
         source = make_source("example", "https://example.com/list")
