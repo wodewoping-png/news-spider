@@ -484,7 +484,7 @@
 | pending_confirmation | 2026-09-26 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-09-26 | 电池网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-09-27 | Electrek | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
-| pending_confirmation | 2026-09-27 | interesting engineering | 检测到 1 篇正文不完整或混入页面模板/导航内容；类型：public_preview_only，请检查正文选择器和内容质量规则 | - |
+| pending_confirmation | 2026-09-27 | interesting engineering | 检测到 1 篇正文不完整或混入页面模板/导航内容，请检查正文选择器和内容质量规则 | - |
 | pending_confirmation | 2026-09-27 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 
 处理方式：修复渠道后运行 `python -m src.recovery confirm --source "渠道名" --note "修复说明"`；后续任务会自动补抓所有已确认的原日期缺口。
