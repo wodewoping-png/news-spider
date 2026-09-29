@@ -15,6 +15,7 @@ import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlparse
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 
@@ -186,7 +187,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="单独抓取并归档部委通知、公告及附件")
     parser.add_argument("--sources", type=Path, default=Path("sources.xlsx"))
     parser.add_argument("--target-date", type=date.fromisoformat,
-                        default=datetime.now(DEFAULT_TIMEZONE).date() - timedelta(days=1))
+                        default=datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).date() - timedelta(days=1))
     parser.add_argument("--output-dir", type=Path, default=Path("data/government_announcements"))
     parser.add_argument("--only-source", action="append")
     args = parser.parse_args(argv)
@@ -205,7 +206,7 @@ def main(argv: list[str] | None = None) -> int:
             logging.exception("Government archive failed: %s", source.name)
             reports.append({"source": source.name, "status": "failed", "errors": [str(exc)], "notices": []})
     root.mkdir(parents=True, exist_ok=True)
-    index = {"target_date": args.target_date.isoformat(), "generated_at": datetime.now(DEFAULT_TIMEZONE).isoformat(),
+    index = {"target_date": args.target_date.isoformat(), "generated_at": datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).isoformat(),
              "attachment_bytes": total, "sources": reports}
     (root / "索引.json").write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     with (root / "公告清单.csv").open("w", encoding="utf-8-sig", newline="") as handle:
