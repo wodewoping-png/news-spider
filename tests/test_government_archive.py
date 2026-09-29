@@ -70,7 +70,7 @@ class GovernmentArchiveTests(unittest.TestCase):
         client = FakeClient({parser.data_url: listing, detail: html})
         with tempfile.TemporaryDirectory() as temp, patch("src.government_archive.fetch_attachment", side_effect=ValueError("robots 未许可")):
             report, used = archive_source(source(), client, date(2026, 9, 9), Path(temp), 10_000)
-            self.assertEqual(report["status"], "ok")
+            self.assertEqual(report["status"], "partial")
             self.assertEqual(used, 0)
             folders = list((Path(temp) / "国家能源局—通知").iterdir())
             self.assertEqual(len(folders), 1)
