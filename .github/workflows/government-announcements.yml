@@ -1,0 +1,73 @@
+name: Government Announcements Archive
+
+on:
+  schedule:
+    # 10:30 Asia/Shanghai: archive the previous local calendar day.
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: "Optional publication date (YYYY-MM-DD)"
+        required: false
+        type: string
+  push:
+    paths:
+      - "src/government_archive.py"
+      - ".github/workflows/government-announcements.yml"
+
+concurrency:
+  group: news-spider-data-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - name: Archive government notices and attachments
+        id: archive
+        continue-on-error: true
+        env:
+          TARGET_DATE: ${{ inputs.target_date }}
+        run: |
+          args=(--sources sources.xlsx --output-dir data/government_announcements)
+          if [ -n "$TARGET_DATE" ]; then
+            args+=(--target-date "$TARGET_DATE")
+          fi
+          python -m src.government_archive "${args[@]}"
+      - name: Upload archive
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: government-announcements-${{ github.run_id }}
+          path: data/government_announcements/
+          if-no-files-found: warn
+      - name: Commit archive
+        if: always()
+        run: |
+          branch="${GITHUB_REF_NAME:-main}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/government_announcements
+          if git diff --cached --quiet; then
+            echo "No government archive changes to commit."
+          else
+            git commit -m "chore: archive government announcements"
+            git pull --rebase --autostash origin "$branch"
+            git push origin "HEAD:$branch"
+          fi
+      - name: Report archive status
+        if: ${{ steps.archive.outcome == 'failure' }}
+        run: |
+          echo "Some government archive channels failed or returned an empty listing; inspect the uploaded 索引.json." >> "$GITHUB_STEP_SUMMARY"
+          exit 1
