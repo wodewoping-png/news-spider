@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from candidate_sources.government_announcements.scrapers import NeaNoticesScraper
-from src.government_archive import archive_source, attachment_links, safe_name
+from src.government_archive import archive_source, attachment_links, main, safe_name
 from src.http_client import FetchResult
 from src.load_sources import Source
 
@@ -33,6 +33,19 @@ def source():
 
 
 class GovernmentArchiveTests(unittest.TestCase):
+    def test_command_writes_csv_and_index(self):
+        notice = {"title": "储能公告", "published_at": "2026-09-09", "url": "https://www.nea.gov.cn/a",
+                  "content_status": "full_text", "folder": "国家能源局—通知/储能公告_123",
+                  "attachments": [{"status": "downloaded", "file": "附件/储能公告_附件1.pdf"}], "errors": []}
+        with tempfile.TemporaryDirectory() as temp, \
+             patch("src.government_archive.load_sources", return_value=[source()]), \
+             patch("src.government_archive.archive_source", return_value=({"source": source().name, "status": "ok", "notices": [notice]}, 123)):
+            status = main(["--target-date", "2026-09-09", "--output-dir", temp])
+            root = Path(temp) / "2026-09-09"
+            self.assertEqual(status, 0)
+            self.assertEqual(json.loads((root / "索引.json").read_text())["attachment_bytes"], 123)
+            self.assertIn("储能公告_附件1.pdf", (root / "公告清单.csv").read_text(encoding="utf-8-sig"))
+
     def test_attachment_links_are_limited_to_official_body(self):
         parser = NeaNoticesScraper()
         url = "https://www.nea.gov.cn/20260909/22d62e1a042a420c846f7598589136e2/c.html"
