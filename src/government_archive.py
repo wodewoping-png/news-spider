@@ -180,6 +180,9 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
             notice["errors"].append("此渠道详情尚未通过生产校验，仅归档标题、日期和原文链接")
         (folder / "公告.json").write_text(json.dumps(notice, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         report["notices"].append(notice)
+    if any(notice["errors"] or any(item["status"] != "downloaded" for item in notice["attachments"])
+           for notice in report["notices"]):
+        report["status"] = "partial"
     return report, used
 
 
