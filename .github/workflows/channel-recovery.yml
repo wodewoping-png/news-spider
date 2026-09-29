@@ -61,6 +61,10 @@ jobs:
           RIO_SYSTEM_TYPE: ${{ vars.RIO_SYSTEM_TYPE }}
           RIO_DAYS: ${{ vars.RIO_DAYS || '7' }}
         run: |
+          case "$RECOVERY_SOURCE" in
+            中国能源网|电池网|我爱电车网|国际能源网|北极星储能网) ;;
+            *) echo "Selected channel does not use RIOnews; skipping export."; exit 0 ;;
+          esac
           daily_dir="$RUNNER_TEMP/rionews/daily"
           echo "RIONEWS_DAILY_DIR=$daily_dir" >> "$GITHUB_ENV"
           if [ -z "$RIO_USERNAME" ] || [ -z "$RIO_PASSWORD" ]; then
