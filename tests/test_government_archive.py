@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from candidate_sources.government_announcements.scrapers import NeaNoticesScraper
-from src.government_archive import archive_source, attachment_links, main, safe_name
+from src.government_archive import archive_source, attachment_links, fetch_attachment, main, safe_name
 from src.http_client import FetchResult
 from src.load_sources import Source
 
@@ -46,7 +46,7 @@ class GovernmentArchiveTests(unittest.TestCase):
             self.assertEqual(json.loads((root / "索引.json").read_text())["attachment_bytes"], 123)
             self.assertIn("储能公告_附件1.pdf", (root / "公告清单.csv").read_text(encoding="utf-8-sig"))
 
-    def test_attachment_links_are_limited_to_official_body(self):
+    def test_attachment_candidates_are_limited_to_document_body(self):
         parser = NeaNoticesScraper()
         url = "https://www.nea.gov.cn/20260909/22d62e1a042a420c846f7598589136e2/c.html"
         html = '''<nav><a href="/nav.pdf">导航附件</a></nav><span id="detailContent">
@@ -57,8 +57,11 @@ class GovernmentArchiveTests(unittest.TestCase):
         self.assertEqual([x["url"] for x in links], [
             "https://www.nea.gov.cn/20260909/22d62e1a042a420c846f7598589136e2/a.pdf",
             "https://www.nea.gov.cn/docs/b.docx",
+            "https://evil.example/x.pdf",
         ])
         self.assertEqual(safe_name('测试/公告:甲'), '测试_公告_甲')
+        with self.assertRaisesRegex(ValueError, "官方域名"):
+            fetch_attachment(FakeClient({}), parser, "https://evil.example/x.pdf", Path("unused.pdf"), 1000)
 
     def test_archive_writes_separate_notice_and_records_attachment_failure(self):
         parser = NeaNoticesScraper()
