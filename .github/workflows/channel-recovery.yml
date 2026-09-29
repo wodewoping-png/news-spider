@@ -50,6 +50,45 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Prepare RIOnews exports for the selected channel's missing dates
+        if: ${{ inputs.action == 'confirm' }}
+        continue-on-error: true
+        env:
+          RECOVERY_SOURCE: ${{ inputs.source }}
+          RIO_USERNAME: ${{ secrets.RIO_USERNAME }}
+          RIO_PASSWORD: ${{ secrets.RIO_PASSWORD }}
+          RIO_BASE_URL: ${{ vars.RIO_BASE_URL }}
+          RIO_SYSTEM_TYPE: ${{ vars.RIO_SYSTEM_TYPE }}
+          RIO_DAYS: ${{ vars.RIO_DAYS || '7' }}
+        run: |
+          daily_dir="$RUNNER_TEMP/rionews/daily"
+          echo "RIONEWS_DAILY_DIR=$daily_dir" >> "$GITHUB_ENV"
+          if [ -z "$RIO_USERNAME" ] || [ -z "$RIO_PASSWORD" ]; then
+            echo "RIOnews credentials are not configured; recovery will use public-site fallbacks."
+            exit 0
+          fi
+          days="$(python - <<'PY'
+          import json
+          import os
+          from datetime import date
+          from pathlib import Path
+
+          source = os.environ['RECOVERY_SOURCE']
+          queue = Path('logs/recovery-queue.json')
+          incidents = json.loads(queue.read_text(encoding='utf-8')).get('incidents', []) if queue.exists() else []
+          dates = []
+          for item in incidents:
+              if item.get('source') == source and item.get('status') in {'pending_confirmation', 'confirmed', 'recovery_failed'}:
+                  try:
+                      dates.append(date.fromisoformat(item['date']))
+                  except (KeyError, TypeError, ValueError):
+                      pass
+          baseline = max(1, int(os.environ.get('RIO_DAYS') or 7))
+          print(max(baseline, (date.today() - min(dates)).days + 2) if dates else baseline)
+          PY
+          )"
+          python -m src.rionews_fetch --daily-output-dir "$daily_dir" --days "$days"
+
       - name: Resolve incident and run maintenance
         env:
           RECOVERY_ACTION: ${{ inputs.action }}
