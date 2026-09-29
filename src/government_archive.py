@@ -66,12 +66,13 @@ def attachment_links(parser: GovernmentDocumentScraper, html: str, page_url: str
                 url = parsed._replace(scheme="https").geturl()
                 parsed = urlparse(url)
             ext = Path(unquote(parsed.path)).suffix.lower()
-            if ext not in EXTENSIONS or parsed.scheme != "https" or parsed.hostname not in parser.allowed_hosts:
+            label = anchor.get_text(" ", strip=True)
+            if parsed.scheme not in {"http", "https"} or (ext not in EXTENSIONS and "附件" not in label):
                 continue
             if url in seen:
                 continue
             seen.add(url)
-            results.append({"url": url, "label": anchor.get_text(" ", strip=True), "extension": ext})
+            results.append({"url": url, "label": label, "extension": ext})
     return results
 
 
