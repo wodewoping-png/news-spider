@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from candidate_sources.government_announcements.scrapers import NeaNoticesScraper
-from src.government_archive import archive_source, attachment_links, fetch_attachment, main, safe_name
+from src.government_archive import archive_source, attachment_links, cleanup_legacy_csv, cleanup_legacy_notice, fetch_attachment, main, safe_name
 from src.http_client import FetchResult
 from src.load_sources import Source
 
@@ -111,6 +111,36 @@ class GovernmentArchiveTests(unittest.TestCase):
             self.assertEqual(attachment.parent, root / notice["attachment_folder"])
             self.assertTrue((root / notice["folder"] / "公告.json").is_file())
             self.assertFalse((root / notice["folder"] / "附件").exists())
+
+    def test_old_layout_is_removed_only_after_contents_are_preserved(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            relative = Path("部委") / "储能公告_123"
+            old = root / relative
+            new = root / "政策正文" / relative
+            previous = old / "附件" / "储能公告_附件1.pdf"
+            current = root / "附件" / relative / previous.name
+            for folder in (old, new, current.parent):
+                folder.mkdir(parents=True, exist_ok=True)
+            (old / "公告.json").write_text("old")
+            (new / "公告.json").write_text("new")
+            previous.write_bytes(b"original attachment")
+            cleanup_legacy_notice(root, relative)
+            self.assertTrue(old.exists())
+            current.write_bytes(previous.read_bytes())
+            cleanup_legacy_notice(root, relative)
+            self.assertFalse(old.exists())
+            self.assertEqual(current.read_bytes(), b"original attachment")
+
+            header = "渠道,发布日期,原文链接\n"
+            row = "部委,2026-09-09,https://example.gov.cn/a\n"
+            (root / "公告清单.csv").write_text(header + row)
+            (root / "国内政策清单.csv").write_text(header)
+            cleanup_legacy_csv(root)
+            self.assertTrue((root / "公告清单.csv").exists())
+            (root / "国内政策清单.csv").write_text(header + row)
+            cleanup_legacy_csv(root)
+            self.assertFalse((root / "公告清单.csv").exists())
 
 
 if __name__ == "__main__":
