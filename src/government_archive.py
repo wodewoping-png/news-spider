@@ -213,6 +213,12 @@ def main(argv: list[str] | None = None) -> int:
             logging.exception("Government archive failed: %s", source.name)
             reports.append({"source": source.name, "status": "failed", "errors": [str(exc)], "notices": []})
     root.mkdir(parents=True, exist_ok=True)
+    attachment_root = root / "附件"
+    attachment_root.mkdir(exist_ok=True)
+    (attachment_root / "说明.txt").write_text(
+        "附件按渠道/公告名称_哈希存放；当天没有下载成功的附件时，此目录仅有本说明。\n",
+        encoding="utf-8",
+    )
     index = {"target_date": args.target_date.isoformat(), "generated_at": datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).isoformat(),
              "attachment_bytes": total, "sources": reports}
     (root / "索引.json").write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

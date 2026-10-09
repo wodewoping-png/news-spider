@@ -45,6 +45,7 @@ class GovernmentArchiveTests(unittest.TestCase):
             root = Path(temp) / "2026-09-09"
             self.assertEqual(status, 0)
             self.assertEqual(json.loads((root / "索引.json").read_text())["attachment_bytes"], 123)
+            self.assertTrue((root / "附件" / "说明.txt").is_file())
             rows = (root / "国内政策清单.csv").read_text(encoding="utf-8-sig")
             self.assertIn("储能公告_附件1.pdf", rows)
             self.assertIn("附件文件夹", rows)
