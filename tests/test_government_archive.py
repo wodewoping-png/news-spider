@@ -120,7 +120,7 @@ class GovernmentArchiveTests(unittest.TestCase):
             new = root / "政策正文" / relative
             previous = old / "附件" / "储能公告_附件1.pdf"
             current = root / "附件" / relative / previous.name
-            for folder in (old, new, current.parent):
+            for folder in (previous.parent, new, current.parent):
                 folder.mkdir(parents=True, exist_ok=True)
             (old / "公告.json").write_text("old")
             (new / "公告.json").write_text("new")
