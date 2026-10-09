@@ -11,6 +11,7 @@ import hashlib
 import json
 import logging
 import re
+import shutil
 import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -121,6 +122,54 @@ def fetch_attachment(client: HttpClient, parser: GovernmentDocumentScraper, url:
         response.close()
 
 
+def cleanup_legacy_notice(root: Path, relative_notice: Path) -> None:
+    """Remove an old layout copy only when the new layout retains its contents."""
+    old = root / relative_notice
+    current = root / "政策正文" / relative_notice
+    if not old.is_dir() or old.is_symlink():
+        return
+    for path in old.rglob("*"):
+        if path.is_symlink():
+            return
+        if not path.is_file():
+            continue
+        relative = path.relative_to(old)
+        if relative == Path("公告.json"):
+            if not (current / relative).is_file():
+                return
+        elif relative == Path("正文.txt"):
+            counterpart = current / relative
+            if not counterpart.is_file() or path.read_bytes() != counterpart.read_bytes():
+                return
+        elif relative.parts[0] == "附件":
+            counterpart = root / "附件" / relative_notice / Path(*relative.parts[1:])
+            if not counterpart.is_file() or path.read_bytes() != counterpart.read_bytes():
+                return
+        else:
+            return
+    shutil.rmtree(old)
+    try:
+        old.parent.rmdir()
+    except OSError:
+        pass
+
+
+def cleanup_legacy_csv(root: Path) -> None:
+    old = root / "公告清单.csv"
+    new = root / "国内政策清单.csv"
+    if not old.is_file():
+        return
+    def entries(path: Path) -> set[tuple[str, str, str]]:
+        with path.open(encoding="utf-8-sig", newline="") as handle:
+            return {(row["渠道"], row["发布日期"], row["原文链接"])
+                    for row in csv.DictReader(handle)}
+    try:
+        if entries(old) <= entries(new):
+            old.unlink()
+    except (KeyError, UnicodeError, csv.Error):
+        pass
+
+
 def archive_source(source, client: HttpClient, target: date, root: Path,
                    remaining_bytes: int) -> tuple[dict, int]:
     scraper_class = get_scraper_class(source.name)
@@ -145,10 +194,13 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
     selected = [item for item in items if item.platform_published_at == target]
     for item in selected[:20]:
         digest = hashlib.sha256(item.url.encode()).hexdigest()[:10]
-        folder = root / safe_name(source.name) / f"{safe_name(item.title)}_{digest}"
+        relative_notice = Path(safe_name(source.name)) / f"{safe_name(item.title)}_{digest}"
+        folder = root / "政策正文" / relative_notice
+        attachment_folder = Path("附件") / relative_notice
         folder.mkdir(parents=True, exist_ok=True)
         notice = {"title": item.title, "published_at": target.isoformat(), "url": item.url,
-                  "folder": str(folder.relative_to(root)), "content_status": "metadata_only", "attachments": [], "errors": []}
+                  "folder": str(folder.relative_to(root)), "attachment_folder": str(attachment_folder),
+                  "content_status": "metadata_only", "attachments": [], "errors": []}
         if parser.fetch_detail:
             result = client.get(item.url, allow_non_html=False, strict_robots=True)
             if result:
@@ -164,9 +216,9 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
                             record["reason"] = "超过单篇附件数量上限"
                         else:
                             filename = f"{safe_name(item.title, max_length=80)}_附件{index + 1}{link['extension']}"
-                            relative = Path("附件") / filename
+                            relative = attachment_folder / filename
                             try:
-                                size = fetch_attachment(client, parser, link["url"], folder / relative,
+                                size = fetch_attachment(client, parser, link["url"], root / relative,
                                                         remaining_bytes - used)
                                 used += size
                                 record.update(status="downloaded", file=str(relative), bytes=size)
@@ -181,6 +233,7 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
             notice["errors"].append("此渠道详情尚未通过生产校验，仅归档标题、日期和原文链接")
         (folder / "公告.json").write_text(json.dumps(notice, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         report["notices"].append(notice)
+        cleanup_legacy_notice(root, relative_notice)
     if any(notice["errors"] or any(item["status"] != "downloaded" for item in notice["attachments"])
            for notice in report["notices"]):
         report["status"] = "partial"
@@ -210,21 +263,29 @@ def main(argv: list[str] | None = None) -> int:
             logging.exception("Government archive failed: %s", source.name)
             reports.append({"source": source.name, "status": "failed", "errors": [str(exc)], "notices": []})
     root.mkdir(parents=True, exist_ok=True)
+    attachment_root = root / "附件"
+    attachment_root.mkdir(exist_ok=True)
+    (attachment_root / "说明.txt").write_text(
+        "附件按渠道/公告名称_哈希存放；当天没有下载成功的附件时，此目录仅有本说明。\n",
+        encoding="utf-8",
+    )
     index = {"target_date": args.target_date.isoformat(), "generated_at": datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).isoformat(),
              "attachment_bytes": total, "sources": reports}
     (root / "索引.json").write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    with (root / "公告清单.csv").open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "附件下载", "附件状态"))
+    with (root / "国内政策清单.csv").open("w", encoding="utf-8-sig", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "附件文件夹", "附件下载", "附件状态"))
         writer.writeheader()
         for report in reports:
             for notice in report.get("notices", []):
-                downloaded = [str(Path(notice["folder"]) / item["file"])
+                downloaded = [item["file"]
                               for item in notice["attachments"] if item["status"] == "downloaded"]
                 writer.writerow({"渠道": report["source"], "发布日期": notice["published_at"],
                                  "公告名称": notice["title"], "原文链接": notice["url"],
                                  "正文状态": notice["content_status"], "公告文件夹": notice["folder"],
+                                 "附件文件夹": notice["attachment_folder"],
                                  "附件下载": "; ".join(downloaded),
                                  "附件状态": "; ".join(item["status"] for item in notice["attachments"])})
+    cleanup_legacy_csv(root)
     print(root / "索引.json")
     return 0 if all(r["status"] == "ok" for r in reports) else 1
 
