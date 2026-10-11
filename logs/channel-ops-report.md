@@ -1,6 +1,6 @@
 # 渠道运维总览
 
-- 生成时间：2026-10-11T09:08:36.691096+08:00
+- 生成时间：2026-10-12T07:17:02.223535+08:00
 - 渠道数：71
 - 健康/正常空闲：55
 - 异常渠道：2
@@ -28,7 +28,7 @@
 | Renewables Now | 2026-10-10 | idle | 0 | 0 | 0 | 0 | 25 | no target-date articles were expected for this source schedule | repair_then_reconfirm |
 | scitechdaily | 2026-10-10 | healthy | 5733 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
 | Supply Chain Digital | 2026-10-10 | healthy | 3487 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
-| the information | 2026-10-10 | healthy | 8464 | 0 | 0 | 0 | 3 | - | repair_then_confirm |
+| the information | 2026-10-11 | healthy | 332 | 0 | 1 | 0 | 3 | - | repair_then_confirm |
 | 中国核电信息网-国内 | 2026-10-10 | healthy | 537 | 0 | 1 | 0 | 3 | - | repair_then_reconfirm |
 | 中国核电信息网-国际 | 2026-10-10 | healthy | 899 | 0 | 0 | 0 | 2 | - | repair_then_reconfirm |
 | 中国电力新闻网-新能源 | 2026-10-10 | healthy | 406 | 0 | 1 | 0 | 17 | - | repair_then_confirm |
