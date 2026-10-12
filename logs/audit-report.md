@@ -567,7 +567,7 @@
 | pending_confirmation | 2026-10-09 | 自然资源部—通知公告 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-10-10 | 北极星储能网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-10-10 | 电池网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
-| pending_confirmation | 2026-10-11 | interesting engineering | 检测到 1 篇正文不完整或混入页面模板/导航内容；类型：public_preview_only，请检查正文选择器和内容质量规则 | - |
+| pending_confirmation | 2026-10-11 | interesting engineering | 检测到 1 篇正文不完整或混入页面模板/导航内容，请检查正文选择器和内容质量规则 | - |
 | pending_confirmation | 2026-10-11 | 北极星储能网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-10-11 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-10-11 | 电池网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
