@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-10-19T08:17:42.025999+08:00",
+  "updated_at": "2026-10-19T16:03:02.001493+08:00",
   "incidents": [
     {
       "id": "2026-07-20::4C Offshore",
@@ -18358,7 +18358,7 @@
       "anomaly_level": "warning",
       "anomaly_codes": "content_quality_degraded",
       "crawl_status": "degraded",
-      "crawl_mode": "listing",
+      "crawl_mode": "",
       "candidates_seen": 22,
       "pages_fetched": 20,
       "date_filtered_candidates": 0,
@@ -18366,13 +18366,13 @@
       "candidate_date_min": "",
       "candidate_date_max": "",
       "diagnosis_code": "content_quality_degraded",
-      "diagnosis": "检测到 3 篇正文不完整或混入页面模板/导航内容；类型：public_preview_only，请检查正文选择器和内容质量规则",
-      "technical_reason": "3 articles were not verified as full text (public_preview_only)",
+      "diagnosis": "检测到 3 篇正文不完整或混入页面模板/导航内容，请检查正文选择器和内容质量规则",
+      "technical_reason": "检测到 3 篇正文不完整或包含页面模板噪声",
       "incomplete_articles": 3,
-      "content_issues": "public_preview_only",
+      "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-10-19T08:17:42.025999+08:00"
+      "updated_at": "2026-10-19T16:03:02.001493+08:00"
     },
     {
       "id": "2026-10-18::北极星储能网",
@@ -18390,7 +18390,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "no_output,zero_2d",
       "crawl_status": "zero",
-      "crawl_mode": "listing",
+      "crawl_mode": "",
       "candidates_seen": 0,
       "pages_fetched": 0,
       "date_filtered_candidates": 0,
@@ -18399,12 +18399,12 @@
       "candidate_date_max": "",
       "diagnosis_code": "no_candidates",
       "diagnosis": "未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性",
-      "technical_reason": "no target-date articles were collected",
+      "technical_reason": "日更渠道当天没有收集到文章；已连续 8 天为 0",
       "incomplete_articles": 0,
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-10-19T08:17:42.025999+08:00"
+      "updated_at": "2026-10-19T16:03:02.001493+08:00"
     },
     {
       "id": "2026-10-18::国际能源网",
@@ -18422,7 +18422,7 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero,zero_2d",
       "crawl_status": "zero",
-      "crawl_mode": "listing",
+      "crawl_mode": "",
       "candidates_seen": 0,
       "pages_fetched": 0,
       "date_filtered_candidates": 0,
@@ -18431,12 +18431,12 @@
       "candidate_date_max": "",
       "diagnosis_code": "no_candidates",
       "diagnosis": "未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性",
-      "technical_reason": "no target-date articles were collected",
+      "technical_reason": "日更渠道从有产出降为 0；已连续 2 天为 0",
       "incomplete_articles": 0,
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-10-19T08:17:42.025999+08:00"
+      "updated_at": "2026-10-19T16:03:02.001493+08:00"
     },
     {
       "id": "2026-10-18::少数派",
@@ -18454,21 +18454,21 @@
       "anomaly_level": "critical",
       "anomaly_codes": "sudden_zero,zero_2d",
       "crawl_status": "zero",
-      "crawl_mode": "listing",
+      "crawl_mode": "",
       "candidates_seen": 34,
       "pages_fetched": 34,
-      "date_filtered_candidates": 18,
-      "undated_candidates": 16,
-      "candidate_date_min": "2024-04-02",
-      "candidate_date_max": "2026-10-19",
+      "date_filtered_candidates": 0,
+      "undated_candidates": 0,
+      "candidate_date_min": "",
+      "candidate_date_max": "",
       "diagnosis_code": "no_target_articles",
       "diagnosis": "已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新",
-      "technical_reason": "no target-date articles were collected",
+      "technical_reason": "日更渠道从有产出降为 0；已连续 2 天为 0",
       "incomplete_articles": 0,
       "content_issues": "",
       "error_type": "",
       "failed_at": "",
-      "updated_at": "2026-10-19T08:17:42.025999+08:00"
+      "updated_at": "2026-10-19T16:03:02.001493+08:00"
     }
   ]
 }
