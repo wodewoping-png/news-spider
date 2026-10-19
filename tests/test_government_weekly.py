@@ -109,6 +109,18 @@ class GovernmentWeeklyTests(unittest.TestCase):
             self.assertEqual(book["附件明细"]["H2"].value, "file_missing")
             self.assertEqual(book["政策汇总"]["G2"].value, 0)
 
+    def test_daily_index_and_list_must_have_same_notices(self):
+        start = date(2026, 10, 12)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for offset in range(7):
+                self.write_day(root, start + timedelta(days=offset), notice=offset == 0)
+            (root / start.isoformat() / "国内政策清单.csv").write_text(
+                "渠道,发布日期,公告名称,原文链接,正文状态,公告文件夹\n", encoding="utf-8"
+            )
+            with self.assertRaisesRegex(ValueError, "条目不一致"):
+                build_week(root, start)
+
 
 if __name__ == "__main__":
     unittest.main()

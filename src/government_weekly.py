@@ -120,9 +120,11 @@ def build_week(root: Path, week_start: date) -> tuple[Path, dict]:
                 required = {"渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹"}
                 if not required.issubset(reader.fieldnames or []):
                     raise ValueError(f"每日清单缺少必要列: {listing}")
+                daily_keys = set()
                 for row in reader:
                     if row["发布日期"] != day.isoformat():
                         raise ValueError(f"每日清单日期不符: {listing}")
+                    daily_keys.add((row["渠道"], row["原文链接"]))
                     key = (row["发布日期"], row["渠道"], row["原文链接"])
                     if key in seen:
                         continue
@@ -192,6 +194,8 @@ def build_week(root: Path, week_start: date) -> tuple[Path, dict]:
                                      "正文文件": str(weekly_folder / "正文.txt") if (staged / weekly_folder / "正文.txt").is_file() else "",
                                      "附件数量": len(files), "附件文件夹": str(weekly_attachment_folder),
                                      "附件下载": "; ".join(files)})
+                if daily_keys != set(indexed):
+                    raise ValueError(f"每日清单与索引条目不一致: {listing}")
         save_workbook(staged / "国内政策周汇总.xlsx", policies, attachments, statuses)
         summary = {"week_start": week_start.isoformat(), "week_end": week_end.isoformat(),
                    "generated_at": datetime.now(TIMEZONE).isoformat(), "policy_count": len(policies),
