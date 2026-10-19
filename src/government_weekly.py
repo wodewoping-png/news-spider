@@ -151,6 +151,11 @@ def build_week(root: Path, week_start: date) -> tuple[Path, dict]:
                     for item in weekly_notice["attachments"]:
                         relative = item.get("file", "") if item.get("status") == "downloaded" else ""
                         state = item.get("status", "skipped")
+                        if state == "downloaded" and not relative:
+                            missing_files.append(f"{day}/{row['公告名称']}: 附件路径缺失")
+                            state = "file_missing"
+                            item["status"] = state
+                            item["reason"] = "每日索引未记录附件路径"
                         if relative:
                             try:
                                 original = checked_file(day_root, relative, "附件")
@@ -169,6 +174,8 @@ def build_week(root: Path, week_start: date) -> tuple[Path, dict]:
                                 missing_files.append(f"{day}/{item['file']}")
                                 state = "file_missing"
                                 item["status"] = state
+                                item["file"] = ""
+                                item["reason"] = "每日归档附件文件缺失"
                         attachments.append({"公告日期": datetime.combine(day, datetime.min.time()),
                                             "渠道": row["渠道"], "公告名称": row["公告名称"],
                                             "附件名称": Path(relative).name if relative else item.get("label", ""),

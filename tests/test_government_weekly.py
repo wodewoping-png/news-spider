@@ -94,6 +94,21 @@ class GovernmentWeeklyTests(unittest.TestCase):
             self.assertIn("daily_missing", values)
             self.assertTrue((target / "附件" / "说明.txt").is_file())
 
+    def test_missing_downloaded_attachment_is_not_reported_as_saved(self):
+        start = date(2026, 10, 12)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for offset in range(7):
+                self.write_day(root, start + timedelta(days=offset), notice=offset == 0, attachment=offset == 0)
+            attachment = next((root / start.isoformat() / "附件").rglob("*.pdf"))
+            attachment.unlink()
+            target, info = build_week(root, start)
+            self.assertEqual(info["attachment_count"], 0)
+            self.assertEqual(len(info["missing_files"]), 1)
+            book = load_workbook(target / "国内政策周汇总.xlsx")
+            self.assertEqual(book["附件明细"]["H2"].value, "file_missing")
+            self.assertEqual(book["政策汇总"]["G2"].value, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
