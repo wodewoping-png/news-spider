@@ -222,7 +222,8 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
     report["listing_count"] = len(items)
     if not items:
         reason = getattr(client, "last_failure_reason", "")
-        report["status"] = "listing_failed" if reason else "listing_empty"
+        report["status"] = ("robots_hold" if reason == "blocked by robots.txt" else
+                            "listing_failed" if reason else "listing_empty")
         if reason:
             report["errors"].append(reason)
     selected = [item for item in items if item.platform_published_at == target]
@@ -342,7 +343,7 @@ def main(argv: list[str] | None = None) -> int:
                                  "附件状态": "; ".join(item["status"] for item in notice["attachments"])})
     cleanup_legacy_csv(root)
     print(root / "索引.json")
-    return 0 if all(r["status"] == "ok" for r in reports) else 1
+    return 0 if all(r["status"] in {"ok", "robots_hold"} for r in reports) else 1
 
 
 if __name__ == "__main__":

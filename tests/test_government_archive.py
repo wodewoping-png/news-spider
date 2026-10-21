@@ -33,6 +33,18 @@ def source():
 
 
 class GovernmentArchiveTests(unittest.TestCase):
+    def test_robots_hold_is_recorded_without_failing_other_channels(self):
+        class BlockedClient(FakeClient):
+            def get(self, url, **kwargs):
+                self.last_failure_reason = "blocked by robots.txt"
+                return None
+
+        with tempfile.TemporaryDirectory() as temp:
+            report, used = archive_source(source(), BlockedClient({}), date(2026, 9, 9), Path(temp), 1000)
+        self.assertEqual(report["status"], "robots_hold")
+        self.assertEqual(report["errors"], ["blocked by robots.txt"])
+        self.assertEqual(used, 0)
+
     def test_command_writes_csv_and_index(self):
         notice = {"title": "储能公告", "published_at": "2026-09-09", "url": "https://www.nea.gov.cn/a",
                   "content_status": "full_text", "folder": "政策正文/国家能源局—通知/储能公告_123",
