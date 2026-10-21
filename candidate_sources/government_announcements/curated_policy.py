@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import re
 from datetime import date
+from html import escape
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
@@ -22,6 +23,7 @@ MONTH_DATE = re.compile(r"/(20\d{2})(\d{2})/t20\d{6}_")
 SKIP_TITLE = re.compile(r"(一图读懂|图解|图片解读|领导活动|时政要闻|公务员|招聘|招录|表彰|评选|获奖名单|比赛|大赛|人事任免)")
 SCRIPT_TITLE = re.compile(r"\bvar\s+_docTitle\s*=\s*(['\"])(.*?)\1\s*;", re.S)
 CDATA_RECORD = re.compile(r"<record>\s*<!\[CDATA\[(.*?)\]\]>\s*</record>", re.I | re.S)
+JSON_ITEMS = re.compile(r"\bvar\s+itemObj\s*=\s*")
 
 
 def load_policy_sites() -> list[dict]:
@@ -42,6 +44,7 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
     detail_path_re: re.Pattern[str]
     title_pattern: re.Pattern[str] | None = None
     embedded_records: bool = False
+    embedded_json_items: bool = False
 
     def _guard_path(self, path: str, *, detail: bool) -> None:
         if not (self.detail_path_re.fullmatch(path) if detail else path == urlparse(self.listing_url).path):
@@ -58,7 +61,33 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
         # <record><![CDATA[...]]></record> within a script, then render it in
         # the browser. Parse only the bounded literal record fragments.
         records = CDATA_RECORD.findall(html)[:80] if self.embedded_records else []
-        soup = BeautifulSoup("".join(records) if records else html, "html.parser")
+        listing_html = "".join(records) if records else html
+        if self.embedded_json_items:
+            match = JSON_ITEMS.search(html)
+            if not match:
+                raise ContractViolation("verified policy JSON items missing")
+            try:
+                rows, _ = json.JSONDecoder().raw_decode(html[match.end():])
+            except ValueError as exc:
+                raise ContractViolation("invalid official policy JSON items") from exc
+            if not isinstance(rows, list):
+                raise ContractViolation("official policy JSON items are not a list")
+            fragments = []
+            for row in rows[:80]:
+                if not isinstance(row, dict):
+                    continue
+                try:
+                    path = json.loads(row.get("aU") or "{}").get("common", "")
+                except (TypeError, ValueError, AttributeError):
+                    continue
+                if not isinstance(path, str) or not path.startswith("/"):
+                    continue
+                title = BeautifulSoup(str(row.get("aT") or ""), "html.parser").get_text(" ", strip=True)
+                published = str(row.get("aPd") or "")
+                fragments.append(f'<li><a href="{escape(path, quote=True)}">{escape(title)}</a>'
+                                 f'<span>{escape(published)}</span></li>')
+            listing_html = "".join(fragments)
+        soup = BeautifulSoup(listing_html, "html.parser")
         items: list[ListingItem] = []
         seen = set()
         for anchor in soup.select("a[href]"):
@@ -133,6 +162,7 @@ def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
                  "additional_allowed_hosts": tuple(column.get("additional_allowed_hosts", [])),
                  "detail_path_re": re.compile(column["detail_path_re"]),
                  "embedded_records": bool(column.get("embedded_records", False)),
+                 "embedded_json_items": bool(column.get("embedded_json_items", False)),
                  "title_pattern": re.compile(column["title_pattern"]) if column.get("title_pattern") else None},
             )
             classes[name] = parser

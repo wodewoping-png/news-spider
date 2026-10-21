@@ -135,17 +135,21 @@
     "agency": "国家民族事务委员会",
     "official_domain": "neac.gov.cn",
     "focus": "政策文件、通知公告",
-    "status": "pending",
-    "reason": "政策解读列表混入新闻转载；部门规章列表未可靠标注发布日期，暂不按事件日期充作发布日期。",
+    "status": "active",
+    "reason": "政策文件正式列表可读；只保留国家民委印发、修订、废止的规范性文件与指导意见，排除新闻转载和示范单位评选；仅存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
-        "label": "待验证栏目1",
-        "category": "政策文件、通知公告",
-        "url": "https://www.neac.gov.cn/seac/xxgk/zcjd/index.shtml",
-        "status": "pending"
+        "label": "政策文件",
+        "category": "政策文件",
+        "url": "https://www.neac.gov.cn/seac/xxgk/zcfb/index.shtml",
+        "status": "active",
+        "detail_path_re": "/seac/(?:c103593|c103280|xxgk)/20\\d{4}/\\d+\\.shtml",
+        "title_pattern": "国家民委.*(印发|修改|废止).*(通知|决定)|国家民委.*指导意见",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
       }
     ]
   },
@@ -1054,17 +1058,33 @@
     "agency": "国家疾病预防控制局",
     "official_domain": "ndcpa.gov.cn",
     "focus": "政策文件、疫情通报",
-    "status": "pending",
-    "reason": "政策法规、政策解读、通知栏目可读但列表异步装载，未核准日期接口。",
+    "status": "active",
+    "reason": "政策法规、具名政策解读两栏的官方页面内嵌 itemObj JSON，实测包含原文路径及准确发布日期；仅存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待验证栏目1",
-        "category": "政策文件、疫情通报",
+        "label": "政策法规",
+        "category": "政策文件",
         "url": "https://www.ndcpa.gov.cn/jbkzzx/c100012/common/list.html",
-        "status": "pending"
+        "status": "active",
+        "detail_path_re": "/jbkzzx/c100012/common/content/content_\\d+\\.html",
+        "title_pattern": "关于.*(印发|发布|修订|废止)|管理办法",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only",
+        "embedded_json_items": true
+      },
+      {
+        "label": "具名政策解读",
+        "category": "政策解读",
+        "url": "https://www.ndcpa.gov.cn/jbkzzx/c100013/common/list.html",
+        "status": "active",
+        "detail_path_re": "/jbkzzx/c100013/common/content/content_\\d+\\.html",
+        "title_pattern": "《[^》]+》.*(解读|问答)",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only",
+        "embedded_json_items": true
       }
     ]
   },
