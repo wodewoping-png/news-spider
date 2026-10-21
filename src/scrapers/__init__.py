@@ -11,6 +11,7 @@ from .electrive import ElectriveScraper
 from .energytrend import EnergyTrendScraper
 from .generic import GenericListingScraper
 from .government_announcements import (
+    curated_policy_adapters,
     ForestryPolicyDocumentsScraper,
     GovCnPolicyDocumentsScraper,
     GovCnPolicyInterpretationsScraper,
@@ -106,6 +107,7 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "国家数据局—政策发布": NdaPolicyReleasesScraper,
     "市场监管总局—反垄断通知公告": SamrAntitrustNoticesScraper,
 }
+SCRAPER_REGISTRY.update(curated_policy_adapters())
 
 
 def get_scraper_class(source_name: str) -> type[BaseScraper]:

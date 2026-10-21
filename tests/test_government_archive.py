@@ -41,10 +41,13 @@ class GovernmentArchiveTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, \
              patch("src.government_archive.load_sources", return_value=[source()]), \
              patch("src.government_archive.archive_source", return_value=({"source": source().name, "status": "ok", "notices": [notice]}, 123)):
-            status = main(["--target-date", "2026-09-09", "--output-dir", temp])
+            status = main(["--target-date", "2026-09-09", "--output-dir", temp,
+                           "--only-source", source().name])
             root = Path(temp) / "2026-09-09"
             self.assertEqual(status, 0)
-            self.assertEqual(json.loads((root / "索引.json").read_text())["attachment_bytes"], 123)
+            index = json.loads((root / "索引.json").read_text())
+            self.assertEqual(index["attachment_bytes"], 123)
+            self.assertEqual(len(index["policy_site_coverage"]), 57)
             self.assertTrue((root / "附件" / "说明.txt").is_file())
             rows = (root / "国内政策清单.csv").read_text(encoding="utf-8-sig")
             self.assertIn("储能公告_附件1.pdf", rows)

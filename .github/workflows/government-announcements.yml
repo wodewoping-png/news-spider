@@ -43,7 +43,7 @@ jobs:
         env:
           TARGET_DATE: ${{ inputs.target_date }}
         run: |
-          args=(--sources sources.xlsx --output-dir data/government_announcements)
+          args=(--sources sources.xlsx --output-dir data/government_announcements --check-pending)
           if [ -n "$TARGET_DATE" ]; then
             args+=(--target-date "$TARGET_DATE")
           fi
