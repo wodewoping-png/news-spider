@@ -1,6 +1,6 @@
 ﻿机构,官方域名,优先内容,栏目入口,robots_HTTP,首页_HTTP,栏目_HTTP,处理状态,说明
 中国政府网（含国务院办公厅）,gov.cn,政策文件、政策解读、国务院公报,https://www.gov.cn/zhengce/zuixin/ | https://www.gov.cn/zhengce/jiedu/index.htm,200,200,,已接入原有渠道,原有渠道，继续每日归档；国务院办公厅并入中国政府网；不抓首页要闻。浏览器 UA 测试 robots 和 JSON 均为 200。
-外交部,fmprc.gov.cn,政策文件、声明,,200,200,,栏目待验证,首页可读；所见以外交新闻和人员动态为主，未核准固定政策文件列表。
+外交部,fmprc.gov.cn,政策文件、声明,https://www.fmprc.gov.cn/gjhdq_676201/gjhdqzz_681964/zgzyjz_148206/zywj_688970/,200,200,200,新增已接入栏目,国际和地区组织文件列表实测可读；保留条约、声明、宣言、公报、政策行动文件，排除人员动态；仅存元数据。
 国防部,mod.gov.cn,政策公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
 国家发展和改革委员会,ndrc.gov.cn,政策发布、通知公告,,403,,,访问受限，暂缓,robots 检查 HTTP 403，或首页不可访问；暂缓内容请求。
 教育部,moe.gov.cn,政策文件、通知公告,https://www.moe.gov.cn/jyb_xxgk/zywj_btlj/index.html | https://www.moe.gov.cn/jyb_xxgk/gk_gbgg/moe_0/,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
@@ -37,8 +37,8 @@
 国家知识产权局,cnipa.gov.cn,政策文件、专利公告,https://www.cnipa.gov.cn/col/col74/index.html,404,200,200,栏目待验证,公告公报栏目可读，文章列表异步装载；需核准官方数据接口和日期。
 国家医疗保障局,nhsa.gov.cn,政策法规、通知公告,https://www.nhsa.gov.cn/col/col104/index.html,404,200,200,栏目待验证,政策法规栏目可读，列表异步装载；需核准官方数据接口和日期。
 国家机关事务管理局,ggj.gov.cn,政策文件、通知公告,,404,200,,栏目待验证,政策法规司栏目混合通知与历史法规，标题截断；需核准原文及日期。
-国家新闻出版署（国家版权局）,nppa.gov.cn,政策法规、通知公告,,200,200,,栏目待验证,政策法规栏目抽样多为旧法规，未验证持续更新的正式政策栏目。
-中国气象局,cma.gov.cn,气象预警、政策公告,http://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/,200,200,,栏目待验证,政策文件栏目有成文与发布日期两个时间字段，需确认刊发日；气象预警单列预警类。
+国家新闻出版署（国家版权局）,nppa.gov.cn,政策法规、通知公告,https://www.nppa.gov.cn/xxfb/tzgs/,200,200,200,新增已接入栏目,通知公示列表实测可读；标题由页面固定脚本字面量写入，已核验原文路径与发布日期；暂存元数据。
+中国气象局,cma.gov.cn,气象预警、政策公告,https://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/,200,200,200,新增已接入栏目,政策文件列表实测可读，采用首列发布日期，排除成文日期；原文与日期链接已核验，暂存元数据。
 国家粮食和物资储备局,lswz.gov.cn,政策法规、通知公告,https://www.lswz.gov.cn/html/zcfb/index.shtml,200,200,200,已接入原有渠道,原有渠道，继续每日归档
 国家能源局,nea.gov.cn,政策文件、通知公告,https://www.nea.gov.cn/policy/tz.htm | https://www.nea.gov.cn/policy/gg.htm,404,200,,已接入原有渠道,原有渠道，继续每日归档
 国家国防科技工业局,sastind.gov.cn,政策文件、通知公告,,404,200,,栏目待验证,通知栏目摘要含实施日期，页面只显示月日；不能把实施日误作刊发日。
