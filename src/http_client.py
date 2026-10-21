@@ -66,6 +66,7 @@ def request_headers_for_url(
         return {}
     hostname = (urlparse(url).hostname or "").lower()
     browser_ua_domains = (
+        "gov.cn",
         "batteriesnews.com",
         "bjx.com.cn",
         "china5e.com",

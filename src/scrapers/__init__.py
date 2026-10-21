@@ -11,6 +11,11 @@ from .electrive import ElectriveScraper
 from .energytrend import EnergyTrendScraper
 from .generic import GenericListingScraper
 from .government_announcements import (
+    curated_policy_adapters,
+    ForestryPolicyDocumentsScraper,
+    GovCnPolicyDocumentsScraper,
+    GovCnPolicyInterpretationsScraper,
+    LswzPolicyReleasesScraper,
     MemNoticesScraper,
     MiitPublicNoticesScraper,
     MnrNoticesScraper,
@@ -54,6 +59,10 @@ from .tgs4c import TGS4COffshoreScraper
 
 
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
+    "中国政府网—最新政策": GovCnPolicyDocumentsScraper,
+    "中国政府网—政策解读": GovCnPolicyInterpretationsScraper,
+    "国家粮食和物资储备局—政策发布": LswzPolicyReleasesScraper,
+    "国家林业和草原局—林草政策": ForestryPolicyDocumentsScraper,
     "electrive": ElectriveScraper,
     "光伏测试网": TestPVScraper,
     "索比光伏": SolarbeScraper,
@@ -98,6 +107,7 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "国家数据局—政策发布": NdaPolicyReleasesScraper,
     "市场监管总局—反垄断通知公告": SamrAntitrustNoticesScraper,
 }
+SCRAPER_REGISTRY.update(curated_policy_adapters())
 
 
 def get_scraper_class(source_name: str) -> type[BaseScraper]:

@@ -1,0 +1,35 @@
+name: Central policy channel contracts
+
+on:
+  pull_request:
+    paths:
+      - "candidate_sources/government_announcements/**"
+      - "src/scrapers/government_announcements.py"
+      - "src/scrapers/__init__.py"
+      - "src/government_archive.py"
+      - "src/http_client.py"
+      - "tests/test_gov_cn_policy.py"
+      - ".github/workflows/policy-channel-tests.yml"
+  push:
+    paths:
+      - "candidate_sources/government_announcements/**"
+      - "src/scrapers/government_announcements.py"
+      - "src/scrapers/__init__.py"
+      - "src/government_archive.py"
+      - "src/http_client.py"
+      - "tests/test_gov_cn_policy.py"
+      - ".github/workflows/policy-channel-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - run: python -m pip install beautifulsoup4
+      - run: python -m unittest discover -s tests -p 'test_*policy.py' -v

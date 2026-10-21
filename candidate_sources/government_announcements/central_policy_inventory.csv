@@ -1,0 +1,58 @@
+﻿机构,官方域名,优先内容,栏目入口,robots_HTTP,首页_HTTP,栏目_HTTP,处理状态,说明
+中国政府网（含国务院办公厅）,gov.cn,政策文件、政策解读、国务院公报,https://www.gov.cn/zhengce/zuixin/ | https://www.gov.cn/zhengce/jiedu/index.htm,200,200,,已接入原有渠道,原有渠道，继续每日归档；国务院办公厅并入中国政府网；不抓首页要闻。浏览器 UA 测试 robots 和 JSON 均为 200。
+外交部,fmprc.gov.cn,政策文件、声明,,200,200,,栏目待验证,首页可读；所见以外交新闻和人员动态为主，未核准固定政策文件列表。
+国防部,mod.gov.cn,政策公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+国家发展和改革委员会,ndrc.gov.cn,政策发布、通知公告,,403,,,访问受限，暂缓,robots 检查 HTTP 403，或首页不可访问；暂缓内容请求。
+教育部,moe.gov.cn,政策文件、通知公告,https://www.moe.gov.cn/jyb_xxgk/zywj_btlj/index.html | https://www.moe.gov.cn/jyb_xxgk/gk_gbgg/moe_0/,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+科学技术部,most.gov.cn,政策文件、通知通告,https://www.most.gov.cn/tztg/,404,200,,已接入原有渠道,原有渠道，继续每日归档
+工业和信息化部,miit.gov.cn,政策文件、文件公示,https://www.miit.gov.cn/zwgk/wjgs/index.html,404,200,,已接入原有渠道,原有渠道，继续每日归档
+国家民族事务委员会,neac.gov.cn,政策文件、通知公告,https://www.neac.gov.cn/seac/xxgk/zcjd/index.shtml,200,200,200,栏目待验证,政策解读列表混入新闻转载；部门规章列表未可靠标注发布日期，暂不按事件日期充作发布日期。
+公安部,mps.gov.cn,政策文件、通告,,521,,,访问受限，暂缓,robots 检查 HTTP 521，或首页不可访问；暂缓内容请求。
+民政部,mca.gov.cn,政策文件、通知公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+司法部,moj.gov.cn,政策文件、立法征求意见,https://www.moj.gov.cn/zcjd/ | https://www.moj.gov.cn/zwxxgk/fdzdgknr/fdzdgknrtzwj/,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+财政部,mof.gov.cn,政策发布、财政公告,https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+人力资源和社会保障部,mohrss.gov.cn,政策文件、公告,,200,200,,栏目待验证,首页可读；政策栏目列表由脚本加载，尚未核准日期字段与详情路径。
+自然资源部,mnr.gov.cn,政策文件、通知公告,https://www.mnr.gov.cn/gk/tzgg/,503,,,已接入原有渠道,原有渠道，继续每日归档
+生态环境部,mee.gov.cn,政策文件、公示公告,https://www.mee.gov.cn/zcwj/bwj/gg/ | https://www.mee.gov.cn/zcwj/zcjd/,200,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据；robots.txt 当前 403；保持 HOLD。
+住房和城乡建设部,mohurd.gov.cn,政策文件、通知公告,,404,200,,栏目待验证,首页可读，政策发布栏目 robots 检查不可用；暂停该栏目请求。
+交通运输部,mot.gov.cn,政策文件、通知公告,https://www.mot.gov.cn/gongkai/zcjd/index.html | https://xxgk.mot.gov.cn/2020/zhengce/qtwjlist.html,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+水利部,mwr.gov.cn,政策文件、通知公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+农业农村部,moa.gov.cn,政策文件、通知公告,,200,,,访问受限，暂缓,robots.txt 明确禁止抓取；继续暂停内容请求。
+商务部,mofcom.gov.cn,政策发布、通知公告,https://www.mofcom.gov.cn/zcfb/index.html,404,200,,已接入原有渠道,原有渠道，继续每日归档
+文化和旅游部,mct.gov.cn,政策文件、通知公告,https://www.mct.gov.cn/whzx/ggtz/index.htm,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+国家卫生健康委员会,nhc.gov.cn,政策文件、通告公告,,404,412,,访问受限，暂缓,官网首页返回 HTTP 412；不规避访问限制。
+退役军人事务部,mva.gov.cn,政策文件、通知公告,,403,,,访问受限，暂缓,robots 检查 HTTP 403，或首页不可访问；暂缓内容请求。
+应急管理部,mem.gov.cn,政策文件、预警与通知,https://www.mem.gov.cn/gk/tzgg/,404,200,,已接入原有渠道,原有渠道，继续每日归档
+中国人民银行,pbc.gov.cn,货币政策、公开市场公告,,200,,,访问受限，暂缓,robots 检查 HTTP 200，或首页不可访问；暂缓内容请求。
+审计署,audit.gov.cn,审计结果公告,https://www.audit.gov.cn/n5/n25/index.html,404,200,200,栏目待验证,公告及报告栏目可读，但抽样列表没有稳定可解析的发布日期；待单站解析。
+国务院国有资产监督管理委员会,sasac.gov.cn,政策文件、通知公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+海关总署,customs.gov.cn,政策法规、海关公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+国家税务总局,chinatax.gov.cn,政策文件、解读,,404,200,,栏目待验证,首页可读；政策发布及解读路径抽样返回 HTTP 404，需核准当前法规库入口。
+国家市场监督管理总局,samr.gov.cn,政策文件、通知公告,https://www.samr.gov.cn/jzxts/tzgg/index.html,404,200,,已接入原有渠道,原有渠道，继续每日归档
+国家金融监督管理总局,nfra.gov.cn,监管政策、公告,,404,200,,栏目待验证,首页可读；政策条目由脚本加载，未核准正式政策列表和日期字段。
+中国证券监督管理委员会,csrc.gov.cn,政策发布、监管公告,,200,200,,栏目待验证,政策解读栏目可读，但列表以新闻发布稿为主，不能替代原始监管规则文件。
+国家广播电视总局,nrta.gov.cn,政策文件、通知公告,https://www.nrta.gov.cn/col/col113/index.html,200,200,200,栏目待验证,公告栏目可读，列表异步渲染；需核准接口和发布日期。
+国家体育总局,sport.gov.cn,政策法规、通知公告,,404,200,,栏目待验证,通知公告栏目可读，但抽样列表没有可验证发布日期，首页混入赛事和领导动态。
+国家统计局,stats.gov.cn,统计公报、数据发布,,404,200,,栏目待验证,统计数据与公报有价值，单列数据类；通知栏目抽样多为人事及项目公告，不混入政策。
+国家知识产权局,cnipa.gov.cn,政策文件、专利公告,https://www.cnipa.gov.cn/col/col74/index.html,404,200,200,栏目待验证,公告公报栏目可读，文章列表异步装载；需核准官方数据接口和日期。
+国家医疗保障局,nhsa.gov.cn,政策法规、通知公告,https://www.nhsa.gov.cn/col/col104/index.html,404,200,200,栏目待验证,政策法规栏目可读，列表异步装载；需核准官方数据接口和日期。
+国家机关事务管理局,ggj.gov.cn,政策文件、通知公告,,404,200,,栏目待验证,政策法规司栏目混合通知与历史法规，标题截断；需核准原文及日期。
+国家新闻出版署（国家版权局）,nppa.gov.cn,政策法规、通知公告,,200,200,,栏目待验证,政策法规栏目抽样多为旧法规，未验证持续更新的正式政策栏目。
+中国气象局,cma.gov.cn,气象预警、政策公告,http://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/,200,200,,栏目待验证,政策文件栏目有成文与发布日期两个时间字段，需确认刊发日；气象预警单列预警类。
+国家粮食和物资储备局,lswz.gov.cn,政策法规、通知公告,https://www.lswz.gov.cn/html/zcfb/index.shtml,200,200,200,已接入原有渠道,原有渠道，继续每日归档
+国家能源局,nea.gov.cn,政策文件、通知公告,https://www.nea.gov.cn/policy/tz.htm | https://www.nea.gov.cn/policy/gg.htm,404,200,,已接入原有渠道,原有渠道，继续每日归档
+国家国防科技工业局,sastind.gov.cn,政策文件、通知公告,,404,200,,栏目待验证,通知栏目摘要含实施日期，页面只显示月日；不能把实施日误作刊发日。
+国家烟草专卖局,tobacco.gov.cn,政策公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+国家移民管理局,nia.gov.cn,出入境政策、公告,https://www.nia.gov.cn/n741440/n741547/index.html | https://www.nia.gov.cn/n741440/n741577/index.html | https://www.nia.gov.cn/n741440/n741542/index.html,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+国家林业和草原局,forestry.gov.cn,政策文件、通知公告,https://www.forestry.gov.cn/zcgg.jhtml,404,200,200,已接入原有渠道,原有渠道，继续每日归档；原名单 nfga.gov.cn 与 forestry.gov.cn 合并；仅林草政策，排除国务院转载。
+国家铁路局,nra.gov.cn,政策文件、通知公告,https://www.nra.gov.cn/hdjl/zcjd/jdhz/,200,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+中国民用航空局,caac.gov.cn,政策法规、适航指令,,200,200,,栏目待验证,官网首页可读，未核准适航指令与规章的固定列表、发布日期及详情链接。
+国家邮政局,spb.gov.cn,政策文件、通知公告,https://www.spb.gov.cn/gjyzj/c100009/c100010/common_list.shtml | https://www.spb.gov.cn/gjyzj/c100009/c100013/common_list.shtml | https://www.spb.gov.cn/gjyzj/c100009/c100014/xxgk_index.shtml,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+国家文物局,ncha.gov.cn,政策法规、通知公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+国家中医药管理局,natcm.gov.cn,政策文件、通知公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+国家矿山安全监察局,nmsa.gov.cn,政策文件、监察公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。
+国家外汇管理局,safe.gov.cn,政策法规、统计数据,https://www.safe.gov.cn/safe/zcfg/index.html | https://www.safe.gov.cn/safe/zcfgjd/index.html,404,200,200,已接入新栏目,新栏目经过官方列表和日期链接实测；正文暂存元数据
+国家药品监督管理局,nmpa.gov.cn,政策法规、药械通告,,404,412,,访问受限，暂缓,官网首页返回 HTTP 412；不规避访问限制。
+国家数据局,nda.gov.cn,政策文件、通知公告,https://www.nda.gov.cn/sjj/zwgk/zcfb/list/index_pc_1.html,404,200,,已接入原有渠道,原有渠道，继续每日归档
+国家疾病预防控制局,ndcpa.gov.cn,政策文件、疫情通报,https://www.ndcpa.gov.cn/jbkzzx/c100012/common/list.html,404,200,200,栏目待验证,政策法规、政策解读、通知栏目可读但列表异步装载，未核准日期接口。
+国家国际发展合作署,cidca.gov.cn,政策文件、公告,,503,,,访问受限，暂缓,robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。

@@ -13,14 +13,22 @@ import logging
 import re
 import shutil
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlparse
+from urllib.robotparser import RobotFileParser
 from zoneinfo import ZoneInfo
 
+import requests
 from bs4 import BeautifulSoup
 
 from candidate_sources.government_announcements.base import ContractViolation
+from candidate_sources.government_announcements.curated_policy import CuratedPolicyListingScraper, load_policy_sites
+from candidate_sources.government_announcements.gov_cn import (
+    GovCnPolicyDocumentsScraper,
+    GovCnPolicyInterpretationsScraper,
+)
 from candidate_sources.government_announcements.scrapers import (
     GovernmentDocumentScraper,
     MiitPublicNoticesScraper,
@@ -28,8 +36,8 @@ from candidate_sources.government_announcements.scrapers import (
     StaticMinistryScraper,
 )
 from .date_utils import DEFAULT_TIMEZONE
-from .http_client import HttpClient
-from .load_sources import load_sources
+from .http_client import BROWSER_USER_AGENT, HttpClient
+from .load_sources import Source, load_sources
 from .scrapers.government_announcements import GovernmentAnnouncementScraper
 from .scrapers import get_scraper_class
 
@@ -50,6 +58,7 @@ def attachment_links(parser: GovernmentDocumentScraper, html: str, page_url: str
     selectors = (
         ("#detailContent",) if isinstance(parser, NeaDocumentScraper)
         else ("#con_con",) if isinstance(parser, MiitPublicNoticesScraper)
+        else (parser.body_selector,) if isinstance(parser, GovCnPolicyDocumentsScraper)
         else tuple(parser.body_selector.split(","))
         if isinstance(parser, StaticMinistryScraper) else ()
     )
@@ -170,6 +179,31 @@ def cleanup_legacy_csv(root: Path) -> None:
         pass
 
 
+def check_pending_policy_sites(sites: list[dict]) -> dict[str, dict]:
+    """Daily robots health check only; never promote an unreviewed column."""
+    candidates = [site for site in sites if site["status"] in {"pending", "hold"}]
+
+    def check(site: dict) -> tuple[str, dict]:
+        domain = site["official_domain"]
+        url = f"https://www.{domain}/robots.txt"
+        target = next((c["url"] for c in site["columns"] if c["url"]), f"https://www.{domain}/")
+        try:
+            response = requests.get(url, headers={"User-Agent": BROWSER_USER_AGENT}, timeout=6)
+            status = response.status_code
+            if status not in {200, 404}:
+                state = "robots_unavailable"
+            else:
+                parser = RobotFileParser()
+                parser.parse(response.text.splitlines() if status == 200 else [])
+                state = "allowed_needs_column_review" if parser.can_fetch(BROWSER_USER_AGENT, target) else "robots_disallowed"
+            return site["agency"], {"robots_http": status, "check": state}
+        except requests.RequestException as exc:
+            return site["agency"], {"robots_http": None, "check": type(exc).__name__}
+
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        return dict(pool.map(check, candidates))
+
+
 def archive_source(source, client: HttpClient, target: date, root: Path,
                    remaining_bytes: int) -> tuple[dict, int]:
     scraper_class = get_scraper_class(source.name)
@@ -188,7 +222,8 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
     report["listing_count"] = len(items)
     if not items:
         reason = getattr(client, "last_failure_reason", "")
-        report["status"] = "listing_failed" if reason else "listing_empty"
+        report["status"] = ("robots_hold" if reason == "blocked by robots.txt" else
+                            "listing_failed" if reason else "listing_empty")
         if reason:
             report["errors"].append(reason)
     selected = [item for item in items if item.platform_published_at == target]
@@ -230,7 +265,8 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
             else:
                 notice["errors"].append(f"详情请求失败: {client.last_failure_reason}")
         else:
-            notice["errors"].append("此渠道详情尚未通过生产校验，仅归档标题、日期和原文链接")
+            if not isinstance(parser, (GovCnPolicyInterpretationsScraper, CuratedPolicyListingScraper)):
+                notice["errors"].append("此渠道详情尚未通过生产校验，仅归档标题、日期和原文链接")
         (folder / "公告.json").write_text(json.dumps(notice, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         report["notices"].append(notice)
         cleanup_legacy_notice(root, relative_notice)
@@ -247,11 +283,24 @@ def main(argv: list[str] | None = None) -> int:
                         default=datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).date() - timedelta(days=1))
     parser.add_argument("--output-dir", type=Path, default=Path("data/government_announcements"))
     parser.add_argument("--only-source", action="append")
+    parser.add_argument("--check-pending", action="store_true", help="复查待验证机构的 robots 状态")
     args = parser.parse_args(argv)
     root = args.output_dir / args.target_date.isoformat()
     selected = [s for s in load_sources(args.sources)
                 if issubclass(get_scraper_class(s.name), GovernmentAnnouncementScraper)
                 and (not args.only_source or s.name in args.only_source)]
+    existing = {source.name for source in selected}
+    policy_sites = load_policy_sites()
+    for site in policy_sites:
+        for column in site["columns"]:
+            if column["status"] != "active":
+                continue
+            name = f"{site['agency']}—{column['label']}"
+            if name in existing or (args.only_source and name not in args.only_source):
+                continue
+            selected.append(Source(name, "官方政策", "政策", column["category"], "不定期",
+                                   "官方栏目发布日期及原文链接", "列表已核验，正文待核验", column["url"]))
+            existing.add(name)
     client = HttpClient(sleep_seconds=1.5, respect_robots=True)
     reports, total = [], 0
     for source in selected:
@@ -269,8 +318,15 @@ def main(argv: list[str] | None = None) -> int:
         "附件按渠道/公告名称_哈希存放；当天没有下载成功的附件时，此目录仅有本说明。\n",
         encoding="utf-8",
     )
+    pending_health = check_pending_policy_sites(policy_sites) if args.check_pending else {}
     index = {"target_date": args.target_date.isoformat(), "generated_at": datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).isoformat(),
-             "attachment_bytes": total, "sources": reports}
+             "attachment_bytes": total, "sources": reports,
+             "policy_site_coverage": [{"agency": site["agency"], "status": site["status"],
+                                       "reason": site["reason"],
+                                       "last_robots_check": pending_health.get(site["agency"]),
+                                       "channels": [{"label": c["label"], "url": c["url"], "status": c["status"]}
+                                                    for c in site["columns"]]}
+                                      for site in policy_sites]}
     (root / "索引.json").write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     with (root / "国内政策清单.csv").open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "附件文件夹", "附件下载", "附件状态"))
@@ -287,7 +343,7 @@ def main(argv: list[str] | None = None) -> int:
                                  "附件状态": "; ".join(item["status"] for item in notice["attachments"])})
     cleanup_legacy_csv(root)
     print(root / "索引.json")
-    return 0 if all(r["status"] == "ok" for r in reports) else 1
+    return 0 if all(r["status"] in {"ok", "robots_hold"} for r in reports) else 1
 
 
 if __name__ == "__main__":

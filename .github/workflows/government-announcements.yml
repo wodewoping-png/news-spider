@@ -43,7 +43,7 @@ jobs:
         env:
           TARGET_DATE: ${{ inputs.target_date }}
         run: |
-          args=(--sources sources.xlsx --output-dir data/government_announcements)
+          args=(--sources sources.xlsx --output-dir data/government_announcements --check-pending)
           if [ -n "$TARGET_DATE" ]; then
             args+=(--target-date "$TARGET_DATE")
           fi
@@ -71,6 +71,22 @@ jobs:
             git pull --rebase --autostash origin "$branch"
             git push origin "HEAD:$branch"
           fi
+      - name: Report robots holds
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          indexes = list(Path('data/government_announcements').glob('*/索引.json'))
+          if indexes:
+              index = json.loads(max(indexes, key=lambda p: p.stat().st_mtime).read_text())
+              holds = [source['source'] for source in index['sources'] if source['status'] == 'robots_hold']
+              if holds:
+                  with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
+                      summary.write('robots 暂缓渠道：' + '、'.join(holds) + '。每日索引保留原因，其他渠道继续归档。\n')
+          PY
       - name: Report archive status
         if: ${{ steps.archive.outcome == 'failure' }}
         run: |

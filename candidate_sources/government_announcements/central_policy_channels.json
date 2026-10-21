@@ -1,0 +1,1040 @@
+[
+  {
+    "agency": "中国政府网（含国务院办公厅）",
+    "official_domain": "gov.cn",
+    "focus": "政策文件、政策解读、国务院公报",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、政策解读、国务院公报",
+        "url": "https://www.gov.cn/zhengce/zuixin/",
+        "status": "existing"
+      },
+      {
+        "label": "既有渠道",
+        "category": "政策文件、政策解读、国务院公报",
+        "url": "https://www.gov.cn/zhengce/jiedu/index.htm",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "外交部",
+    "official_domain": "fmprc.gov.cn",
+    "focus": "政策文件、声明",
+    "status": "pending",
+    "reason": "首页可读；所见以外交新闻和人员动态为主，未核准固定政策文件列表。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策文件、声明",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国防部",
+    "official_domain": "mod.gov.cn",
+    "focus": "政策公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "国家发展和改革委员会",
+    "official_domain": "ndrc.gov.cn",
+    "focus": "政策发布、通知公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 403，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 403,
+    "columns": []
+  },
+  {
+    "agency": "教育部",
+    "official_domain": "moe.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "最新文件",
+        "category": "政策文件",
+        "url": "https://www.moe.gov.cn/jyb_xxgk/zywj_btlj/index.html",
+        "status": "active",
+        "detail_path_re": "/srcsite/[A-Z0-9]+/[^/]+/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "title_pattern": "",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "待验证栏目1",
+        "category": "政策文件、通知公告",
+        "url": "https://www.moe.gov.cn/jyb_xxgk/gk_gbgg/moe_0/",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "科学技术部",
+    "official_domain": "most.gov.cn",
+    "focus": "政策文件、通知通告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知通告",
+        "url": "https://www.most.gov.cn/tztg/",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "工业和信息化部",
+    "official_domain": "miit.gov.cn",
+    "focus": "政策文件、文件公示",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、文件公示",
+        "url": "https://www.miit.gov.cn/zwgk/wjgs/index.html",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "国家民族事务委员会",
+    "official_domain": "neac.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "pending",
+    "reason": "政策解读列表混入新闻转载；部门规章列表未可靠标注发布日期，暂不按事件日期充作发布日期。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待验证栏目1",
+        "category": "政策文件、通知公告",
+        "url": "https://www.neac.gov.cn/seac/xxgk/zcjd/index.shtml",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "公安部",
+    "official_domain": "mps.gov.cn",
+    "focus": "政策文件、通告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 521，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 521,
+    "columns": []
+  },
+  {
+    "agency": "民政部",
+    "official_domain": "mca.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "司法部",
+    "official_domain": "moj.gov.cn",
+    "focus": "政策文件、立法征求意见",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "具名政策解读",
+        "category": "政策解读",
+        "url": "https://www.moj.gov.cn/zcjd/",
+        "status": "active",
+        "detail_path_re": "/pub/sfbgw/zcjd/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "title_pattern": "《[^》]+》.*(解读|答记者问)|关于《[^》]+》",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "待验证栏目1",
+        "category": "政策文件、立法征求意见",
+        "url": "https://www.moj.gov.cn/zwxxgk/fdzdgknr/fdzdgknrtzwj/",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "财政部",
+    "official_domain": "mof.gov.cn",
+    "focus": "政策发布、财政公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "政策发布",
+        "category": "政策文件",
+        "url": "https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/",
+        "status": "active",
+        "detail_path_re": "/zhengcefabu/(?:[^/]+/)?20\\d{4}/t20\\d{6}_\\d+\\.htm",
+        "title_pattern": "关于.*(通知|公告|办法|规定|意见|规划|措施)|《[^》]+》.*(修订|印发)",
+        "additional_allowed_hosts": [
+          "jkw.mof.gov.cn",
+          "jrs.mof.gov.cn",
+          "szs.mof.gov.cn",
+          "kjs.mof.gov.cn",
+          "gss.mof.gov.cn",
+          "sbs.mof.gov.cn"
+        ],
+        "body": "metadata_only"
+      }
+    ]
+  },
+  {
+    "agency": "人力资源和社会保障部",
+    "official_domain": "mohrss.gov.cn",
+    "focus": "政策文件、公告",
+    "status": "pending",
+    "reason": "首页可读；政策栏目列表由脚本加载，尚未核准日期字段与详情路径。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策文件、公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "自然资源部",
+    "official_domain": "mnr.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知公告",
+        "url": "https://www.mnr.gov.cn/gk/tzgg/",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "生态环境部",
+    "official_domain": "mee.gov.cn",
+    "focus": "政策文件、公示公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "部门公告",
+        "category": "政策文件",
+        "url": "https://www.mee.gov.cn/zcwj/bwj/gg/",
+        "status": "active",
+        "detail_path_re": "/xxgk2018/xxgk/xxgk0[1-9]/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "title_pattern": "关于.*(发布|印发|实施|修改|废止).*|.*办法.*公告",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "具名政策解读",
+        "category": "政策解读",
+        "url": "https://www.mee.gov.cn/zcwj/zcjd/",
+        "status": "active",
+        "detail_path_re": "/zcwj/zcjd/20\\d{4}/t20\\d{6}_\\d+\\.shtml",
+        "title_pattern": "《[^》]+》.*(解读|答记者问)|关于《[^》]+》",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      }
+    ]
+  },
+  {
+    "agency": "住房和城乡建设部",
+    "official_domain": "mohurd.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "pending",
+    "reason": "首页可读，政策发布栏目 robots 检查不可用；暂停该栏目请求。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策文件、通知公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "交通运输部",
+    "official_domain": "mot.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "政策解读",
+        "category": "政策解读",
+        "url": "https://www.mot.gov.cn/gongkai/zcjd/index.html",
+        "status": "active",
+        "detail_path_re": "/gongkai/zcjd/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "title_pattern": "《[^》]+》.*解读",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知公告",
+        "url": "https://xxgk.mot.gov.cn/2020/zhengce/qtwjlist.html",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "水利部",
+    "official_domain": "mwr.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "农业农村部",
+    "official_domain": "moa.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "hold",
+    "reason": "robots.txt 明确禁止抓取；继续暂停内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 200,
+    "columns": []
+  },
+  {
+    "agency": "商务部",
+    "official_domain": "mofcom.gov.cn",
+    "focus": "政策发布、通知公告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策发布、通知公告",
+        "url": "https://www.mofcom.gov.cn/zcfb/index.html",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "文化和旅游部",
+    "official_domain": "mct.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "公告通知",
+        "category": "通知公告",
+        "url": "https://www.mct.gov.cn/whzx/ggtz/index.htm",
+        "status": "active",
+        "detail_path_re": "/zfxxgkml/(?:[^/]+/){1,4}20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "title_pattern": "文化和旅游部.*(通知|公告|意见|办法|规划)",
+        "additional_allowed_hosts": [
+          "zwgk.mct.gov.cn"
+        ],
+        "body": "metadata_only"
+      }
+    ]
+  },
+  {
+    "agency": "国家卫生健康委员会",
+    "official_domain": "nhc.gov.cn",
+    "focus": "政策文件、通告公告",
+    "status": "hold",
+    "reason": "官网首页返回 HTTP 412；不规避访问限制。",
+    "observed_at": "2026-10-21",
+    "home_http": 412,
+    "robots_http": 404,
+    "columns": []
+  },
+  {
+    "agency": "退役军人事务部",
+    "official_domain": "mva.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 403，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 403,
+    "columns": []
+  },
+  {
+    "agency": "应急管理部",
+    "official_domain": "mem.gov.cn",
+    "focus": "政策文件、预警与通知",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、预警与通知",
+        "url": "https://www.mem.gov.cn/gk/tzgg/",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "中国人民银行",
+    "official_domain": "pbc.gov.cn",
+    "focus": "货币政策、公开市场公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 200，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 200,
+    "columns": []
+  },
+  {
+    "agency": "审计署",
+    "official_domain": "audit.gov.cn",
+    "focus": "审计结果公告",
+    "status": "pending",
+    "reason": "公告及报告栏目可读，但抽样列表没有稳定可解析的发布日期；待单站解析。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待验证栏目1",
+        "category": "审计结果公告",
+        "url": "https://www.audit.gov.cn/n5/n25/index.html",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国务院国有资产监督管理委员会",
+    "official_domain": "sasac.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "海关总署",
+    "official_domain": "customs.gov.cn",
+    "focus": "政策法规、海关公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "国家税务总局",
+    "official_domain": "chinatax.gov.cn",
+    "focus": "政策文件、解读",
+    "status": "pending",
+    "reason": "首页可读；政策发布及解读路径抽样返回 HTTP 404，需核准当前法规库入口。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策文件、解读",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家市场监督管理总局",
+    "official_domain": "samr.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知公告",
+        "url": "https://www.samr.gov.cn/jzxts/tzgg/index.html",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "国家金融监督管理总局",
+    "official_domain": "nfra.gov.cn",
+    "focus": "监管政策、公告",
+    "status": "pending",
+    "reason": "首页可读；政策条目由脚本加载，未核准正式政策列表和日期字段。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "监管政策、公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "中国证券监督管理委员会",
+    "official_domain": "csrc.gov.cn",
+    "focus": "政策发布、监管公告",
+    "status": "pending",
+    "reason": "政策解读栏目可读，但列表以新闻发布稿为主，不能替代原始监管规则文件。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策发布、监管公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家广播电视总局",
+    "official_domain": "nrta.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "pending",
+    "reason": "公告栏目可读，列表异步渲染；需核准接口和发布日期。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待验证栏目1",
+        "category": "政策文件、通知公告",
+        "url": "https://www.nrta.gov.cn/col/col113/index.html",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家体育总局",
+    "official_domain": "sport.gov.cn",
+    "focus": "政策法规、通知公告",
+    "status": "pending",
+    "reason": "通知公告栏目可读，但抽样列表没有可验证发布日期，首页混入赛事和领导动态。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策法规、通知公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家统计局",
+    "official_domain": "stats.gov.cn",
+    "focus": "统计公报、数据发布",
+    "status": "pending",
+    "reason": "统计数据与公报有价值，单列数据类；通知栏目抽样多为人事及项目公告，不混入政策。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "统计公报、数据发布",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家知识产权局",
+    "official_domain": "cnipa.gov.cn",
+    "focus": "政策文件、专利公告",
+    "status": "pending",
+    "reason": "公告公报栏目可读，文章列表异步装载；需核准官方数据接口和日期。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待验证栏目1",
+        "category": "政策文件、专利公告",
+        "url": "https://www.cnipa.gov.cn/col/col74/index.html",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家医疗保障局",
+    "official_domain": "nhsa.gov.cn",
+    "focus": "政策法规、通知公告",
+    "status": "pending",
+    "reason": "政策法规栏目可读，列表异步装载；需核准官方数据接口和日期。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待验证栏目1",
+        "category": "政策法规、通知公告",
+        "url": "https://www.nhsa.gov.cn/col/col104/index.html",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家机关事务管理局",
+    "official_domain": "ggj.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "pending",
+    "reason": "政策法规司栏目混合通知与历史法规，标题截断；需核准原文及日期。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策文件、通知公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家新闻出版署（国家版权局）",
+    "official_domain": "nppa.gov.cn",
+    "focus": "政策法规、通知公告",
+    "status": "pending",
+    "reason": "政策法规栏目抽样多为旧法规，未验证持续更新的正式政策栏目。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策法规、通知公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "中国气象局",
+    "official_domain": "cma.gov.cn",
+    "focus": "气象预警、政策公告",
+    "status": "pending",
+    "reason": "政策文件栏目有成文与发布日期两个时间字段，需确认刊发日；气象预警单列预警类。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待验证栏目1",
+        "category": "气象预警、政策公告",
+        "url": "http://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家粮食和物资储备局",
+    "official_domain": "lswz.gov.cn",
+    "focus": "政策法规、通知公告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策法规、通知公告",
+        "url": "https://www.lswz.gov.cn/html/zcfb/index.shtml",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "国家能源局",
+    "official_domain": "nea.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知公告",
+        "url": "https://www.nea.gov.cn/policy/tz.htm",
+        "status": "existing"
+      },
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知公告",
+        "url": "https://www.nea.gov.cn/policy/gg.htm",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "国家国防科技工业局",
+    "official_domain": "sastind.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "pending",
+    "reason": "通知栏目摘要含实施日期，页面只显示月日；不能把实施日误作刊发日。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策文件、通知公告",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家烟草专卖局",
+    "official_domain": "tobacco.gov.cn",
+    "focus": "政策公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "国家移民管理局",
+    "official_domain": "nia.gov.cn",
+    "focus": "出入境政策、公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "政策文件",
+        "category": "政策文件",
+        "url": "https://www.nia.gov.cn/n741440/n741547/index.html",
+        "status": "active",
+        "detail_path_re": "/n741440/n741547/c\\d+/content\\.html",
+        "title_pattern": "",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "政策解读",
+        "category": "政策解读",
+        "url": "https://www.nia.gov.cn/n741440/n741577/index.html",
+        "status": "active",
+        "detail_path_re": "/n741440/n741577/c\\d+/content\\.html",
+        "title_pattern": "",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "待验证栏目1",
+        "category": "出入境政策、公告",
+        "url": "https://www.nia.gov.cn/n741440/n741542/index.html",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家林业和草原局",
+    "official_domain": "forestry.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知公告",
+        "url": "https://www.forestry.gov.cn/zcgg.jhtml",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "国家铁路局",
+    "official_domain": "nra.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "政策解读",
+        "category": "政策解读",
+        "url": "https://www.nra.gov.cn/hdjl/zcjd/jdhz/",
+        "status": "active",
+        "detail_path_re": "/xxgk/gkml/ztjg/gfzd/zcjd/20\\d{4}/t20\\d{6}_\\d+\\.shtml",
+        "title_pattern": "《[^》]+》.*解读",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      }
+    ]
+  },
+  {
+    "agency": "中国民用航空局",
+    "official_domain": "caac.gov.cn",
+    "focus": "政策法规、适航指令",
+    "status": "pending",
+    "reason": "官网首页可读，未核准适航指令与规章的固定列表、发布日期及详情链接。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 200,
+    "columns": [
+      {
+        "label": "待定位政策栏目",
+        "category": "政策法规、适航指令",
+        "url": "",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家邮政局",
+    "official_domain": "spb.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "通知公告",
+        "category": "通知公告",
+        "url": "https://www.spb.gov.cn/gjyzj/c100009/c100010/common_list.shtml",
+        "status": "active",
+        "detail_path_re": "/gjyzj/c100009/c100010/20\\d{4}/[0-9a-f]{32}\\.shtml",
+        "title_pattern": "关于.*(通知|公告|通告)",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "政策解读",
+        "category": "政策解读",
+        "url": "https://www.spb.gov.cn/gjyzj/c100009/c100013/common_list.shtml",
+        "status": "active",
+        "detail_path_re": "/gjyzj/c100009/c100013/20\\d{4}/[0-9a-f]{32}\\.shtml",
+        "title_pattern": "《[^》]+》.*解读",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "待验证栏目1",
+        "category": "政策文件、通知公告",
+        "url": "https://www.spb.gov.cn/gjyzj/c100009/c100014/xxgk_index.shtml",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家文物局",
+    "official_domain": "ncha.gov.cn",
+    "focus": "政策法规、通知公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "国家中医药管理局",
+    "official_domain": "natcm.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "国家矿山安全监察局",
+    "official_domain": "nmsa.gov.cn",
+    "focus": "政策文件、监察公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  },
+  {
+    "agency": "国家外汇管理局",
+    "official_domain": "safe.gov.cn",
+    "focus": "政策法规、统计数据",
+    "status": "active",
+    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "政策法规",
+        "category": "政策文件",
+        "url": "https://www.safe.gov.cn/safe/zcfg/index.html",
+        "status": "active",
+        "detail_path_re": "/safe/20\\d{2}/\\d{4}/\\d+\\.html",
+        "title_pattern": "",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      },
+      {
+        "label": "政策法规解读",
+        "category": "政策解读",
+        "url": "https://www.safe.gov.cn/safe/zcfgjd/index.html",
+        "status": "active",
+        "detail_path_re": "/safe/20\\d{2}/\\d{4}/\\d+\\.html",
+        "title_pattern": "《[^》]+》.*(解读|答记者问)|关于《[^》]+》|政策.*解读|就.*答记者问",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
+      }
+    ]
+  },
+  {
+    "agency": "国家药品监督管理局",
+    "official_domain": "nmpa.gov.cn",
+    "focus": "政策法规、药械通告",
+    "status": "hold",
+    "reason": "官网首页返回 HTTP 412；不规避访问限制。",
+    "observed_at": "2026-10-21",
+    "home_http": 412,
+    "robots_http": 404,
+    "columns": []
+  },
+  {
+    "agency": "国家数据局",
+    "official_domain": "nda.gov.cn",
+    "focus": "政策文件、通知公告",
+    "status": "existing",
+    "reason": "原有渠道，继续每日归档",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "既有渠道",
+        "category": "政策文件、通知公告",
+        "url": "https://www.nda.gov.cn/sjj/zwgk/zcfb/list/index_pc_1.html",
+        "status": "existing"
+      }
+    ]
+  },
+  {
+    "agency": "国家疾病预防控制局",
+    "official_domain": "ndcpa.gov.cn",
+    "focus": "政策文件、疫情通报",
+    "status": "pending",
+    "reason": "政策法规、政策解读、通知栏目可读但列表异步装载，未核准日期接口。",
+    "observed_at": "2026-10-21",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "待验证栏目1",
+        "category": "政策文件、疫情通报",
+        "url": "https://www.ndcpa.gov.cn/jbkzzx/c100012/common/list.html",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "agency": "国家国际发展合作署",
+    "official_domain": "cidca.gov.cn",
+    "focus": "政策文件、公告",
+    "status": "hold",
+    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
+    "observed_at": "2026-10-21",
+    "home_http": null,
+    "robots_http": 503,
+    "columns": []
+  }
+]
