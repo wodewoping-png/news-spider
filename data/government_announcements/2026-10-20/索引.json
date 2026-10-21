@@ -1,6 +1,6 @@
 {
   "target_date": "2026-10-20",
-  "generated_at": "2026-10-21T19:01:12.142484+08:00",
+  "generated_at": "2026-10-21T19:09:35.322533+08:00",
   "attachment_bytes": 32768,
   "sources": [
     {
@@ -156,6 +156,13 @@
       "source": "教育部—最新文件",
       "status": "ok",
       "listing_count": 12,
+      "notices": [],
+      "errors": []
+    },
+    {
+      "source": "国家民族事务委员会—政策文件",
+      "status": "ok",
+      "listing_count": 4,
       "notices": [],
       "errors": []
     },
@@ -329,6 +336,20 @@
       "listing_count": 6,
       "notices": [],
       "errors": []
+    },
+    {
+      "source": "国家疾病预防控制局—政策法规",
+      "status": "ok",
+      "listing_count": 38,
+      "notices": [],
+      "errors": []
+    },
+    {
+      "source": "国家疾病预防控制局—具名政策解读",
+      "status": "ok",
+      "listing_count": 40,
+      "notices": [],
+      "errors": []
     }
   ],
   "policy_site_coverage": [
@@ -429,17 +450,14 @@
     },
     {
       "agency": "国家民族事务委员会",
-      "status": "pending",
-      "reason": "政策解读列表混入新闻转载；部门规章列表未可靠标注发布日期，暂不按事件日期充作发布日期。",
-      "last_robots_check": {
-        "robots_http": null,
-        "check": "ConnectionError"
-      },
+      "status": "active",
+      "reason": "政策文件正式列表可读；只保留国家民委印发、修订、废止的规范性文件与指导意见，排除新闻转载和示范单位评选；仅存元数据。",
+      "last_robots_check": null,
       "channels": [
         {
-          "label": "待验证栏目1",
-          "url": "https://www.neac.gov.cn/seac/xxgk/zcjd/index.shtml",
-          "status": "pending"
+          "label": "政策文件",
+          "url": "https://www.neac.gov.cn/seac/xxgk/zcfb/index.shtml",
+          "status": "active"
         }
       ]
     },
@@ -497,7 +515,7 @@
     {
       "agency": "人力资源和社会保障部",
       "status": "pending",
-      "reason": "首页可读；政策栏目列表由脚本加载，尚未核准日期字段与详情路径。",
+      "reason": "就业政策列表在当前抓取环境返回脚本访问挑战，无法核验发布日期与详情链接；不绕过访问限制。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -667,7 +685,7 @@
     {
       "agency": "审计署",
       "status": "pending",
-      "reason": "公告及报告栏目可读，但抽样列表没有稳定可解析的发布日期；待单站解析。",
+      "reason": "公告报告列表仅显示月日，无法稳定确定发布年份；详情尚未建立发布日期合同。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -732,7 +750,7 @@
     {
       "agency": "国家金融监督管理总局",
       "status": "pending",
-      "reason": "首页可读；政策条目由脚本加载，未核准正式政策列表和日期字段。",
+      "reason": "官网规章库可见，但固定政策列表请求返回 404 或由脚本装载；未核准正式发布日及接口。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -748,7 +766,7 @@
     {
       "agency": "中国证券监督管理委员会",
       "status": "pending",
-      "reason": "政策解读栏目可读，但列表以新闻发布稿为主，不能替代原始监管规则文件。",
+      "reason": "政策解读页有日期但主要指向新闻稿；法规库和公告页尚未核准原始监管规则的发布日期接口。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -777,7 +795,7 @@
     {
       "agency": "国家体育总局",
       "status": "pending",
-      "reason": "通知公告栏目可读，但抽样列表没有可验证发布日期，首页混入赛事和领导动态。",
+      "reason": "政法司通知列表带日期，近期主要是研究项目申报与培训；政策法规检索库尚未形成可日更的发布日期列表。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -985,7 +1003,7 @@
     {
       "agency": "中国民用航空局",
       "status": "pending",
-      "reason": "官网首页可读，未核准适航指令与规章的固定列表、发布日期及详情链接。",
+      "reason": "信息公开的政策发布栏目只返回页框架，未给列表条目；适航指令独立查询服务尚无核准的发布日期接口。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -1094,17 +1112,19 @@
     },
     {
       "agency": "国家疾病预防控制局",
-      "status": "pending",
-      "reason": "政策法规、政策解读、通知栏目可读但列表异步装载，未核准日期接口。",
-      "last_robots_check": {
-        "robots_http": 404,
-        "check": "allowed_needs_column_review"
-      },
+      "status": "active",
+      "reason": "政策法规、具名政策解读两栏的官方页面内嵌 itemObj JSON，实测包含原文路径及准确发布日期；仅存元数据。",
+      "last_robots_check": null,
       "channels": [
         {
-          "label": "待验证栏目1",
+          "label": "政策法规",
           "url": "https://www.ndcpa.gov.cn/jbkzzx/c100012/common/list.html",
-          "status": "pending"
+          "status": "active"
+        },
+        {
+          "label": "具名政策解读",
+          "url": "https://www.ndcpa.gov.cn/jbkzzx/c100013/common/list.html",
+          "status": "active"
         }
       ]
     },
