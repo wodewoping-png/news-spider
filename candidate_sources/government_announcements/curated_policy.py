@@ -20,6 +20,7 @@ CHANNELS_PATH = Path(__file__).with_name("central_policy_channels.json")
 URL_DATE = re.compile(r"/(20\d{2})/(\d{1,2})/(\d{1,2})/")
 MONTH_DATE = re.compile(r"/(20\d{2})(\d{2})/t20\d{6}_")
 SKIP_TITLE = re.compile(r"(一图读懂|图解|图片解读|领导活动|时政要闻|公务员|招聘|招录|表彰|评选|获奖名单|比赛|大赛|人事任免)")
+SCRIPT_TITLE = re.compile(r"\bvar\s+_docTitle\s*=\s*(['\"])(.*?)\1\s*;", re.S)
 
 
 def load_policy_sites() -> list[dict]:
@@ -69,7 +70,15 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
             title = normalize_space(str(anchor.get("title") or (
                 title_node.get_text(" ", strip=True) if title_node else anchor.get_text(" ", strip=True)
             )))
+            # NPPA writes the title through a fixed inline document.write snippet.
+            # Read only its literal assignment; never execute page JavaScript.
+            if not title:
+                script = anchor.select_one("script")
+                match = SCRIPT_TITLE.search(script.string or "") if script else None
+                if match:
+                    title = normalize_space(match.group(2))
             title = re.sub(r"\s*20\d{2}[-./]\d{1,2}[-./]\d{1,2}$", "", title)
+            title = re.sub(r"\s*[（(]20\d{2}[-./]\d{1,2}[-./]\d{1,2}[）)]$", "", title)
             if not 9 <= len(title) <= 180 or SKIP_TITLE.search(title):
                 continue
             if self.title_pattern and not self.title_pattern.search(title):

@@ -13,6 +13,8 @@ on:
   push:
     paths:
       - "src/government_archive.py"
+      - "candidate_sources/government_announcements/central_policy_channels.json"
+      - "candidate_sources/government_announcements/curated_policy.py"
       - "tests/test_government_archive.py"
       - ".github/workflows/government-announcements.yml"
 

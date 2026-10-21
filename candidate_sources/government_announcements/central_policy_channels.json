@@ -27,17 +27,21 @@
     "agency": "外交部",
     "official_domain": "fmprc.gov.cn",
     "focus": "政策文件、声明",
-    "status": "pending",
-    "reason": "首页可读；所见以外交新闻和人员动态为主，未核准固定政策文件列表。",
+    "status": "active",
+    "reason": "国际和地区组织文件列表实测可读；保留条约、声明、宣言、公报、政策行动文件，排除人员动态；仅存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策文件、声明",
-        "url": "",
-        "status": "pending"
+        "label": "国际组织文件",
+        "category": "外交政策文件与声明",
+        "url": "https://www.fmprc.gov.cn/gjhdq_676201/gjhdqzz_681964/zgzyjz_148206/zywj_688970/",
+        "status": "active",
+        "detail_path_re": "/gjhdq_676201/gjhdqzz_681964/zgzyjz_148206/zywj_688970/20\\d{4}/t20\\d{6}_\\d+\\.shtml",
+        "title_pattern": "声明|宣言|公报|条约|成果清单|倡议|行动",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
       }
     ]
   },
@@ -677,17 +681,21 @@
     "agency": "国家新闻出版署（国家版权局）",
     "official_domain": "nppa.gov.cn",
     "focus": "政策法规、通知公告",
-    "status": "pending",
-    "reason": "政策法规栏目抽样多为旧法规，未验证持续更新的正式政策栏目。",
+    "status": "active",
+    "reason": "通知公示列表实测可读；标题由页面固定脚本字面量写入，已核验原文路径与发布日期；暂存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策法规、通知公告",
-        "url": "",
-        "status": "pending"
+        "label": "通知公示",
+        "category": "通知公告",
+        "url": "https://www.nppa.gov.cn/xxfb/tzgs/",
+        "status": "active",
+        "detail_path_re": "/xxfb/tzgs/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "title_pattern": "",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
       }
     ]
   },
@@ -695,17 +703,21 @@
     "agency": "中国气象局",
     "official_domain": "cma.gov.cn",
     "focus": "气象预警、政策公告",
-    "status": "pending",
-    "reason": "政策文件栏目有成文与发布日期两个时间字段，需确认刊发日；气象预警单列预警类。",
+    "status": "active",
+    "reason": "政策文件列表实测可读，采用首列发布日期，排除成文日期；原文与日期链接已核验，暂存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
-        "label": "待验证栏目1",
-        "category": "气象预警、政策公告",
-        "url": "http://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/",
-        "status": "pending"
+        "label": "政策文件",
+        "category": "政策文件",
+        "url": "https://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/",
+        "status": "active",
+        "detail_path_re": "/zfxxgk/gknr/wjgk/gfxwj/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "title_pattern": "",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
       }
     ]
   },
