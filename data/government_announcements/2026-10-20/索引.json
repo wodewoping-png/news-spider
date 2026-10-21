@@ -1,6 +1,6 @@
 {
   "target_date": "2026-10-20",
-  "generated_at": "2026-10-21T14:44:17.853390+08:00",
+  "generated_at": "2026-10-21T18:31:37.486457+08:00",
   "attachment_bytes": 32768,
   "sources": [
     {
@@ -44,7 +44,7 @@
     },
     {
       "source": "自然资源部—通知公告",
-      "status": "listing_failed",
+      "status": "robots_hold",
       "listing_count": 0,
       "notices": [],
       "errors": [
@@ -297,7 +297,7 @@
     {
       "agency": "外交部",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "首页可读；所见以外交新闻和人员动态为主，未核准固定政策文件列表。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -313,7 +313,7 @@
     {
       "agency": "国防部",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "SSLError"
@@ -323,7 +323,7 @@
     {
       "agency": "国家发展和改革委员会",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 403，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": 403,
         "check": "robots_unavailable"
@@ -377,10 +377,10 @@
     {
       "agency": "国家民族事务委员会",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "政策解读列表混入新闻转载；部门规章列表未可靠标注发布日期，暂不按事件日期充作发布日期。",
       "last_robots_check": {
-        "robots_http": 200,
-        "check": "allowed_needs_column_review"
+        "robots_http": null,
+        "check": "ConnectionError"
       },
       "channels": [
         {
@@ -393,7 +393,7 @@
     {
       "agency": "公安部",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 521，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": 521,
         "check": "robots_unavailable"
@@ -403,7 +403,7 @@
     {
       "agency": "民政部",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -444,7 +444,7 @@
     {
       "agency": "人力资源和社会保障部",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "首页可读；政策栏目列表由脚本加载，尚未核准日期字段与详情路径。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -491,7 +491,7 @@
     {
       "agency": "住房和城乡建设部",
       "status": "pending",
-      "reason": "首页可读，但政策栏目 robots 检查不可用，暂缓",
+      "reason": "首页可读，政策发布栏目 robots 检查不可用；暂停该栏目请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -525,7 +525,7 @@
     {
       "agency": "水利部",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -535,10 +535,10 @@
     {
       "agency": "农业农村部",
       "status": "hold",
-      "reason": "robots.txt 明确禁止抓取，暂停请求",
+      "reason": "robots.txt 明确禁止抓取；继续暂停内容请求。",
       "last_robots_check": {
-        "robots_http": 200,
-        "check": "robots_disallowed"
+        "robots_http": 403,
+        "check": "robots_unavailable"
       },
       "channels": []
     },
@@ -571,7 +571,7 @@
     {
       "agency": "国家卫生健康委员会",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "官网首页返回 HTTP 412；不规避访问限制。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -581,7 +581,7 @@
     {
       "agency": "退役军人事务部",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 403，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": 403,
         "check": "robots_unavailable"
@@ -604,7 +604,7 @@
     {
       "agency": "中国人民银行",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 200，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "robots_disallowed"
@@ -614,7 +614,7 @@
     {
       "agency": "审计署",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "公告及报告栏目可读，但抽样列表没有稳定可解析的发布日期；待单站解析。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -630,7 +630,7 @@
     {
       "agency": "国务院国有资产监督管理委员会",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -640,7 +640,7 @@
     {
       "agency": "海关总署",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "SSLError"
@@ -650,7 +650,7 @@
     {
       "agency": "国家税务总局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "首页可读；政策发布及解读路径抽样返回 HTTP 404，需核准当前法规库入口。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -679,7 +679,7 @@
     {
       "agency": "国家金融监督管理总局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "首页可读；政策条目由脚本加载，未核准正式政策列表和日期字段。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -695,10 +695,10 @@
     {
       "agency": "中国证券监督管理委员会",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "政策解读栏目可读，但列表以新闻发布稿为主，不能替代原始监管规则文件。",
       "last_robots_check": {
-        "robots_http": 200,
-        "check": "allowed_needs_column_review"
+        "robots_http": null,
+        "check": "ConnectTimeout"
       },
       "channels": [
         {
@@ -711,7 +711,7 @@
     {
       "agency": "国家广播电视总局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "公告栏目可读，列表异步渲染；需核准接口和发布日期。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -727,7 +727,7 @@
     {
       "agency": "国家体育总局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "通知公告栏目可读，但抽样列表没有可验证发布日期，首页混入赛事和领导动态。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -743,10 +743,10 @@
     {
       "agency": "国家统计局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "统计数据与公报有价值，单列数据类；通知栏目抽样多为人事及项目公告，不混入政策。",
       "last_robots_check": {
-        "robots_http": null,
-        "check": "ReadTimeout"
+        "robots_http": 404,
+        "check": "allowed_needs_column_review"
       },
       "channels": [
         {
@@ -759,7 +759,7 @@
     {
       "agency": "国家知识产权局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "公告公报栏目可读，文章列表异步装载；需核准官方数据接口和日期。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -775,10 +775,10 @@
     {
       "agency": "国家医疗保障局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "政策法规栏目可读，列表异步装载；需核准官方数据接口和日期。",
       "last_robots_check": {
-        "robots_http": 404,
-        "check": "allowed_needs_column_review"
+        "robots_http": null,
+        "check": "ReadTimeout"
       },
       "channels": [
         {
@@ -791,7 +791,7 @@
     {
       "agency": "国家机关事务管理局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "政策法规司栏目混合通知与历史法规，标题截断；需核准原文及日期。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -807,7 +807,7 @@
     {
       "agency": "国家新闻出版署（国家版权局）",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "政策法规栏目抽样多为旧法规，未验证持续更新的正式政策栏目。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -823,7 +823,7 @@
     {
       "agency": "中国气象局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "政策文件栏目有成文与发布日期两个时间字段，需确认刊发日；气象预警单列预警类。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -870,10 +870,10 @@
     {
       "agency": "国家国防科技工业局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "通知栏目摘要含实施日期，页面只显示月日；不能把实施日误作刊发日。",
       "last_robots_check": {
-        "robots_http": null,
-        "check": "ConnectionError"
+        "robots_http": 404,
+        "check": "allowed_needs_column_review"
       },
       "channels": [
         {
@@ -886,7 +886,7 @@
     {
       "agency": "国家烟草专卖局",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -945,7 +945,7 @@
     {
       "agency": "中国民用航空局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "官网首页可读，未核准适航指令与规章的固定列表、发布日期及详情链接。",
       "last_robots_check": {
         "robots_http": 200,
         "check": "allowed_needs_column_review"
@@ -984,7 +984,7 @@
     {
       "agency": "国家文物局",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -994,7 +994,7 @@
     {
       "agency": "国家中医药管理局",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -1004,7 +1004,7 @@
     {
       "agency": "国家矿山安全监察局",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "ConnectionError"
@@ -1032,7 +1032,7 @@
     {
       "agency": "国家药品监督管理局",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "官网首页返回 HTTP 412；不规避访问限制。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -1055,7 +1055,7 @@
     {
       "agency": "国家疾病预防控制局",
       "status": "pending",
-      "reason": "官网首页可读，具体政策栏目或发布日期尚未通过合同验证",
+      "reason": "政策法规、政策解读、通知栏目可读但列表异步装载，未核准日期接口。",
       "last_robots_check": {
         "robots_http": 404,
         "check": "allowed_needs_column_review"
@@ -1071,7 +1071,7 @@
     {
       "agency": "国家国际发展合作署",
       "status": "hold",
-      "reason": "本环境 robots / HTTP 访问受限，待恢复后验证具体栏目",
+      "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
       "last_robots_check": {
         "robots_http": null,
         "check": "SSLError"
