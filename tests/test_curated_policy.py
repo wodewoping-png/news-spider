@@ -1,3 +1,4 @@
+import json
 import unittest
 
 from candidate_sources.government_announcements.curated_policy import (
@@ -104,6 +105,36 @@ class CuratedPolicyContractTests(unittest.TestCase):
         items = parser.parse_listing(html, parser.listing_url)
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0].platform_published_at.isoformat(), "2026-07-31")
+
+    def test_neac_policy_document_excludes_demonstration_award(self):
+        parser = curated_scrapers()["国家民族事务委员会—政策文件"]()
+        html = '''<li><a href="https://www.neac.gov.cn/seac/c103593/202601/1185934.shtml">
+        国家民委关于印发《民族团结进步示范区创建管理办法》的通知</a>
+        <span>[2026-01-08]</span></li><li><a href="https://www.neac.gov.cn/seac/xwzx/202601/1186743.shtml">
+        国家民委关于命名示范单位的决定</a><span>[2026-01-29]</span></li>'''
+        items = parser.parse_listing(html, parser.listing_url)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].platform_published_at.isoformat(), "2026-01-08")
+
+    def test_disease_control_embedded_json_keeps_official_dated_document(self):
+        parser = curated_scrapers()["国家疾病预防控制局—政策法规"]()
+        rows = [
+            {"aT": "国家疾控局关于印发传染病疫情信息公布管理办法的通知",
+             "aPd": "2026-05-14 17:11", "aU": json.dumps({"common": "/jbkzzx/c100012/common/content/content_2057633897501855744.html"})},
+            {"aT": "国家疾控局关于印发伪造办法的通知", "aPd": "2026-05-14",
+             "aU": json.dumps({"common": "https://example.com/evil.html"})},
+        ]
+        html = "<script>var itemObj = " + json.dumps(rows, ensure_ascii=False) + ";</script>"
+        items = parser.parse_listing(html, parser.listing_url)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].platform_published_at.isoformat(), "2026-05-14")
+        self.assertTrue(items[0].url.startswith("https://www.ndcpa.gov.cn/"))
+
+        interpretation = curated_scrapers()["国家疾病预防控制局—具名政策解读"]()
+        rows = [{"aT": "《疾病预防控制十五五规划》政策解读", "aPd": "2026-07-27 18:02",
+                 "aU": json.dumps({"common": "/jbkzzx/c100013/common/content/content_2081593247836573696.html"})}]
+        html = "<script>var itemObj = " + json.dumps(rows, ensure_ascii=False) + ";</script>"
+        self.assertEqual(len(interpretation.parse_listing(html, interpretation.listing_url)), 1)
 
 
 if __name__ == "__main__":
