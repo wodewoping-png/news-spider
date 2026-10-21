@@ -1,6 +1,6 @@
 {
   "target_date": "2026-10-20",
-  "generated_at": "2026-10-21T18:31:37.486457+08:00",
+  "generated_at": "2026-10-21T18:37:28.141355+08:00",
   "attachment_bytes": 32768,
   "sources": [
     {
@@ -210,10 +210,12 @@
     },
     {
       "source": "国家铁路局—政策解读",
-      "status": "ok",
-      "listing_count": 6,
+      "status": "robots_hold",
+      "listing_count": 0,
       "notices": [],
-      "errors": []
+      "errors": [
+        "blocked by robots.txt"
+      ]
     },
     {
       "source": "国家邮政局—通知公告",
@@ -537,8 +539,8 @@
       "status": "hold",
       "reason": "robots.txt 明确禁止抓取；继续暂停内容请求。",
       "last_robots_check": {
-        "robots_http": 403,
-        "check": "robots_unavailable"
+        "robots_http": 200,
+        "check": "robots_disallowed"
       },
       "channels": []
     },
@@ -697,8 +699,8 @@
       "status": "pending",
       "reason": "政策解读栏目可读，但列表以新闻发布稿为主，不能替代原始监管规则文件。",
       "last_robots_check": {
-        "robots_http": null,
-        "check": "ConnectTimeout"
+        "robots_http": 200,
+        "check": "allowed_needs_column_review"
       },
       "channels": [
         {
@@ -777,8 +779,8 @@
       "status": "pending",
       "reason": "政策法规栏目可读，列表异步装载；需核准官方数据接口和日期。",
       "last_robots_check": {
-        "robots_http": null,
-        "check": "ReadTimeout"
+        "robots_http": 404,
+        "check": "allowed_needs_column_review"
       },
       "channels": [
         {
