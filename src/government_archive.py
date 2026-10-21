@@ -21,6 +21,10 @@ from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 
 from candidate_sources.government_announcements.base import ContractViolation
+from candidate_sources.government_announcements.gov_cn import (
+    GovCnPolicyDocumentsScraper,
+    GovCnPolicyInterpretationsScraper,
+)
 from candidate_sources.government_announcements.scrapers import (
     GovernmentDocumentScraper,
     MiitPublicNoticesScraper,
@@ -50,6 +54,7 @@ def attachment_links(parser: GovernmentDocumentScraper, html: str, page_url: str
     selectors = (
         ("#detailContent",) if isinstance(parser, NeaDocumentScraper)
         else ("#con_con",) if isinstance(parser, MiitPublicNoticesScraper)
+        else (parser.body_selector,) if isinstance(parser, GovCnPolicyDocumentsScraper)
         else tuple(parser.body_selector.split(","))
         if isinstance(parser, StaticMinistryScraper) else ()
     )
@@ -230,7 +235,8 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
             else:
                 notice["errors"].append(f"详情请求失败: {client.last_failure_reason}")
         else:
-            notice["errors"].append("此渠道详情尚未通过生产校验，仅归档标题、日期和原文链接")
+            if not isinstance(parser, GovCnPolicyInterpretationsScraper):
+                notice["errors"].append("此渠道详情尚未通过生产校验，仅归档标题、日期和原文链接")
         (folder / "公告.json").write_text(json.dumps(notice, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         report["notices"].append(notice)
         cleanup_legacy_notice(root, relative_notice)

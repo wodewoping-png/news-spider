@@ -6,6 +6,15 @@ from typing import ClassVar
 from urllib.parse import urlencode
 
 from candidate_sources.government_announcements.base import ContractViolation, ListingItem
+from candidate_sources.government_announcements.gov_cn import (
+    GovCnJsonScraper,
+    GovCnPolicyDocumentsScraper as GovCnPolicyDocumentsParser,
+    GovCnPolicyInterpretationsScraper as GovCnPolicyInterpretationsParser,
+)
+from candidate_sources.government_announcements.selected_ministries import (
+    ForestryPolicyDocumentsScraper as ForestryPolicyDocumentsParser,
+    LswzPolicyReleasesScraper as LswzPolicyReleasesParser,
+)
 from candidate_sources.government_announcements.scrapers import (
     GovernmentDocumentScraper as GovernmentDocumentParser,
     MemNoticesScraper as MemNoticesParser,
@@ -33,6 +42,11 @@ class GovernmentAnnouncementScraper(BaseScraper):
     parser_type: ClassVar[type[GovernmentDocumentParser]]
 
     def _listing_items(self, parser: GovernmentDocumentParser) -> list[ListingItem]:
+        if isinstance(parser, GovCnJsonScraper):
+            result = self.client.get(parser.data_url, strict_robots=True)
+            if not result:
+                return []
+            return parser.parse_listing_json(result.text, result.url)
         if isinstance(parser, NeaDocumentScraper):
             result = self.client.get(parser.data_url, strict_robots=True)
             if not result:
@@ -186,3 +200,19 @@ class NdaPolicyReleasesScraper(GovernmentAnnouncementScraper):
 
 class SamrAntitrustNoticesScraper(GovernmentAnnouncementScraper):
     parser_type = SamrAntitrustNoticesParser
+
+
+class GovCnPolicyDocumentsScraper(GovernmentAnnouncementScraper):
+    parser_type = GovCnPolicyDocumentsParser
+
+
+class GovCnPolicyInterpretationsScraper(GovernmentAnnouncementScraper):
+    parser_type = GovCnPolicyInterpretationsParser
+
+
+class LswzPolicyReleasesScraper(GovernmentAnnouncementScraper):
+    parser_type = LswzPolicyReleasesParser
+
+
+class ForestryPolicyDocumentsScraper(GovernmentAnnouncementScraper):
+    parser_type = ForestryPolicyDocumentsParser

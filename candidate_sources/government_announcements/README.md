@@ -1,5 +1,7 @@
 # Government announcement candidates
 
+2026-10-21 扩展：57 个机构的去重清单和实测筛选见 [`POLICY_EXPANSION.md`](POLICY_EXPANSION.md)、[`central_policy_inventory.csv`](central_policy_inventory.csv)。本轮新增中国政府网两类政策栏目、粮储局政策发布和林草局林草政策四个生产渠道。下文记录的是此前的十个渠道和当时的验收状态。
+
 本目录保留经过人工审核前验证的固定路径、同域和正文清洗合同。2026-09-15 起，通过验收的 10 个渠道已由 `src/scrapers/government_announcements.py` 接入生产，其中自然资源部仅保存元数据，其余 9 个保存机关文件纯文本。
 
 当前可运行候选共 10 个：国家能源局“通知”“公告”、工信部“文件公示”，以及科技部、自然资源部、交通运输部、商务部、应急管理部、国家数据局、市场监管总局相关栏目。自然资源部暂为仅元数据，其余 9 个支持经严格路径和官网标识校验的机关文件纯文本。
