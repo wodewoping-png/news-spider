@@ -185,8 +185,11 @@ def check_pending_policy_sites(sites: list[dict]) -> dict[str, dict]:
 
     def check(site: dict) -> tuple[str, dict]:
         domain = site["official_domain"]
-        url = f"https://www.{domain}/robots.txt"
         target = next((c["url"] for c in site["columns"] if c["url"]), f"https://www.{domain}/")
+        host = urlparse(target).hostname or ""
+        if host != domain and not host.endswith(f".{domain}"):
+            return site["agency"], {"robots_http": None, "check": "unverified_host"}
+        url = f"https://{host}/robots.txt"
         try:
             response = requests.get(url, headers={"User-Agent": BROWSER_USER_AGENT}, timeout=6)
             status = response.status_code
