@@ -502,15 +502,15 @@
     "official_domain": "chinatax.gov.cn",
     "focus": "政策文件、解读",
     "status": "pending",
-    "reason": "首页可读；政策发布及解读路径抽样返回 HTTP 404，需核准当前法规库入口。",
+    "reason": "最新政策文件库列表可读，但列标题为“成文日期”，不能当作发布日期；需核准各详情页的发布字段后接入日清单。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策文件、解读",
-        "url": "",
+        "label": "最新政策文件库（待核发布日期）",
+        "category": "政策文件",
+        "url": "https://fgk.chinatax.gov.cn/zcfgk/c100027/list.html",
         "status": "pending"
       }
     ]
@@ -573,17 +573,22 @@
     "agency": "国家广播电视总局",
     "official_domain": "nrta.gov.cn",
     "focus": "政策文件、通知公告",
-    "status": "pending",
-    "reason": "公告栏目可读，列表异步渲染；需核准接口和发布日期。",
+    "status": "active",
+    "reason": "公告公示栏目以嵌入 CDATA 记录发布；仅取政策标准、规范与征求意见通知，排除评奖赛事；仅存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
-        "label": "待验证栏目1",
-        "category": "政策文件、通知公告",
-        "url": "https://www.nrta.gov.cn/col/col113/index.html",
-        "status": "pending"
+        "label": "政策公告",
+        "category": "通知公告",
+        "url": "https://www.nrta.gov.cn/col/col113/",
+        "status": "active",
+        "detail_path_re": "/art/20\\d{2}/\\d{1,2}/\\d{1,2}/art_113_\\d+\\.html",
+        "title_pattern": "关于.*(发布|印发|进一步|规范|实施|征求意见|公开征求).*(通知|公告)$",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only",
+        "embedded_records": true
       }
     ]
   },
@@ -627,17 +632,33 @@
     "agency": "国家知识产权局",
     "official_domain": "cnipa.gov.cn",
     "focus": "政策文件、专利公告",
-    "status": "pending",
-    "reason": "公告公报栏目可读，文章列表异步装载；需核准官方数据接口和日期。",
+    "status": "active",
+    "reason": "政策文件的公告和通知以嵌入 CDATA 记录发布；按官方日期、原文路径与实质政策标题筛选，排除逐案标志保护和招聘；仅存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待验证栏目1",
-        "category": "政策文件、专利公告",
-        "url": "https://www.cnipa.gov.cn/col/col74/index.html",
-        "status": "pending"
+        "label": "政策通知",
+        "category": "政策文件",
+        "url": "https://www.cnipa.gov.cn/col/col75/",
+        "status": "active",
+        "detail_path_re": "/art/20\\d{2}/\\d{1,2}/\\d{1,2}/art_75_\\d+\\.html",
+        "title_pattern": "关于.*(通知|意见)|发布.*(指南|规则|办法|标准)|政策",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only",
+        "embedded_records": true
+      },
+      {
+        "label": "政策公告",
+        "category": "通知公告",
+        "url": "https://www.cnipa.gov.cn/col/col74/",
+        "status": "active",
+        "detail_path_re": "/art/20\\d{2}/\\d{1,2}/\\d{1,2}/art_74_\\d+\\.html",
+        "title_pattern": "关于.*(发布|修订|公布|印发).*(指南|标准|规定|办法|规则|政策)",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only",
+        "embedded_records": true
       }
     ]
   },
@@ -645,17 +666,22 @@
     "agency": "国家医疗保障局",
     "official_domain": "nhsa.gov.cn",
     "focus": "政策法规、通知公告",
-    "status": "pending",
-    "reason": "政策法规栏目可读，列表异步装载；需核准官方数据接口和日期。",
+    "status": "active",
+    "reason": "政策法规栏目以嵌入 CDATA 记录发布；核验独立发布日期与同域政策详情路径；仅存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待验证栏目1",
-        "category": "政策法规、通知公告",
-        "url": "https://www.nhsa.gov.cn/col/col104/index.html",
-        "status": "pending"
+        "label": "政策法规",
+        "category": "政策文件",
+        "url": "https://www.nhsa.gov.cn/col/col104/",
+        "status": "active",
+        "detail_path_re": "/art/20\\d{2}/\\d{1,2}/\\d{1,2}/art_(?:104|53)_\\d+\\.html",
+        "title_pattern": "",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only",
+        "embedded_records": true
       }
     ]
   },
@@ -663,17 +689,21 @@
     "agency": "国家机关事务管理局",
     "official_domain": "ggj.gov.cn",
     "focus": "政策文件、通知公告",
-    "status": "pending",
-    "reason": "政策法规司栏目混合通知与历史法规，标题截断；需核准原文及日期。",
+    "status": "active",
+    "reason": "公共机构节约能源官方子站通知公告可读；只保留国管局署名的实质方案、意见、办法或通知，排除活动预告及外部转载；仅存元数据。",
     "observed_at": "2026-10-21",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策文件、通知公告",
-        "url": "",
-        "status": "pending"
+        "label": "公共机构政策通知",
+        "category": "政策文件与通知",
+        "url": "https://ecpi.ggj.gov.cn/tzgg/",
+        "status": "active",
+        "detail_path_re": "/tzgg/20\\d{4}/t20\\d{6}_\\d+\\.htm",
+        "title_pattern": "(国管局|国家机关事务管理局).*(关于|印发).*(通知|方案|意见|办法|规划)",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
       }
     ]
   },

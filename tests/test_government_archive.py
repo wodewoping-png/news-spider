@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from candidate_sources.government_announcements.scrapers import NeaNoticesScraper
-from src.government_archive import archive_source, attachment_links, cleanup_legacy_csv, cleanup_legacy_notice, fetch_attachment, main, safe_name
+from src.government_archive import archive_source, attachment_links, check_pending_policy_sites, cleanup_legacy_csv, cleanup_legacy_notice, fetch_attachment, main, safe_name
 from src.http_client import FetchResult
 from src.load_sources import Source
 
@@ -33,6 +33,16 @@ def source():
 
 
 class GovernmentArchiveTests(unittest.TestCase):
+    def test_pending_column_checks_its_actual_official_host(self):
+        from unittest.mock import Mock
+
+        site = {"agency": "税务测试", "official_domain": "chinatax.gov.cn", "status": "pending",
+                "columns": [{"url": "https://fgk.chinatax.gov.cn/zcfgk/c100027/list.html"}]}
+        with patch("src.government_archive.requests.get", return_value=Mock(status_code=404, text="")) as get:
+            result = check_pending_policy_sites([site])
+        self.assertEqual(get.call_args.args[0], "https://fgk.chinatax.gov.cn/robots.txt")
+        self.assertEqual(result["税务测试"]["check"], "allowed_needs_column_review")
+
     def test_robots_hold_is_recorded_without_failing_other_channels(self):
         class BlockedClient(FakeClient):
             def get(self, url, **kwargs):

@@ -69,6 +69,42 @@ class CuratedPolicyContractTests(unittest.TestCase):
         self.assertEqual(items[0].title, "上海合作组织成员国政府首脑理事会联合公报")
         self.assertEqual(items[0].platform_published_at.isoformat(), "2026-10-21")
 
+    def test_official_embedded_records_keep_dates_and_skip_unrelated_items(self):
+        fixtures = (
+            ("国家知识产权局—政策通知", "https://www.cnipa.gov.cn/art/2026/10/21/art_75_208634.html",
+             "国家知识产权局关于发布集成电路布图设计请求类表格的通知", "2026-10-21"),
+            ("国家广播电视总局—政策公告", "https://www.nrta.gov.cn/art/2026/7/31/art_113_73786.html",
+             "国家广播电视总局关于发布《广播电视行业标准》的通知", "2026-07-31"),
+            ("国家医疗保障局—政策法规", "https://www.nhsa.gov.cn/art/2026/9/15/art_104_22141.html",
+             "国家医疗保障局关于试行高水平新技术服务价格制度的通知", "2026-09-15"),
+        )
+        for name, url, title, day in fixtures:
+            with self.subTest(name=name):
+                parser = curated_scrapers()[name]()
+                html = (f'<script><datastore><record><![CDATA[<li><span>2026-02-00024</span>'
+                        f'<a href="{url}">{title}</a><span>{day}</span></li>]]></record>'
+                        f'<record><![CDATA[<li><a href="https://example.com/art/2026/9/15/art_104_99.html">'
+                        f'{title}</a><span>{day}</span></li>]]></record></datastore></script>')
+                items = parser.parse_listing(html, parser.listing_url)
+                self.assertEqual(len(items), 1)
+                self.assertEqual(items[0].platform_published_at.isoformat(), day)
+
+        nrta = curated_scrapers()["国家广播电视总局—政策公告"]()
+        html = '''<record><![CDATA[<li><a href="https://www.nrta.gov.cn/art/2026/9/29/art_113_74147.html"
+        >《关于促进广播电视和网络视听公益广告高质量发展的意见》发布</a>
+        <span>2026-09-29</span></li>]]></record>'''
+        self.assertEqual(nrta.parse_listing(html, nrta.listing_url), [])
+
+    def test_ggj_policy_notice_excludes_event_preview(self):
+        parser = curated_scrapers()["国家机关事务管理局—公共机构政策通知"]()
+        html = '''<li><a href="./202607/t20260731_49595.htm">国家机关事务管理局
+        国家发展和改革委员会关于印发《公共机构节能工作方案》的通知</a>
+        <span>2026-07-31</span></li><li><a href="./202610/t20261010_49795.htm">
+        直播预告：公共机构绿色低碳讲堂</a><span>2026-10-10</span></li>'''
+        items = parser.parse_listing(html, parser.listing_url)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].platform_published_at.isoformat(), "2026-07-31")
+
 
 if __name__ == "__main__":
     unittest.main()

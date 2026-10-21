@@ -21,6 +21,7 @@ URL_DATE = re.compile(r"/(20\d{2})/(\d{1,2})/(\d{1,2})/")
 MONTH_DATE = re.compile(r"/(20\d{2})(\d{2})/t20\d{6}_")
 SKIP_TITLE = re.compile(r"(一图读懂|图解|图片解读|领导活动|时政要闻|公务员|招聘|招录|表彰|评选|获奖名单|比赛|大赛|人事任免)")
 SCRIPT_TITLE = re.compile(r"\bvar\s+_docTitle\s*=\s*(['\"])(.*?)\1\s*;", re.S)
+CDATA_RECORD = re.compile(r"<record>\s*<!\[CDATA\[(.*?)\]\]>\s*</record>", re.I | re.S)
 
 
 def load_policy_sites() -> list[dict]:
@@ -40,6 +41,7 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
     additional_allowed_hosts: tuple[str, ...] = ()
     detail_path_re: re.Pattern[str]
     title_pattern: re.Pattern[str] | None = None
+    embedded_records: bool = False
 
     def _guard_path(self, path: str, *, detail: bool) -> None:
         if not (self.detail_path_re.fullmatch(path) if detail else path == urlparse(self.listing_url).path):
@@ -52,7 +54,11 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
         if page_url.startswith("http://") and urlparse(page_url).netloc == self.allowed_host:
             page_url = "https://" + page_url.removeprefix("http://")
         self.guard_url(page_url)
-        soup = BeautifulSoup(html, "html.parser")
+        # Several official jpage templates keep their visible listing in
+        # <record><![CDATA[...]]></record> within a script, then render it in
+        # the browser. Parse only the bounded literal record fragments.
+        records = CDATA_RECORD.findall(html)[:80] if self.embedded_records else []
+        soup = BeautifulSoup("".join(records) if records else html, "html.parser")
         items: list[ListingItem] = []
         seen = set()
         for anchor in soup.select("a[href]"):
@@ -126,6 +132,7 @@ def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
                  "allowed_host": urlparse(url).netloc, "listing_url": url,
                  "additional_allowed_hosts": tuple(column.get("additional_allowed_hosts", [])),
                  "detail_path_re": re.compile(column["detail_path_re"]),
+                 "embedded_records": bool(column.get("embedded_records", False)),
                  "title_pattern": re.compile(column["title_pattern"]) if column.get("title_pattern") else None},
             )
             classes[name] = parser
