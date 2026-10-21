@@ -1,6 +1,6 @@
 {
   "target_date": "2026-10-20",
-  "generated_at": "2026-10-21T18:37:28.141355+08:00",
+  "generated_at": "2026-10-21T18:50:57.871430+08:00",
   "attachment_bytes": 32768,
   "sources": [
     {
@@ -146,6 +146,13 @@
       "errors": []
     },
     {
+      "source": "外交部—国际组织文件",
+      "status": "ok",
+      "listing_count": 34,
+      "notices": [],
+      "errors": []
+    },
+    {
       "source": "教育部—最新文件",
       "status": "ok",
       "listing_count": 12,
@@ -195,6 +202,20 @@
       "errors": []
     },
     {
+      "source": "国家新闻出版署（国家版权局）—通知公示",
+      "status": "ok",
+      "listing_count": 14,
+      "notices": [],
+      "errors": []
+    },
+    {
+      "source": "中国气象局—政策文件",
+      "status": "ok",
+      "listing_count": 20,
+      "notices": [],
+      "errors": []
+    },
+    {
       "source": "国家移民管理局—政策文件",
       "status": "ok",
       "listing_count": 4,
@@ -210,12 +231,10 @@
     },
     {
       "source": "国家铁路局—政策解读",
-      "status": "robots_hold",
-      "listing_count": 0,
+      "status": "ok",
+      "listing_count": 6,
       "notices": [],
-      "errors": [
-        "blocked by robots.txt"
-      ]
+      "errors": []
     },
     {
       "source": "国家邮政局—通知公告",
@@ -298,17 +317,14 @@
     },
     {
       "agency": "外交部",
-      "status": "pending",
-      "reason": "首页可读；所见以外交新闻和人员动态为主，未核准固定政策文件列表。",
-      "last_robots_check": {
-        "robots_http": 200,
-        "check": "allowed_needs_column_review"
-      },
+      "status": "active",
+      "reason": "国际和地区组织文件列表实测可读；保留条约、声明、宣言、公报、政策行动文件，排除人员动态；仅存元数据。",
+      "last_robots_check": null,
       "channels": [
         {
-          "label": "待定位政策栏目",
-          "url": "",
-          "status": "pending"
+          "label": "国际组织文件",
+          "url": "https://www.fmprc.gov.cn/gjhdq_676201/gjhdqzz_681964/zgzyjz_148206/zywj_688970/",
+          "status": "active"
         }
       ]
     },
@@ -779,8 +795,8 @@
       "status": "pending",
       "reason": "政策法规栏目可读，列表异步装载；需核准官方数据接口和日期。",
       "last_robots_check": {
-        "robots_http": 404,
-        "check": "allowed_needs_column_review"
+        "robots_http": null,
+        "check": "ConnectTimeout"
       },
       "channels": [
         {
@@ -808,33 +824,27 @@
     },
     {
       "agency": "国家新闻出版署（国家版权局）",
-      "status": "pending",
-      "reason": "政策法规栏目抽样多为旧法规，未验证持续更新的正式政策栏目。",
-      "last_robots_check": {
-        "robots_http": 200,
-        "check": "allowed_needs_column_review"
-      },
+      "status": "active",
+      "reason": "通知公示列表实测可读；标题由页面固定脚本字面量写入，已核验原文路径与发布日期；暂存元数据。",
+      "last_robots_check": null,
       "channels": [
         {
-          "label": "待定位政策栏目",
-          "url": "",
-          "status": "pending"
+          "label": "通知公示",
+          "url": "https://www.nppa.gov.cn/xxfb/tzgs/",
+          "status": "active"
         }
       ]
     },
     {
       "agency": "中国气象局",
-      "status": "pending",
-      "reason": "政策文件栏目有成文与发布日期两个时间字段，需确认刊发日；气象预警单列预警类。",
-      "last_robots_check": {
-        "robots_http": 200,
-        "check": "allowed_needs_column_review"
-      },
+      "status": "active",
+      "reason": "政策文件列表实测可读，采用首列发布日期，排除成文日期；原文与日期链接已核验，暂存元数据。",
+      "last_robots_check": null,
       "channels": [
         {
-          "label": "待验证栏目1",
-          "url": "http://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/",
-          "status": "pending"
+          "label": "政策文件",
+          "url": "https://www.cma.gov.cn/zfxxgk/gknr/wjgk/gfxwj/",
+          "status": "active"
         }
       ]
     },
