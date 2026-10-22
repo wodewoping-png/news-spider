@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 
 from src.date_utils import DEFAULT_TIMEZONE
 from src.storage import article_lines, export_csv, upsert_jsonl
+from src.recovery import run_confirmed_recoveries, save_queue
 
 
 class WeeklyArchiveTest(unittest.TestCase):
@@ -34,6 +35,35 @@ class WeeklyArchiveTest(unittest.TestCase):
             csv_path = journal.parent / "daily.csv"
             export_csv(journal, csv_path)
             self.assertIn("A much longer full article", csv_path.read_text(encoding="utf-8-sig"))
+
+    def test_empty_historical_day_is_ignored_without_overwriting_daily_health(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            logs = root / "logs"
+            logs.mkdir()
+            daily_health = logs / "channel-health.json"
+            daily_health.write_text('{"sources": [{"source": "Daily"}]}', encoding="utf-8")
+            queue = logs / "recovery-queue.json"
+            save_queue(queue, {"incidents": [{
+                "date": "2026-10-20", "source": "Example", "status": "confirmed"
+            }]})
+
+            def runner(command):
+                attempt = Path(command[command.index("--logs") + 1])
+                attempt.mkdir(parents=True, exist_ok=True)
+                (attempt / "channel-health.json").write_text(json.dumps({
+                    "sources": [{"source": "Example", "status": "idle",
+                                 "reason": "all observed candidates were published outside the target date"}]
+                }), encoding="utf-8")
+                return 0
+
+            rows = run_confirmed_recoveries(
+                queue, sources_path=root / "sources.xlsx",
+                output_path=root / "articles.jsonl", logs_dir=logs,
+                command_runner=runner,
+            )
+            self.assertEqual(rows[0]["status"], "ignored")
+            self.assertIn('"Daily"', daily_health.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
