@@ -1,6 +1,6 @@
 {
   "target_date": "2026-10-21",
-  "generated_at": "2026-10-22T18:32:08.532110+08:00",
+  "generated_at": "2026-10-22T18:44:19.433453+08:00",
   "attachment_bytes": 27233835,
   "sources": [
     {
@@ -977,8 +977,8 @@
       "status": "hold",
       "reason": "指定两页返回通用信息公开模板而非核准的带日期规则列表；本次 robots.txt HTTP 503，禁止生产请求，待找到实际栏目数据接口。",
       "last_robots_check": {
-        "robots_http": 200,
-        "check": "allowed_needs_column_review"
+        "robots_http": null,
+        "check": "ConnectTimeout"
       },
       "channels": [
         {
@@ -1147,7 +1147,7 @@
       "reason": "通知栏目摘要含实施日期，页面只显示月日；不能把实施日误作刊发日。",
       "last_robots_check": {
         "robots_http": null,
-        "check": "ReadTimeout"
+        "check": "ConnectionError"
       },
       "channels": [
         {
