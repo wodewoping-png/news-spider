@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -430,6 +431,11 @@ def run_confirmed_recoveries(
             }
         )
         save_queue(queue_path, payload, updated_at=now)
+        attempt_logs = logs_dir / "recovery-attempts" / day / hashlib.sha256(
+            source.encode("utf-8")
+        ).hexdigest()[:16]
+        attempt_logs.mkdir(parents=True, exist_ok=True)
+        (attempt_logs / "channel-health.json").unlink(missing_ok=True)
         command = [
             sys.executable,
             "-m",
@@ -439,7 +445,7 @@ def run_confirmed_recoveries(
             "--output",
             str(output_path),
             "--logs",
-            str(logs_dir),
+            str(attempt_logs),
             "--target-date",
             day,
             "--only-source",
@@ -469,11 +475,22 @@ def run_confirmed_recoveries(
                 }
             )
         else:
-            reason = (
-                _latest_health_reason(logs_dir / "channel-health.json", source)
-                if return_code == 0
-                else ""
-            )
+            health = (_latest_health(attempt_logs / "channel-health.json", source)
+                      if return_code == 0 else {})
+            reason = str(health.get("reason") or "")
+            if (return_code == 0 and not quality_recovery and
+                    health.get("status") == "idle" and
+                    "outside the target date" in reason.lower()):
+                incident.update({
+                    "status": "ignored",
+                    "confirmation_note": reason,
+                    "ignored_at": now,
+                    "last_error": "",
+                    "updated_at": now,
+                })
+                processed.append(incident)
+                save_queue(queue_path, payload, updated_at=now)
+                continue
             incident.update(
                 {
                     "status": "recovery_failed",
@@ -495,17 +512,17 @@ def run_confirmed_recoveries(
     return processed
 
 
-def _latest_health_reason(path: Path, source: str) -> str:
+def _latest_health(path: Path, source: str) -> dict:
     if not path.exists():
-        return ""
+        return {}
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
-        return ""
+        return {}
     for record in payload.get("sources", []):
         if str(record.get("source") or "") == source:
-            return str(record.get("reason") or "")
-    return ""
+            return record
+    return {}
 
 
 def _as_int(value: object) -> int:
