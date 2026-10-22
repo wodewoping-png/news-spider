@@ -136,6 +136,31 @@ class CuratedPolicyContractTests(unittest.TestCase):
         html = "<script>var itemObj = " + json.dumps(rows, ensure_ascii=False) + ";</script>"
         self.assertEqual(len(interpretation.parse_listing(html, interpretation.listing_url)), 1)
 
+    def test_nfra_api_uses_publication_date_and_pins_document_path(self):
+        parser = curated_scrapers()["国家金融监督管理总局—政策法规"]()
+        payload = {"rptCode": 200, "data": {"rows": [
+            {"docId": 1268952, "docTitle": "保险公司资产负债管理办法",
+             "publishDate": "2026-08-21 20:07:00", "builddate": "2026-08-20"},
+            {"docId": 1268953, "docTitle": "保险公司资产负债管理办法", "builddate": "2026-08-20"},
+        ]}}
+        items = parser.parse_listing_json(json.dumps(payload), parser.data_url)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].platform_published_at.isoformat(), "2026-08-21")
+        self.assertEqual(items[0].url, "https://www.nfra.gov.cn/cn/view/pages/ItemDetail.html?docId=1268952&itemId=926")
+        with self.assertRaises(ValueError):
+            parser.parse_listing_json(json.dumps(payload), parser.data_url.replace("itemId=926", "itemId=916"))
+
+    def test_statistics_and_mine_are_dated_and_same_origin(self):
+        stats = curated_scrapers()["国家统计局—数据发布"]()
+        html = '<li><a href="./202610/t20261020_1965658.html">2026年三季度国内生产总值初步核算结果</a><span>2026-10-20</span></li>'
+        self.assertEqual(len(stats.parse_listing(html, stats.listing_url)), 1)
+        mine = curated_scrapers()["国家矿山安全监察局—通知公告"]()
+        html = '''<li><a href="./202610/t20261016_736000.shtml">国家矿山安全监察局关于印发《煤矿安全监管监察行政处罚裁量权基准》的通知</a><span>2026-10-16</span></li>
+        <li><a href="./202609/t20260930_718035.shtml">国家矿山安全监察局公布第三批典型执法案例</a><span>2026-09-30</span></li>'''
+        items = mine.parse_listing(html, mine.listing_url)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].platform_published_at.isoformat(), "2026-10-16")
+
 
 if __name__ == "__main__":
     unittest.main()

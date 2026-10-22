@@ -351,22 +351,54 @@
     "official_domain": "mwr.gov.cn",
     "focus": "政策文件、通知公告",
     "status": "hold",
-    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
-    "observed_at": "2026-10-21",
+    "reason": "主站和技术标准子站 robots.txt 的 HTTP、HTTPS 请求均返回 503，无法判定允许路径。",
+    "observed_at": "2026-10-22",
     "home_http": null,
     "robots_http": 503,
-    "columns": []
+    "columns": [
+      {
+        "label": "法律法规",
+        "category": "水利法规",
+        "url": "http://www.mwr.gov.cn/zw/zcfg/fl/",
+        "status": "hold"
+      },
+      {
+        "label": "政策解读",
+        "category": "水利政策解读",
+        "url": "http://www.mwr.gov.cn/zw/zcjd/",
+        "status": "hold"
+      },
+      {
+        "label": "标准查询",
+        "category": "水利技术标准",
+        "url": "http://gjkj.mwr.gov.cn/jsjd1/bzcx/",
+        "status": "hold"
+      }
+    ]
   },
   {
     "agency": "农业农村部",
     "official_domain": "moa.gov.cn",
     "focus": "政策文件、通知公告",
     "status": "hold",
-    "reason": "robots.txt 明确禁止抓取；继续暂停内容请求。",
-    "observed_at": "2026-10-21",
+    "reason": "两栏虽公开且有日期，但本站 robots.txt 为 HTTP 200 且 Disallow: /，明确禁止自动抓取。",
+    "observed_at": "2026-10-22",
     "home_http": null,
     "robots_http": 200,
-    "columns": []
+    "columns": [
+      {
+        "label": "政策法规",
+        "category": "农业政策法规",
+        "url": "https://www.moa.gov.cn/gk/zcfg/",
+        "status": "hold"
+      },
+      {
+        "label": "规划计划",
+        "category": "农业规划计划",
+        "url": "https://www.moa.gov.cn/gk/ghjh_1/",
+        "status": "hold"
+      }
+    ]
   },
   {
     "agency": "商务部",
@@ -484,22 +516,42 @@
     "official_domain": "sasac.gov.cn",
     "focus": "政策文件、通知公告",
     "status": "hold",
-    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
-    "observed_at": "2026-10-21",
+    "reason": "两个 HTTP 栏目列表与日期可读；HTTPS 栏目和 robots.txt 均返回 503，现有生产抓取只接受 HTTPS，暂缓接入。",
+    "observed_at": "2026-10-22",
     "home_http": null,
     "robots_http": 503,
-    "columns": []
+    "columns": [
+      {
+        "label": "政策发布",
+        "category": "国资政策",
+        "url": "http://www.sasac.gov.cn/n2588035/n2588320/n2588335/index.html",
+        "status": "hold"
+      },
+      {
+        "label": "政策解读",
+        "category": "国资政策解读",
+        "url": "http://www.sasac.gov.cn/n2588035/n2588320/n2588340/index.html",
+        "status": "hold"
+      }
+    ]
   },
   {
     "agency": "海关总署",
     "official_domain": "customs.gov.cn",
     "focus": "政策法规、海关公告",
     "status": "hold",
-    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
-    "observed_at": "2026-10-21",
+    "reason": "指定的海关栏目 HTTP robots.txt 可读，但列表请求返回 HTTP 412；不绕过访问控制；原 HTTPS robots 检查为 503。",
+    "observed_at": "2026-10-22",
     "home_http": null,
     "robots_http": 503,
-    "columns": []
+    "columns": [
+      {
+        "label": "政策法规公告",
+        "category": "海关公告",
+        "url": "http://www.customs.gov.cn/customs/302249/index.html",
+        "status": "hold"
+      }
+    ]
   },
   {
     "agency": "国家税务总局",
@@ -541,17 +593,35 @@
     "agency": "国家金融监督管理总局",
     "official_domain": "nfra.gov.cn",
     "focus": "监管政策、公告",
-    "status": "pending",
-    "reason": "官网规章库可见，但固定政策列表请求返回 404 或由脚本装载；未核准正式发布日及接口。",
-    "observed_at": "2026-10-21",
+    "status": "active",
+    "reason": "三个指定页面为脚本容器；官网公开 DocInfo 列表接口实测 HTTP 200，独立 publishDate、docTitle、docId 可读；仅存元数据。",
+    "observed_at": "2026-10-22",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "监管政策、公告",
-        "url": "",
-        "status": "pending"
+        "label": "政策法规",
+        "category": "监管规章",
+        "url": "https://www.nfra.gov.cn/cn/view/pages/ItemList.html?itemPId=923&itemId=926&itemUrl=ItemListRightMore.html&itemName=%E6%94%BF%E7%AD%96%E6%B3%95%E8%A7%84",
+        "status": "active",
+        "api_url": "https://www.nfra.gov.cn/cbircweb/DocInfo/SelectDocByItemIdAndChild?itemId=926&pageSize=40&pageIndex=1",
+        "item_id": 926
+      },
+      {
+        "label": "政策解读",
+        "category": "监管政策解读",
+        "url": "https://www.nfra.gov.cn/cn/view/pages/ItemList.html?itemPId=914&itemId=916&itemUrl=ItemListRightMore.html&itemName=%E6%94%BF%E7%AD%96%E8%A7%A3%E8%AF%BB",
+        "status": "active",
+        "api_url": "https://www.nfra.gov.cn/cbircweb/DocInfo/SelectDocByItemIdAndChild?itemId=916&pageSize=40&pageIndex=1",
+        "item_id": 916
+      },
+      {
+        "label": "征求意见",
+        "category": "监管征求意见",
+        "url": "https://www.nfra.gov.cn/cn/view/pages/ItemList.html?itemPId=945&itemId=951&itemUrl=ItemListRightList.html&itemName=%E5%BE%81%E6%B1%82%E6%84%8F%E8%A7%81",
+        "status": "active",
+        "api_url": "https://www.nfra.gov.cn/cbircweb/DocInfo/SelectDocByItemIdAndChild?itemId=951&pageSize=40&pageIndex=1",
+        "item_id": 951
       }
     ]
   },
@@ -559,17 +629,23 @@
     "agency": "中国证券监督管理委员会",
     "official_domain": "csrc.gov.cn",
     "focus": "政策发布、监管公告",
-    "status": "pending",
-    "reason": "政策解读页有日期但主要指向新闻稿；法规库和公告页尚未核准原始监管规则的发布日期接口。",
-    "observed_at": "2026-10-21",
+    "status": "hold",
+    "reason": "指定两页返回通用信息公开模板而非核准的带日期规则列表；本次 robots.txt HTTP 503，禁止生产请求，待找到实际栏目数据接口。",
+    "observed_at": "2026-10-22",
     "home_http": 200,
-    "robots_http": 200,
+    "robots_http": 503,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策发布、监管公告",
-        "url": "",
-        "status": "pending"
+        "label": "政府信息公开栏目954",
+        "category": "监管政策",
+        "url": "https://www.csrc.gov.cn/csrc/c101954/zfxxgk_zdgk.shtml",
+        "status": "hold"
+      },
+      {
+        "label": "政府信息公开栏目953",
+        "category": "监管政策",
+        "url": "https://www.csrc.gov.cn/csrc/c101953/zfxxgk_zdgk.shtml",
+        "status": "hold"
       }
     ]
   },
@@ -618,17 +694,25 @@
     "agency": "国家统计局",
     "official_domain": "stats.gov.cn",
     "focus": "统计公报、数据发布",
-    "status": "pending",
-    "reason": "统计数据与公报有价值，单列数据类；通知栏目抽样多为人事及项目公告，不混入政策。",
-    "observed_at": "2026-10-21",
+    "status": "active",
+    "reason": "数据发布与数据解读列表实测 HTTP 200，均有独立日期及同域详情路径；作为统计数据栏目标识，不视为部门政策指令；仅存元数据。",
+    "observed_at": "2026-10-22",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "统计公报、数据发布",
-        "url": "",
-        "status": "pending"
+        "label": "数据发布",
+        "category": "统计数据发布",
+        "url": "https://www.stats.gov.cn/sj/zxfb/",
+        "status": "active",
+        "detail_path_re": "/sj/zxfb/20\\d{4}/t20\\d{6}_\\d+\\.html"
+      },
+      {
+        "label": "数据解读",
+        "category": "统计数据解读",
+        "url": "https://www.stats.gov.cn/sj/sjjd/",
+        "status": "active",
+        "detail_path_re": "/sj/sjjd/20\\d{4}/t20\\d{6}_\\d+\\.html"
       }
     ]
   },
@@ -909,15 +993,27 @@
     "official_domain": "caac.gov.cn",
     "focus": "政策法规、适航指令",
     "status": "pending",
-    "reason": "信息公开的政策发布栏目只返回页框架，未给列表条目；适航指令独立查询服务尚无核准的发布日期接口。",
-    "observed_at": "2026-10-21",
+    "reason": "三个 fl 页面实际跳转到 /was5/web/search：9 为通知公告与行业标准，10 为政策发布，11 为统计数据；检索列表显示「发文日期」，且样本与详情 URL 建档日期不同，不能直接当作网页发布日期。待核准发布日字段后接入。",
+    "observed_at": "2026-10-22",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策法规、适航指令",
-        "url": "",
+        "label": "信息公开分类 9",
+        "category": "待确认政策分类",
+        "url": "https://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=9",
+        "status": "pending"
+      },
+      {
+        "label": "信息公开分类 10",
+        "category": "待确认政策分类",
+        "url": "https://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=10",
+        "status": "pending"
+      },
+      {
+        "label": "信息公开分类 11",
+        "category": "待确认政策分类",
+        "url": "https://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=11",
         "status": "pending"
       }
     ]
@@ -984,14 +1080,39 @@
   },
   {
     "agency": "国家矿山安全监察局",
-    "official_domain": "nmsa.gov.cn",
+    "official_domain": "chinamine-safety.gov.cn",
     "focus": "政策文件、监察公告",
-    "status": "hold",
-    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
-    "observed_at": "2026-10-21",
-    "home_http": null,
-    "robots_http": 503,
-    "columns": []
+    "status": "active",
+    "reason": "新官方域名的三个指定栏目实测 HTTP 200，浏览器 UA 的 robots.txt 为 404，条目带明确日期；事故查处只保留站内事故通报及督办 HTML，调查报告 PDF 待独立附件合同；正文仍只存元数据。",
+    "observed_at": "2026-10-22",
+    "home_http": 200,
+    "robots_http": 404,
+    "columns": [
+      {
+        "label": "通知公告",
+        "category": "矿山安全政策通知",
+        "url": "https://www.chinamine-safety.gov.cn/zfxxgk/fdzdgknr/tzgg/",
+        "status": "active",
+        "detail_path_re": "/zfxxgk/fdzdgknr/tzgg/20\\d{4}/t20\\d{6}_\\d+\\.shtml",
+        "title_pattern": "(国家矿山安全监察局|矿山安全|煤矿).*(通知|意见|办法|规定|细则|标准|公告|通报)"
+      },
+      {
+        "label": "征求意见",
+        "category": "矿山安全征求意见",
+        "url": "https://www.chinamine-safety.gov.cn/zfxxgk/fdzdgknr/zqyj_01/",
+        "status": "active",
+        "detail_path_re": "/zfxxgk/fdzdgknr/zqyj_01/20\\d{4}/t20\\d{6}_\\d+\\.shtml",
+        "title_pattern": "(征求|意见|办法|通知|标准)"
+      },
+      {
+        "label": "事故查处",
+        "category": "矿山事故查处",
+        "url": "https://www.chinamine-safety.gov.cn/zfxxgk/fdzdgknr/sgcc/",
+        "status": "active",
+        "detail_path_re": "/zfxxgk/fdzdgknr/sgcc/(?:sgtb|sgdb)/20\\d{4}/t20\\d{6}_\\d+\\.shtml",
+        "title_pattern": "(通报|督办)"
+      }
+    ]
   },
   {
     "agency": "国家外汇管理局",
@@ -1093,10 +1214,23 @@
     "official_domain": "cidca.gov.cn",
     "focus": "政策文件、公告",
     "status": "hold",
-    "reason": "robots 检查 HTTP 503，或首页不可访问；暂缓内容请求。",
-    "observed_at": "2026-10-21",
+    "reason": "HTTP 栏目可返回页面外框但未提供带日期条目；HTTPS robots.txt 和栏目返回 503，不能按现有 HTTPS 生产合同抓取。",
+    "observed_at": "2026-10-22",
     "home_http": null,
     "robots_http": 503,
-    "columns": []
+    "columns": [
+      {
+        "label": "行政许可",
+        "category": "行政许可",
+        "url": "http://www.cidca.gov.cn/xzxk.htm",
+        "status": "hold"
+      },
+      {
+        "label": "法规制度",
+        "category": "法规制度",
+        "url": "http://www.cidca.gov.cn/fgzd.htm",
+        "status": "hold"
+      }
+    ]
   }
 ]
