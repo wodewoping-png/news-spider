@@ -1,50 +1,57 @@
 # 渠道运维总览
 
-- 生成时间：2026-10-20T09:28:14.830948+08:00
-- 渠道数：71
-- 健康/正常空闲：47
-- 异常渠道：10
-- 待处理缺口：594
+- 生成时间：2026-10-22T11:08:47.300135+08:00
+- 渠道数：75
+- 健康/正常空闲：52
+- 异常渠道：9
+- 待处理缺口：624
 
 ## 需要处理的渠道
 
 | 渠道 | 最近目标日期 | 状态 | 正文中位字符 | 不完整正文 | 短正文 | 连续异常 | 待补日期数 | 原因 | 下一步 |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
-| 4C Offshore | 2026-10-19 | healthy | 1444 | 0 | 0 | 0 | 7 | - | repair_then_confirm |
-| Batteries News | 2026-10-19 | idle | 0 | 0 | 0 | 0 | 25 | all observed candidates were published outside the target date (2026-10-08 to 2026-10-17) | repair_then_confirm |
-| Data Center Knowledge | 2026-10-19 | healthy | 6355 | 0 | 0 | 0 | 2 | - | repair_then_confirm |
-| Electrek | 2026-10-19 | healthy | 5883 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
-| electrive | 2026-10-19 | healthy | 3483 | 0 | 0 | 0 | 4 | - | repair_then_reconfirm |
-| EnergyTrend储能 | 2026-10-19 | healthy | 1448 | 0 | 0 | 0 | 8 | - | repair_then_confirm |
-| H2 View | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 40 | article fetch failures: Cloudflare access challenge (1) | repair_then_reconfirm |
-| Informationsdienst Wissenschaft-idw | 2026-10-19 | healthy | 8095 | 0 | 0 | 0 | 12 | - | repair_then_reconfirm |
-| interesting engineering | 2026-10-19 | healthy | 3664 | 0 | 0 | 0 | 16 | - | repair_then_reconfirm |
-| IT之家 | 2026-10-19 | healthy | 474 | 0 | 12 | 0 | 3 | - | repair_then_reconfirm |
-| MIT Technology Review | 2026-10-19 | healthy | 14519 | 0 | 0 | 0 | 11 | - | repair_then_reconfirm |
-| NE时代 | 2026-10-19 | healthy | 3464 | 0 | 0 | 0 | 8 | - | repair_then_confirm |
-| perovskite-info | 2026-10-19 | healthy | 2598 | 0 | 0 | 0 | 13 | - | repair_then_reconfirm |
-| pv magazine | 2026-10-19 | healthy | 3450 | 0 | 0 | 0 | 7 | - | repair_then_reconfirm |
-| pv magazine C&I PV | 2026-10-19 | healthy | 3854 | 0 | 0 | 0 | 32 | - | repair_then_reconfirm |
-| Renewables Now | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 31 | article fetch failures: Cloudflare access challenge (1) | repair_then_reconfirm |
-| scitechdaily | 2026-10-19 | healthy | 6266 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
-| Supply Chain Digital | 2026-10-19 | healthy | 7497 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
-| the information | 2026-10-19 | healthy | 7184 | 0 | 0 | 0 | 3 | - | repair_then_confirm |
-| 中国核电信息网-国内 | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 4 | article fetch failures: HTTP 404 (1) | repair_then_reconfirm |
-| 中国核电信息网-国际 | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 3 | article fetch failures: HTTP 404 (1) | repair_then_reconfirm |
-| 中国电力新闻网-新能源 | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 19 | no target-date articles were collected | repair_then_confirm |
-| 中国电力新闻网-科技 | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 29 | no target-date articles were collected | repair_then_reconfirm |
-| 中国能源网 | 2026-10-19 | healthy | 1065 | 0 | 0 | 0 | 36 | - | repair_then_confirm |
-| 光伏测试网 | 2026-10-19 | idle | 0 | 0 | 0 | 0 | 36 | all observed candidates were published outside the target date (2026-09-24 to 2026-10-20) | repair_then_confirm |
-| 北极星储能网 | 2026-10-19 | zero | 0 | 0 | 0 | 23 | 62 | no target-date articles were collected | repair_then_confirm |
-| 国际太阳能光伏网 | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 4 | article fetch failures: ReadTimeout (1) | repair_then_confirm |
-| 国际能源网 | 2026-10-19 | healthy | 2606 | 0 | 0 | 0 | 69 | - | repair_then_confirm |
-| 少数派 | 2026-10-19 | healthy | 4890 | 0 | 0 | 0 | 5 | - | repair_then_confirm |
-| 我爱电车网 | 2026-10-19 | healthy | 984 | 0 | 1 | 0 | 21 | - | repair_then_confirm |
-| 新华网科技 | 2026-10-19 | healthy | 1526 | 0 | 1 | 0 | 1 | - | repair_then_confirm |
-| 电池网 | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 38 | no target-date articles were collected | repair_then_confirm |
-| 科学网新闻 | 2026-10-19 | healthy | 1082 | 0 | 0 | 0 | 9 | - | repair_then_reconfirm |
-| 索比光伏 | 2026-10-19 | healthy | 1552 | 0 | 1 | 0 | 3 | - | repair_then_reconfirm |
-| 自然资源部—通知公告 | 2026-10-19 | zero | 0 | 0 | 0 | 1 | 24 | no target-date articles were collected | repair_then_confirm |
+| 4C Offshore | 2026-10-21 | healthy | 1221 | 0 | 0 | 0 | 7 | - | repair_then_confirm |
+| Batteries News | 2026-10-21 | idle | 0 | 0 | 0 | 0 | 26 | all observed candidates were published outside the target date (2026-10-08 to 2026-10-17) | repair_then_reconfirm |
+| Data Center Knowledge | 2026-10-21 | healthy | 3441 | 0 | 0 | 0 | 2 | - | repair_then_confirm |
+| Electrek | 2026-10-21 | healthy | 3288 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
+| electrive | 2026-10-21 | healthy | 3561 | 0 | 0 | 0 | 4 | - | repair_then_reconfirm |
+| EnergyTrend储能 | 2026-10-21 | healthy | 1088 | 0 | 0 | 0 | 8 | - | repair_then_confirm |
+| H2 View | 2026-10-21 | zero | 0 | 0 | 0 | 2 | 42 | article fetch failures: Cloudflare access challenge (1) | repair_then_reconfirm |
+| Informationsdienst Wissenschaft-idw | 2026-10-21 | healthy | 4331 | 0 | 0 | 0 | 12 | - | repair_then_reconfirm |
+| interesting engineering | 2026-10-21 | healthy | 3677 | 0 | 0 | 0 | 16 | - | repair_then_reconfirm |
+| IT之家 | 2026-10-21 | healthy | 611 | 0 | 0 | 0 | 4 | - | repair_then_reconfirm |
+| MIT Technology Review | 2026-10-21 | healthy | 4088 | 0 | 0 | 0 | 12 | - | repair_then_reconfirm |
+| NE时代 | 2026-10-21 | healthy | 2700 | 0 | 0 | 0 | 9 | - | repair_then_reconfirm |
+| perovskite-info | 2026-10-21 | healthy | 2469 | 0 | 0 | 0 | 13 | - | repair_then_reconfirm |
+| pv magazine | 2026-10-21 | healthy | 3597 | 0 | 0 | 0 | 8 | - | repair_then_reconfirm |
+| pv magazine C&I PV | 2026-10-21 | healthy | 4432 | 0 | 0 | 0 | 32 | - | repair_then_reconfirm |
+| Renewables Now | 2026-10-21 | zero | 0 | 0 | 0 | 2 | 33 | article fetch failures: Cloudflare access challenge (1) | repair_then_reconfirm |
+| scitechdaily | 2026-10-21 | healthy | 6936 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
+| Supply Chain Digital | 2026-10-21 | healthy | 8844 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
+| the information | 2026-10-21 | healthy | 5122 | 0 | 0 | 0 | 3 | - | repair_then_confirm |
+| 中国政府网—政策解读 | 2026-10-21 | degraded | 0 | 1 | 1 | 1 | 1 | 1 articles were not verified as full text (empty_content) | repair_then_confirm |
+| 中国核电信息网-国内 | 2026-10-21 | zero | 0 | 0 | 0 | 2 | 6 | article fetch failures: HTTP 404 (1) | repair_then_reconfirm |
+| 中国核电信息网-国际 | 2026-10-21 | zero | 0 | 0 | 0 | 2 | 5 | article fetch failures: HTTP 404 (1) | repair_then_reconfirm |
+| 中国电力新闻网-新能源 | 2026-10-21 | zero | 0 | 0 | 0 | 2 | 20 | no target-date articles were collected | repair_then_confirm |
+| 中国电力新闻网-科技 | 2026-10-21 | healthy | 867 | 0 | 0 | 0 | 29 | - | repair_then_reconfirm |
+| 中国能源网 | 2026-10-21 | healthy | 2581 | 0 | 0 | 0 | 36 | - | repair_then_confirm |
+| 交通运输部—其他政策性文件 | 2026-10-21 | idle | 0 | 0 | 0 | 0 | 1 | all observed candidates were published outside the target date (2026-09-29 to 2026-10-14) | repair_then_reconfirm |
+| 光伏测试网 | 2026-10-21 | healthy | 51 | 0 | 1 | 0 | 36 | - | repair_then_confirm |
+| 北极星储能网 | 2026-10-21 | zero | 0 | 0 | 0 | 24 | 64 | no target-date articles were collected | repair_then_reconfirm |
+| 国家数据局—政策发布 | 2026-10-21 | idle | 0 | 0 | 0 | 0 | 1 | all observed candidates were published outside the target date (2025-11-10 to 2026-07-08) | repair_then_reconfirm |
+| 国家能源局—公告 | 2026-10-21 | healthy | 203 | 0 | 1 | 0 | 1 | - | repair_then_reconfirm |
+| 国家能源局—通知 | 2026-10-21 | healthy | 2699 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
+| 国际太阳能光伏网 | 2026-10-21 | healthy | 1745 | 0 | 0 | 0 | 4 | - | repair_then_confirm |
+| 国际能源网 | 2026-10-21 | healthy | 684 | 0 | 2 | 0 | 69 | - | repair_then_confirm |
+| 少数派 | 2026-10-21 | healthy | 4231 | 0 | 0 | 0 | 5 | - | repair_then_confirm |
+| 市场监管总局—反垄断通知公告 | 2026-10-21 | idle | 0 | 0 | 0 | 0 | 1 | all observed candidates were published outside the target date (2021-12-22 to 2026-10-10) | repair_then_reconfirm |
+| 我爱电车网 | 2026-10-21 | healthy | 1562 | 0 | 0 | 0 | 22 | - | repair_then_reconfirm |
+| 新华网科技 | 2026-10-21 | healthy | 639 | 0 | 2 | 0 | 1 | - | repair_then_confirm |
+| 电池网 | 2026-10-21 | zero | 0 | 0 | 0 | 2 | 40 | no target-date articles were collected | repair_then_reconfirm |
+| 科学技术部—通知通告 | 2026-10-21 | healthy | 3104 | 0 | 0 | 0 | 1 | - | repair_then_reconfirm |
+| 科学网新闻 | 2026-10-21 | healthy | 890 | 0 | 1 | 0 | 10 | - | repair_then_reconfirm |
+| 索比光伏 | 2026-10-21 | healthy | 1345 | 0 | 1 | 0 | 4 | - | repair_then_reconfirm |
+| 自然资源部—通知公告 | 2026-10-21 | zero | 0 | 0 | 0 | 2 | 26 | no target-date articles were collected | repair_then_reconfirm |
 
 ## 运维闭环
 
