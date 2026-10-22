@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import csv
 import json
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Iterable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from zoneinfo import ZoneInfo
 
 from .content_quality import assess_content, content_rank
 from .date_utils import DEFAULT_TIMEZONE, article_date
@@ -38,6 +39,59 @@ FIELDNAMES = (
 INDUSTRY_FIELDNAMES = FIELDNAMES[-9:]
 
 TRACKING_QUERY_KEYS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
+ARCHIVE_THRESHOLD_BYTES = 60 * 1024 * 1024
+
+
+def article_paths(jsonl_path: Path) -> list[Path]:
+    """Read archived weeks as well as the active journal."""
+    return sorted((jsonl_path.parent / "archive").glob("articles-????-W??.jsonl")) + [jsonl_path]
+
+
+def article_lines(jsonl_path: Path):
+    for path in article_paths(jsonl_path):
+        if path.exists():
+            with path.open("r", encoding="utf-8") as handle:
+                yield from handle
+
+
+def _archive_path(jsonl_path: Path, item: dict) -> Path | None:
+    published = article_date(item, DEFAULT_TIMEZONE)
+    if published is None:
+        return None
+    current = datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).date()
+    if published.isocalendar()[:2] >= current.isocalendar()[:2]:
+        return None
+    year, week, _ = published.isocalendar()
+    return jsonl_path.parent / "archive" / f"articles-{year}-W{week:02d}.jsonl"
+
+
+def archive_older_weeks(jsonl_path: Path) -> int:
+    """Move older records before a journal reaches GitHub's single-file limit."""
+    if not jsonl_path.exists() or jsonl_path.stat().st_size <= ARCHIVE_THRESHOLD_BYTES:
+        return 0
+    buckets: dict[Path, list[str]] = {}
+    active: list[str] = []
+    with jsonl_path.open(encoding="utf-8") as handle:
+        for line in handle:
+            try:
+                item = json.loads(line)
+                archive_path = _archive_path(jsonl_path, item)
+            except (ValueError, TypeError):
+                archive_path = None
+            if archive_path is None:
+                active.append(line)
+            else:
+                buckets.setdefault(archive_path, []).append(line)
+    if not buckets:
+        raise ValueError("Active article journal exceeded 60 MiB, but has no older weeks to archive")
+    for path, lines in buckets.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.writelines(lines)
+    temporary_path = jsonl_path.with_suffix(jsonl_path.suffix + ".tmp")
+    temporary_path.write_text("".join(active), encoding="utf-8")
+    temporary_path.replace(jsonl_path)
+    return sum(map(len, buckets.values()))
 
 
 def canonicalize_url(url: str) -> str:
@@ -72,60 +126,51 @@ def canonicalize_url(url: str) -> str:
 
 def load_existing_urls(jsonl_path: Path) -> set[str]:
     urls: set[str] = set()
-    if not jsonl_path.exists():
-        return urls
-    with jsonl_path.open("r", encoding="utf-8") as file:
-        for line in file:
-            if not line.strip():
-                continue
-            try:
-                item = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if item.get("url"):
-                urls.add(canonicalize_url(item["url"]))
+    for line in article_lines(jsonl_path):
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if item.get("url"):
+            urls.add(canonicalize_url(item["url"]))
     return urls
 
 
 def load_existing_content_lengths(jsonl_path: Path) -> dict[str, int]:
     lengths: dict[str, int] = {}
-    if not jsonl_path.exists():
-        return lengths
-    with jsonl_path.open("r", encoding="utf-8") as file:
-        for line in file:
-            if not line.strip():
-                continue
-            try:
-                item = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            url_key = canonicalize_url(str(item.get("url") or ""))
-            if not url_key:
-                continue
-            content_length = len(str(item.get("content") or "").strip())
-            lengths[url_key] = max(lengths.get(url_key, 0), content_length)
+    for line in article_lines(jsonl_path):
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        url_key = canonicalize_url(str(item.get("url") or ""))
+        if not url_key:
+            continue
+        content_length = len(str(item.get("content") or "").strip())
+        lengths[url_key] = max(lengths.get(url_key, 0), content_length)
     return lengths
 
 
 def load_existing_content_quality(jsonl_path: Path) -> dict[str, dict]:
     quality: dict[str, dict] = {}
-    if not jsonl_path.exists():
-        return quality
-    with jsonl_path.open("r", encoding="utf-8") as file:
-        for line in file:
-            if not line.strip():
-                continue
-            try:
-                item = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            url_key = canonicalize_url(str(item.get("url") or ""))
-            if not url_key:
-                continue
-            item = _reassess_known_bad_content(item)
-            current = quality.get(url_key)
-            if current is None or is_better_article(item, current):
-                quality[url_key] = item
+    for line in article_lines(jsonl_path):
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        url_key = canonicalize_url(str(item.get("url") or ""))
+        if not url_key:
+            continue
+        item = _reassess_known_bad_content(item)
+        current = quality.get(url_key)
+        if current is None or is_better_article(item, current):
+            quality[url_key] = item
     return quality
 
 
@@ -210,7 +255,7 @@ def append_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> int:
 
 
 def upsert_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> tuple[int, int]:
-    """Append new URLs and replace existing records only when content is longer."""
+    """Update known URLs across weekly archives and the active journal."""
     incoming: dict[str, dict] = {}
     for article in articles:
         url_key = canonicalize_url(str(article.get("url") or ""))
@@ -224,11 +269,15 @@ def upsert_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> tuple[int, int]:
         return 0, 0
 
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
-    output_lines: list[str] = []
+    archive_older_weeks(jsonl_path)
     seen: set[str] = set()
     updated = 0
-    if jsonl_path.exists():
-        with jsonl_path.open("r", encoding="utf-8") as file:
+    for path in article_paths(jsonl_path):
+        if not path.exists():
+            continue
+        output_lines: list[str] = []
+        changed = False
+        with path.open("r", encoding="utf-8") as file:
             for line in file:
                 if not line.strip():
                     continue
@@ -250,23 +299,31 @@ def upsert_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> tuple[int, int]:
                             )
                         )
                         updated += 1
+                        changed = True
                         continue
                 output_lines.append(line.rstrip("\n"))
+        if changed:
+            _write_jsonl_lines(path, output_lines)
 
-    added = 0
+    additions: dict[Path, list[str]] = {}
     for url_key, article in incoming.items():
         if url_key in seen:
             continue
-        output_lines.append(json.dumps(article, ensure_ascii=False))
-        added += 1
+        path = (_archive_path(jsonl_path, article) if
+                (jsonl_path.parent / "archive").exists() else None) or jsonl_path
+        additions.setdefault(path, []).append(json.dumps(article, ensure_ascii=False))
+    for path, lines in additions.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write("\n".join(lines) + "\n")
+    archive_older_weeks(jsonl_path)
+    return sum(map(len, additions.values())), updated
 
-    temporary_path = jsonl_path.with_suffix(jsonl_path.suffix + ".tmp")
-    temporary_path.write_text(
-        "\n".join(output_lines) + ("\n" if output_lines else ""),
-        encoding="utf-8",
-    )
-    temporary_path.replace(jsonl_path)
-    return added, updated
+
+def _write_jsonl_lines(path: Path, lines: list[str]) -> None:
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    temporary_path.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    temporary_path.replace(path)
 
 
 def export_csv(
@@ -279,18 +336,15 @@ def export_csv(
     with csv_path.open("w", encoding="utf-8-sig", newline="") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES)
         writer.writeheader()
-        if not jsonl_path.exists():
-            return
-        with jsonl_path.open("r", encoding="utf-8") as jsonl_file:
-            for line in jsonl_file:
-                if not line.strip():
-                    continue
-                try:
-                    item = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
-                if target_date and article_date(item, timezone_name) != target_date:
-                    continue
-                writer.writerow(
-                    {key: _csv_value(item.get(key, "")) for key in FIELDNAMES}
-                )
+        for line in article_lines(jsonl_path):
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if target_date and article_date(item, timezone_name) != target_date:
+                continue
+            writer.writerow(
+                {key: _csv_value(item.get(key, "")) for key in FIELDNAMES}
+            )
