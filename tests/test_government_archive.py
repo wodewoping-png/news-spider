@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from candidate_sources.government_announcements.scrapers import NeaNoticesScraper
-from src.government_archive import archive_bucket, archive_source, attachment_links, check_pending_policy_sites, cleanup_legacy_csv, cleanup_legacy_notice, fetch_attachment, main, safe_name
+from src.government_archive import MAX_ATTACHMENT_BYTES, archive_bucket, archive_source, attachment_links, check_pending_policy_sites, cleanup_legacy_csv, cleanup_legacy_notice, fetch_attachment, main, safe_name
 from src.http_client import FetchResult
 from src.load_sources import Source
 
@@ -33,6 +33,23 @@ def source():
 
 
 class GovernmentArchiveTests(unittest.TestCase):
+    def test_official_pdf_just_above_old_eight_mib_limit_is_downloaded(self):
+        from unittest.mock import Mock
+
+        size = 8_830_695  # An actual MEM standards attachment from 2026-10-21.
+        response = Mock(status_code=200, headers={"content-type": "application/pdf", "content-length": str(size)})
+        response.iter_content.return_value = iter([b"%PDF-1.7" + b"x" * (size - 8)])
+        client = Mock(timeout=10, sleep_seconds=0, session=Mock(), robots=Mock())
+        client.session.get.return_value = response
+        client.robots.can_fetch.return_value = True
+        with tempfile.TemporaryDirectory() as temp, patch("src.government_archive.time.sleep"):
+            destination = Path(temp) / "standards.pdf"
+            downloaded = fetch_attachment(client, NeaNoticesScraper(),
+                                          "https://www.nea.gov.cn/standards.pdf", destination, 50 * 1024 * 1024)
+            self.assertEqual(downloaded, size)
+            self.assertEqual(destination.stat().st_size, size)
+            self.assertGreater(MAX_ATTACHMENT_BYTES, size)
+
     def test_pending_column_checks_its_actual_official_host(self):
         from unittest.mock import Mock
 

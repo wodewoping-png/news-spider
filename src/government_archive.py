@@ -42,7 +42,10 @@ from .scrapers.government_announcements import GovernmentAnnouncementScraper
 from .scrapers import get_scraper_class
 
 EXTENSIONS = frozenset({".pdf", ".doc", ".docx", ".xls", ".xlsx", ".wps", ".zip", ".rar"})
-MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
+# Government standards and consultation files can exceed 8 MiB. Keep a
+# per-file ceiling below GitHub's individual-file limit while retaining the
+# separate 50 MiB cap for the whole daily run.
+MAX_ATTACHMENT_BYTES = 16 * 1024 * 1024
 MAX_RUN_BYTES = 50 * 1024 * 1024
 MAX_ATTACHMENTS_PER_NOTICE = 12
 SAFE_NAME = re.compile(r'[\\/:*?"<>|\x00-\x1f]+')
