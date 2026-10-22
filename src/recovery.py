@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 from .content_quality import FULL_CONTENT_STATUS, assess_content
 from .date_utils import DEFAULT_TIMEZONE, article_date
+from .storage import article_lines
 
 
 QUEUE_VERSION = 1
@@ -351,11 +352,8 @@ def auto_confirm_missing_run_incidents(
 
 
 def count_articles(jsonl_path: Path, source: str, day: str) -> int:
-    if not jsonl_path.exists():
-        return 0
     count = 0
-    with jsonl_path.open("r", encoding="utf-8") as handle:
-        for line in handle:
+    for line in article_lines(jsonl_path):
             if not line.strip():
                 continue
             try:
@@ -373,11 +371,8 @@ def count_articles(jsonl_path: Path, source: str, day: str) -> int:
 
 
 def count_usable_articles(jsonl_path: Path, source: str, day: str) -> int:
-    if not jsonl_path.exists():
-        return 0
     count = 0
-    with jsonl_path.open("r", encoding="utf-8") as handle:
-        for line in handle:
+    for line in article_lines(jsonl_path):
             if not line.strip():
                 continue
             try:
