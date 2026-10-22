@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from candidate_sources.government_announcements.scrapers import NeaNoticesScraper
-from src.government_archive import archive_source, attachment_links, check_pending_policy_sites, cleanup_legacy_csv, cleanup_legacy_notice, fetch_attachment, main, safe_name
+from src.government_archive import archive_bucket, archive_source, attachment_links, check_pending_policy_sites, cleanup_legacy_csv, cleanup_legacy_notice, fetch_attachment, main, safe_name
 from src.http_client import FetchResult
 from src.load_sources import Source
 
@@ -74,6 +74,14 @@ class GovernmentArchiveTests(unittest.TestCase):
             rows = (root / "国内政策清单.csv").read_text(encoding="utf-8-sig")
             self.assertIn("储能公告_附件1.pdf", rows)
             self.assertIn("附件文件夹", rows)
+            self.assertTrue((root / "统计数据清单.csv").is_file())
+            self.assertTrue((root / "事故通报清单.csv").is_file())
+
+    def test_data_and_accident_sources_have_separate_daily_lists(self):
+        self.assertEqual(archive_bucket("国家统计局—数据发布"), ("统计数据清单.csv", "统计数据"))
+        self.assertEqual(archive_bucket("国家统计局—数据解读"), ("统计数据清单.csv", "统计数据"))
+        self.assertEqual(archive_bucket("国家矿山安全监察局—事故查处"), ("事故通报清单.csv", "事故通报"))
+        self.assertEqual(archive_bucket("国家矿山安全监察局—通知公告"), ("国内政策清单.csv", "政策正文"))
 
     def test_attachment_candidates_are_limited_to_document_body(self):
         parser = NeaNoticesScraper()

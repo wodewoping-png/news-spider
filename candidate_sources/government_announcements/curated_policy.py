@@ -142,6 +142,49 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
         raise ContractViolation("curated column has metadata-only approval")
 
 
+class NfraPolicyApiListingScraper(CuratedPolicyListingScraper):
+    """Read the NFRA's public document list, not its empty Angular page shell."""
+
+    data_url: str
+    item_id: int
+
+    def _guard_path(self, path: str, *, detail: bool) -> None:
+        expected = "/cn/view/pages/ItemDetail.html" if detail else "/cbircweb/DocInfo/SelectDocByItemIdAndChild"
+        if path != expected:
+            raise ContractViolation(f"unverified NFRA path: {path}")
+
+    def parse_listing_json(self, value: str, page_url: str) -> list[ListingItem]:
+        if self.guard_url(page_url) != self.data_url:
+            raise ContractViolation("unverified NFRA list query")
+        try:
+            payload = json.loads(value)
+        except ValueError as exc:
+            raise ContractViolation("invalid NFRA document list") from exc
+        if not isinstance(payload, dict) or payload.get("rptCode") != 200:
+            raise ContractViolation("NFRA document list failed")
+        data = payload.get("data")
+        rows = data.get("rows") if isinstance(data, dict) else None
+        if not isinstance(rows, list):
+            raise ContractViolation("NFRA document rows missing")
+        items = []
+        for row in rows[:self.max_items]:
+            if not isinstance(row, dict) or not isinstance(row.get("docId"), int):
+                continue
+            title = normalize_space(str(row.get("docTitle") or ""))
+            if not 9 <= len(title) <= 180 or SKIP_TITLE.search(title):
+                continue
+            if self.title_pattern and not self.title_pattern.search(title):
+                continue
+            try:
+                published = parse_platform_date(str(row.get("publishDate") or ""))
+            except (ContractViolation, ValueError):
+                continue
+            detail_url = (f"https://www.nfra.gov.cn/cn/view/pages/ItemDetail.html"
+                          f"?docId={row['docId']}&itemId={self.item_id}")
+            items.append(ListingItem(title, self.guard_url(detail_url, detail=True), published))
+        return items
+
+
 def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
     classes = {}
     for site in load_policy_sites():
@@ -149,21 +192,30 @@ def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
             if column["status"] != "active":
                 continue
             url = column["url"]
-            if not url.startswith("https://") or not column.get("detail_path_re"):
+            if not url.startswith("https://") or not (column.get("detail_path_re") or column.get("api_url")):
                 raise ValueError(f"active policy column missing URL contract: {site['agency']}")
             name = f"{site['agency']}—{column['label']}"
             if name in classes:
                 raise ValueError(f"duplicate curated policy channel: {name}")
-            parser = type(
-                "Curated_" + str(len(classes)),
-                (CuratedPolicyListingScraper,),
-                {"source_id": "curated_" + str(len(classes)), "source_name": name,
+            is_nfra = bool(column.get("api_url"))
+            if is_nfra and (urlparse(url).netloc != "www.nfra.gov.cn" or
+                            not column["api_url"].startswith("https://www.nfra.gov.cn/cbircweb/DocInfo/SelectDocByItemIdAndChild?")):
+                raise ValueError("unverified NFRA API origin or path")
+            attrs = {
+                 "source_id": "curated_" + str(len(classes)), "source_name": name,
                  "allowed_host": urlparse(url).netloc, "listing_url": url,
                  "additional_allowed_hosts": tuple(column.get("additional_allowed_hosts", [])),
-                 "detail_path_re": re.compile(column["detail_path_re"]),
+                 "detail_path_re": re.compile(column.get("detail_path_re") or r"/cn/view/pages/ItemDetail\.html"),
                  "embedded_records": bool(column.get("embedded_records", False)),
                  "embedded_json_items": bool(column.get("embedded_json_items", False)),
-                 "title_pattern": re.compile(column["title_pattern"]) if column.get("title_pattern") else None},
+                 "title_pattern": re.compile(column["title_pattern"]) if column.get("title_pattern") else None,
+            }
+            if is_nfra:
+                attrs.update(data_url=column["api_url"], item_id=int(column["item_id"]))
+            parser = type(
+                "Curated_" + str(len(classes)),
+                (NfraPolicyApiListingScraper if is_nfra else CuratedPolicyListingScraper,),
+                attrs,
             )
             classes[name] = parser
     return classes

@@ -6,7 +6,7 @@ from typing import ClassVar
 from urllib.parse import urlencode
 
 from candidate_sources.government_announcements.base import ContractViolation, ListingItem
-from candidate_sources.government_announcements.curated_policy import CuratedPolicyListingScraper, curated_scrapers
+from candidate_sources.government_announcements.curated_policy import CuratedPolicyListingScraper, NfraPolicyApiListingScraper, curated_scrapers
 from candidate_sources.government_announcements.gov_cn import (
     GovCnJsonScraper,
     GovCnPolicyDocumentsScraper as GovCnPolicyDocumentsParser,
@@ -43,6 +43,11 @@ class GovernmentAnnouncementScraper(BaseScraper):
     parser_type: ClassVar[type[GovernmentDocumentParser]]
 
     def _listing_items(self, parser: GovernmentDocumentParser) -> list[ListingItem]:
+        if isinstance(parser, NfraPolicyApiListingScraper):
+            result = self.client.get(parser.data_url, strict_robots=True)
+            if not result:
+                return []
+            return parser.parse_listing_json(result.text, result.url)
         if isinstance(parser, GovCnJsonScraper):
             result = self.client.get(parser.data_url, strict_robots=True)
             if not result:

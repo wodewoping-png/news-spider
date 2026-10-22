@@ -207,6 +207,15 @@ def check_pending_policy_sites(sites: list[dict]) -> dict[str, dict]:
         return dict(pool.map(check, candidates))
 
 
+def archive_bucket(source_name: str) -> tuple[str, str]:
+    """Keep statistical releases and accident reports out of the policy list."""
+    if source_name.startswith("国家统计局—"):
+        return "统计数据清单.csv", "统计数据"
+    if source_name == "国家矿山安全监察局—事故查处":
+        return "事故通报清单.csv", "事故通报"
+    return "国内政策清单.csv", "政策正文"
+
+
 def archive_source(source, client: HttpClient, target: date, root: Path,
                    remaining_bytes: int) -> tuple[dict, int]:
     scraper_class = get_scraper_class(source.name)
@@ -233,7 +242,7 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
     for item in selected[:20]:
         digest = hashlib.sha256(item.url.encode()).hexdigest()[:10]
         relative_notice = Path(safe_name(source.name)) / f"{safe_name(item.title)}_{digest}"
-        folder = root / "政策正文" / relative_notice
+        folder = root / archive_bucket(source.name)[1] / relative_notice
         attachment_folder = Path("附件") / relative_notice
         folder.mkdir(parents=True, exist_ok=True)
         notice = {"title": item.title, "published_at": target.isoformat(), "url": item.url,
@@ -331,19 +340,22 @@ def main(argv: list[str] | None = None) -> int:
                                                     for c in site["columns"]]}
                                       for site in policy_sites]}
     (root / "索引.json").write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    with (root / "国内政策清单.csv").open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "附件文件夹", "附件下载", "附件状态"))
-        writer.writeheader()
-        for report in reports:
-            for notice in report.get("notices", []):
-                downloaded = [item["file"]
-                              for item in notice["attachments"] if item["status"] == "downloaded"]
-                writer.writerow({"渠道": report["source"], "发布日期": notice["published_at"],
-                                 "公告名称": notice["title"], "原文链接": notice["url"],
-                                 "正文状态": notice["content_status"], "公告文件夹": notice["folder"],
-                                 "附件文件夹": notice["attachment_folder"],
-                                 "附件下载": "; ".join(downloaded),
-                                 "附件状态": "; ".join(item["status"] for item in notice["attachments"])})
+    fields = ("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "附件文件夹", "附件下载", "附件状态")
+    for filename in ("国内政策清单.csv", "统计数据清单.csv", "事故通报清单.csv"):
+        with (root / filename).open("w", encoding="utf-8-sig", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fields)
+            writer.writeheader()
+            for report in reports:
+                if archive_bucket(report["source"])[0] != filename:
+                    continue
+                for notice in report.get("notices", []):
+                    downloaded = [item["file"] for item in notice["attachments"] if item["status"] == "downloaded"]
+                    writer.writerow({"渠道": report["source"], "发布日期": notice["published_at"],
+                                     "公告名称": notice["title"], "原文链接": notice["url"],
+                                     "正文状态": notice["content_status"], "公告文件夹": notice["folder"],
+                                     "附件文件夹": notice["attachment_folder"],
+                                     "附件下载": "; ".join(downloaded),
+                                     "附件状态": "; ".join(item["status"] for item in notice["attachments"])})
     cleanup_legacy_csv(root)
     print(root / "索引.json")
     return 0 if all(r["status"] in {"ok", "robots_hold"} for r in reports) else 1
