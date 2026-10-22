@@ -59,6 +59,7 @@ from .storage import (
 
 DEFAULT_CSV_TIMEZONE = DEFAULT_TIMEZONE
 RSS_DISCOVERY_DISABLED_SOURCES = {
+    "中国石油新闻中心—炼化新材料",
     "batteries news",
     "volta foundation",
     "pv magazine c&i pv",

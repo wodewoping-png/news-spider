@@ -42,6 +42,9 @@ ARTICLE_SELECTORS = (
 )
 
 STRICT_SOURCE_ARTICLE_SELECTORS = {
+    "中国石油新闻中心—炼化新材料": (
+        ".sj-main .as04",
+    ),
     "中国能源网": (
         "#showcontent",
     ),
@@ -313,6 +316,8 @@ def extract_title(soup: BeautifulSoup, source_name: str = "") -> str:
 
 
 def normalize_source_title(title: str, content: str, source_name: str) -> str:
+    if source_name.strip().lower() == "中国石油新闻中心—炼化新材料":
+        return re.sub(r"(?:[-－]中国石油新闻中心)+\s*$", "", title).strip()
     if source_name.strip().lower() != "ne时代":
         return title
     if title.strip() and title.strip().lower() != "ne时代":

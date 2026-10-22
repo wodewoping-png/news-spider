@@ -276,7 +276,16 @@ class HttpClient:
             return None
 
         content_type = response.headers.get("content-type", "")
-        if not allow_non_html and "html" not in content_type.lower():
+        # Some official sites, including CNPC News, serve HTML without a
+        # Content-Type header. Accept only an explicit HTML document signature.
+        looks_like_html = (
+            response.text[:512].lstrip().lower().startswith(("<!doctype html", "<html"))
+            if not content_type and isinstance(response.text, str)
+            else False
+        )
+        if not allow_non_html and "html" not in content_type.lower() and not (
+            not content_type and looks_like_html
+        ):
             logging.info("Skip non-html response: %s (%s)", url, content_type)
             self.last_failure_reason = f"non-HTML response ({content_type or 'unknown'})"
             return None

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .base import BaseScraper
+from .cnpc_news import CNPCRefiningNewsScraper
 from .batteries_international import BatteriesInternationalScraper
 from .batteries_news import BatteriesNewsScraper
 from .batterytechonline import BatteryTechOnlineScraper
@@ -28,6 +29,7 @@ from .government_announcements import (
     SamrAntitrustNoticesScraper,
 )
 from .insideevs import InsideEVsScraper
+from .ieee_spectrum import IEEESpectrumScraper
 from .interesting_engineering import InterestingEngineeringScraper
 from .multi_page import (
     ChinaNengyuanScraper,
@@ -59,6 +61,8 @@ from .tgs4c import TGS4COffshoreScraper
 
 
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
+    "中国石油新闻中心—炼化新材料": CNPCRefiningNewsScraper,
+    "ieee spectrum": IEEESpectrumScraper,
     "中国政府网—最新政策": GovCnPolicyDocumentsScraper,
     "中国政府网—政策解读": GovCnPolicyInterpretationsScraper,
     "国家粮食和物资储备局—政策发布": LswzPolicyReleasesScraper,
