@@ -14,6 +14,7 @@ from urllib.parse import urlparse
 import requests
 
 from .date_utils import DEFAULT_TIMEZONE, article_date
+from .storage import article_paths
 
 
 DEFAULT_API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
@@ -514,21 +515,24 @@ def classify_jsonl(
     limit: int | None = None,
 ) -> dict:
     records: list[dict] = []
-    original_lines: list[dict | str] = []
-    if input_path.exists():
-        for line in input_path.read_text(encoding="utf-8").splitlines():
-            if not line.strip():
-                continue
-            try:
-                item = json.loads(line)
-            except json.JSONDecodeError:
-                original_lines.append(line)
-                continue
-            if isinstance(item, dict):
-                records.append(item)
-                original_lines.append(item)
-            else:
-                original_lines.append(line)
+    lines_by_path: dict[Path, list[dict | str]] = {}
+    for path in article_paths(input_path):
+        original_lines: list[dict | str] = []
+        if path.exists():
+            for line in path.read_text(encoding="utf-8").splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    item = json.loads(line)
+                except json.JSONDecodeError:
+                    original_lines.append(line)
+                    continue
+                if isinstance(item, dict):
+                    records.append(item)
+                    original_lines.append(item)
+                else:
+                    original_lines.append(line)
+        lines_by_path[path] = original_lines
 
     candidates: list[dict] = []
     for item in records:
@@ -543,21 +547,28 @@ def classify_jsonl(
             break
 
     classifier.enrich_articles(candidates)
-    input_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = input_path.with_suffix(input_path.suffix + ".tmp")
-    output_lines = [
-        json.dumps(item, ensure_ascii=False) if isinstance(item, dict) else item
-        for item in original_lines
-    ]
-    temporary_path.write_text(
-        "\n".join(output_lines) + ("\n" if output_lines else ""),
-        encoding="utf-8",
-    )
-    temporary_path.replace(input_path)
+    for path, original_lines in lines_by_path.items():
+        if not path.exists() and not original_lines:
+            continue
+        # Only files containing selected records need to be rewritten.
+        if not any(item is selected for item in original_lines if isinstance(item, dict)
+                   for selected in candidates):
+            continue
+        output_lines = [
+            json.dumps(item, ensure_ascii=False) if isinstance(item, dict) else item
+            for item in original_lines
+        ]
+        temporary_path = path.with_suffix(path.suffix + ".tmp")
+        temporary_path.write_text(
+            "\n".join(output_lines) + ("\n" if output_lines else ""),
+            encoding="utf-8",
+        )
+        temporary_path.replace(path)
     return {
         "records": len(records),
         "classified": len(candidates),
-        "malformed": sum(not isinstance(item, dict) for item in original_lines),
+        "malformed": sum(not isinstance(item, dict) for lines in lines_by_path.values()
+                         for item in lines),
     }
 
 
