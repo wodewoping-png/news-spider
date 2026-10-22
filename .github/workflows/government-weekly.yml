@@ -1,0 +1,73 @@
+name: Government Policy Weekly Archive
+
+on:
+  schedule:
+    # Monday 12:00 Asia/Shanghai, after Sunday's daily archive on Monday morning.
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      week_start:
+        description: "Optional Monday of the week to summarize (YYYY-MM-DD)"
+        required: false
+        type: string
+
+concurrency:
+  group: news-spider-data-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - name: Validate weekly archive
+        run: python -m unittest discover -s tests -p 'test_government_weekly.py'
+      - name: Build weekly policy archive
+        id: weekly
+        continue-on-error: true
+        env:
+          WEEK_START: ${{ inputs.week_start }}
+        run: |
+          args=(--output-dir data/government_announcements)
+          if [ -n "$WEEK_START" ]; then
+            args+=(--week-start "$WEEK_START")
+          fi
+          python -m src.government_weekly "${args[@]}"
+      - name: Upload weekly archive
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: government-policy-weekly-${{ github.run_id }}
+          path: data/government_announcements/weekly/
+          if-no-files-found: warn
+      - name: Commit weekly archive
+        if: always()
+        run: |
+          branch="${GITHUB_REF_NAME:-main}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -d data/government_announcements/weekly ]; then
+            git add -A data/government_announcements/weekly
+          fi
+          if git diff --cached --quiet; then
+            echo "No weekly policy archive changes to commit."
+          else
+            git commit -m "chore: archive weekly government policies"
+            git pull --rebase --autostash origin "$branch"
+            git push origin "HEAD:$branch"
+          fi
+      - name: Report missing daily data
+        if: ${{ steps.weekly.outcome == 'failure' }}
+        run: |
+          echo "Weekly archive is incomplete; inspect 汇总索引.json and the 渠道状态 sheet." >> "$GITHUB_STEP_SUMMARY"
+          exit 1
