@@ -92,5 +92,31 @@ jobs:
       - name: Report archive status
         if: ${{ steps.archive.outcome == 'failure' }}
         run: |
-          echo "Some government archive channels failed or returned an empty listing; inspect the uploaded 索引.json." >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          indexes = list(Path('data/government_announcements').glob('*/索引.json'))
+          if indexes:
+              index = json.loads(max(indexes, key=lambda p: p.stat().st_mtime).read_text())
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
+                  summary.write('政策清单已归档；以下项目仍需补抓：\n')
+                  for source in index['sources']:
+                      if source['status'] in {'ok', 'robots_hold'}:
+                          continue
+                      details = source.get('errors', []) + [
+                          attachment.get('reason', attachment['status'])
+                          for notice in source.get('notices', [])
+                          for attachment in notice.get('attachments', [])
+                          if attachment['status'] != 'downloaded'
+                      ] + [
+                          error for notice in source.get('notices', [])
+                          for error in notice.get('errors', [])
+                      ]
+                      summary.write(f"- {source['source']}：{source['status']}；{'；'.join(details[:5])}\n")
+          else:
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
+                  summary.write('本次未生成政策索引，请检查归档步骤日志。\n')
+          PY
           exit 1
