@@ -12,7 +12,7 @@ from .content_quality import assess_content, is_usable_article
 from .date_utils import DEFAULT_TIMEZONE, article_date
 from .load_sources import expects_output_on_date
 from .recovery import sync_recovery_queue
-from .storage import canonicalize_url
+from .storage import article_lines, canonicalize_url
 
 
 CHANNEL_FIELDS = (
@@ -149,10 +149,7 @@ def _inventory(
             "content_lengths": [],
         }
     )
-    if not jsonl_path.exists():
-        return {}
-    with jsonl_path.open("r", encoding="utf-8") as handle:
-        for line in handle:
+    for line in article_lines(jsonl_path):
             if not line.strip():
                 continue
             try:
