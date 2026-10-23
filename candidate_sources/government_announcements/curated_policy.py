@@ -13,6 +13,7 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
+from src.http_client import is_access_challenge_html
 
 from .base import ContractViolation, ListingItem, normalize_space, parse_platform_date
 from .scrapers import GovernmentDocumentScraper
@@ -142,6 +143,52 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
         raise ContractViolation("curated column has metadata-only approval")
 
 
+class DetailDatedPolicyListingScraper(CuratedPolicyListingScraper):
+    """Keep an undated candidate only after checking the official detail publication field."""
+
+    detail_date_kind: str
+
+    def parse_listing(self, html: str, page_url: str) -> list[ListingItem]:
+        self.guard_url(page_url)
+        soup = BeautifulSoup(html, "html.parser")
+        items: list[ListingItem] = []
+        seen: set[str] = set()
+        for anchor in soup.select("a[href]"):
+            raw = urljoin(page_url, str(anchor.get("href") or ""))
+            if self.detail_date_kind == "caac":
+                # The CAAC search template points at a PHONE/ HTTP alias of
+                # the same document; use its verified canonical HTTPS path.
+                raw = raw.replace("http://www.caac.gov.cn/PHONE/XXGK_17/", "https://www.caac.gov.cn/XXGK/")
+            try:
+                target = self.guard_url(raw, detail=True)
+            except ContractViolation:
+                continue
+            title = normalize_space(str(anchor.get("title") or anchor.get_text(" ", strip=True)))
+            if target in seen or not 9 <= len(title) <= 180 or SKIP_TITLE.search(title):
+                continue
+            if self.title_pattern and not self.title_pattern.search(title):
+                continue
+            seen.add(target)
+            items.append(ListingItem(title, target, None))
+            if len(items) >= self.max_items:
+                break
+        return items
+
+    def verified_date(self, html: str, url: str) -> date:
+        self.guard_url(url, detail=True)
+        if is_access_challenge_html(html):
+            raise ContractViolation("detail access challenge")
+        if self.detail_date_kind in {"audit", "sport"}:
+            tag = BeautifulSoup(html, "html.parser").find("meta", attrs={"name": "PubDate"})
+            value = str(tag.get("content") or "") if tag else ""
+        elif self.detail_date_kind == "caac":
+            match = re.search(r"\bvar\s+__\$pubtime\s*=\s*['\"](20\d{2}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?)['\"]", html)
+            value = match.group(1) if match else ""
+        else:
+            raise ContractViolation("unverified detail date kind")
+        return parse_platform_date(value)
+
+
 class NfraPolicyApiListingScraper(CuratedPolicyListingScraper):
     """Read the NFRA's public document list, not its empty Angular page shell."""
 
@@ -198,6 +245,9 @@ def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
             if name in classes:
                 raise ValueError(f"duplicate curated policy channel: {name}")
             is_nfra = bool(column.get("api_url"))
+            date_kind = column.get("detail_date_kind")
+            if date_kind and date_kind not in {"audit", "caac", "sport"}:
+                raise ValueError("unverified detail date kind")
             if is_nfra and (urlparse(url).netloc != "www.nfra.gov.cn" or
                             not column["api_url"].startswith("https://www.nfra.gov.cn/cbircweb/DocInfo/SelectDocByItemIdAndChild?")):
                 raise ValueError("unverified NFRA API origin or path")
@@ -209,12 +259,14 @@ def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
                  "embedded_records": bool(column.get("embedded_records", False)),
                  "embedded_json_items": bool(column.get("embedded_json_items", False)),
                  "title_pattern": re.compile(column["title_pattern"]) if column.get("title_pattern") else None,
+                 "detail_date_kind": date_kind,
             }
             if is_nfra:
                 attrs.update(data_url=column["api_url"], item_id=int(column["item_id"]))
             parser = type(
                 "Curated_" + str(len(classes)),
-                (NfraPolicyApiListingScraper if is_nfra else CuratedPolicyListingScraper,),
+                (NfraPolicyApiListingScraper if is_nfra else
+                 DetailDatedPolicyListingScraper if date_kind else CuratedPolicyListingScraper,),
                 attrs,
             )
             classes[name] = parser

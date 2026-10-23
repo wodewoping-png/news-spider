@@ -36,7 +36,7 @@ from candidate_sources.government_announcements.scrapers import (
     StaticMinistryScraper,
 )
 from .date_utils import DEFAULT_TIMEZONE
-from .http_client import BROWSER_USER_AGENT, HttpClient
+from .http_client import BROWSER_USER_AGENT, HttpClient, valid_robots_text
 from .load_sources import Source, load_sources
 from .scrapers.government_announcements import GovernmentAnnouncementScraper
 from .scrapers import get_scraper_class
@@ -200,8 +200,11 @@ def check_pending_policy_sites(sites: list[dict]) -> dict[str, dict]:
                 state = "robots_unavailable"
             else:
                 parser = RobotFileParser()
-                parser.parse(response.text.splitlines() if status == 200 else [])
-                state = "allowed_needs_column_review" if parser.can_fetch(BROWSER_USER_AGENT, target) else "robots_disallowed"
+                if status == 200 and not valid_robots_text(response):
+                    state = "robots_unavailable"
+                else:
+                    parser.parse(response.text.splitlines() if status == 200 else [])
+                    state = "allowed_needs_column_review" if parser.can_fetch(BROWSER_USER_AGENT, target) else "robots_disallowed"
             return site["agency"], {"robots_http": status, "check": state}
         except requests.RequestException as exc:
             return site["agency"], {"robots_http": None, "check": type(exc).__name__}

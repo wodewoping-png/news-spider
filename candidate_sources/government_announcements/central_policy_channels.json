@@ -497,17 +497,19 @@
     "agency": "审计署",
     "official_domain": "audit.gov.cn",
     "focus": "审计结果公告",
-    "status": "pending",
-    "reason": "公告报告列表仅显示月日，无法稳定确定发布年份；详情尚未建立发布日期合同。",
-    "observed_at": "2026-10-21",
+    "status": "active",
+    "reason": "审计结果公告列表仅显示月日；逐条读取官方详情页 PubDate 完整发布日期，未验证的详情不入库。",
+    "observed_at": "2026-10-22",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待验证栏目1",
+        "label": "审计结果公告",
         "category": "审计结果公告",
         "url": "https://www.audit.gov.cn/n5/n25/index.html",
-        "status": "pending"
+        "status": "active",
+        "detail_path_re": "/n5/n25/c\\d+/content\\.html",
+        "detail_date_kind": "audit"
       }
     ]
   },
@@ -676,17 +678,20 @@
     "agency": "国家体育总局",
     "official_domain": "sport.gov.cn",
     "focus": "政策法规、通知公告",
-    "status": "pending",
-    "reason": "政法司通知列表带日期，近期主要是研究项目申报与培训；政策法规检索库尚未形成可日更的发布日期列表。",
-    "observed_at": "2026-10-21",
+    "status": "active",
+    "reason": "政策法规栏列表仅显示月日，逐条核实同站详情 PubDate 后归档具名政策文件及解读；普通赛事新闻不收。",
+    "observed_at": "2026-10-22",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策法规、通知公告",
-        "url": "",
-        "status": "pending"
+        "label": "政策法规",
+        "category": "政策法规及解读",
+        "url": "https://www.sport.gov.cn/n315/n331/index.html",
+        "status": "active",
+        "detail_path_re": "/n315/n331/n405/c\\d+/content\\.html",
+        "detail_date_kind": "sport",
+        "title_pattern": "办法|意见|通知|解读|答记者问|规定|方案|政策|标准"
       }
     ]
   },
@@ -992,22 +997,25 @@
     "agency": "中国民用航空局",
     "official_domain": "caac.gov.cn",
     "focus": "政策法规、适航指令",
-    "status": "pending",
-    "reason": "三个 fl 页面实际跳转到 /was5/web/search：9 为通知公告与行业标准，10 为政策发布，11 为统计数据；检索列表显示「发文日期」，且样本与详情 URL 建档日期不同，不能直接当作网页发布日期。待核准发布日字段后接入。",
+    "status": "active",
+    "reason": "政策发布检索页的发文日期不是网页发布日期；逐条读取官方详情脚本 __$pubtime，使用核实后的网页发布日期入库。分类9、11仍暂缓。",
     "observed_at": "2026-10-22",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
+        "label": "政策发布",
+        "category": "政策文件",
+        "url": "https://www.caac.gov.cn/was5/web/search?channelid=271536&fl=10&orderby=-fabuDate",
+        "status": "active",
+        "detail_path_re": "/XXGK/XXGK/ZCFB/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "detail_date_kind": "caac",
+        "title_pattern": "通知|公告|办法|规定|方案|意见|政策|指引"
+      },
+      {
         "label": "信息公开分类 9",
         "category": "待确认政策分类",
         "url": "https://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=9",
-        "status": "pending"
-      },
-      {
-        "label": "信息公开分类 10",
-        "category": "待确认政策分类",
-        "url": "https://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=10",
         "status": "pending"
       },
       {

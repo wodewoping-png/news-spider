@@ -6,7 +6,7 @@ from typing import ClassVar
 from urllib.parse import urlencode
 
 from candidate_sources.government_announcements.base import ContractViolation, ListingItem
-from candidate_sources.government_announcements.curated_policy import CuratedPolicyListingScraper, NfraPolicyApiListingScraper, curated_scrapers
+from candidate_sources.government_announcements.curated_policy import CuratedPolicyListingScraper, DetailDatedPolicyListingScraper, NfraPolicyApiListingScraper, curated_scrapers
 from candidate_sources.government_announcements.gov_cn import (
     GovCnJsonScraper,
     GovCnPolicyDocumentsScraper as GovCnPolicyDocumentsParser,
@@ -72,7 +72,21 @@ class GovernmentAnnouncementScraper(BaseScraper):
             )
             if not result:
                 return []
-            return parser.parse_listing(result.text, result.url)
+            items = parser.parse_listing(result.text, result.url)
+            if isinstance(parser, DetailDatedPolicyListingScraper):
+                verified = []
+                for item in items:
+                    detail = self.client.get(item.url, allow_non_html=False, strict_robots=True)
+                    if not detail:
+                        continue
+                    try:
+                        published = parser.verified_date(detail.text, detail.url)
+                    except (ContractViolation, ValueError) as exc:
+                        logging.warning("Unverified policy publication date %s: %s", item.url, exc)
+                        continue
+                    verified.append(ListingItem(item.title, item.url, published))
+                return verified
+            return items
         raise TypeError(f"unsupported government parser: {type(parser).__name__}")
 
     def _metadata_article(self, item: ListingItem) -> dict:
