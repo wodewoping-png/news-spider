@@ -3,15 +3,17 @@ from __future__ import annotations
 import json
 import unittest
 from datetime import date
+from unittest.mock import Mock
 
 from candidate_sources.government_announcements.scrapers import (
     MnrNoticesScraper as MnrNoticesParser,
     NeaNoticesScraper as NeaNoticesParser,
 )
+from candidate_sources.government_announcements.curated_policy import curated_scrapers
 from src.http_client import FetchResult
 from src.load_sources import Source
 from src.scrapers import get_scraper_class
-from src.scrapers.government_announcements import MnrNoticesScraper, NeaNoticesScraper
+from src.scrapers.government_announcements import GovernmentAnnouncementScraper, MnrNoticesScraper, NeaNoticesScraper
 
 
 def source(name: str, url: str) -> Source:
@@ -42,6 +44,18 @@ class StaticClient:
 
 
 class GovernmentAnnouncementProductionTests(unittest.TestCase):
+    def test_adapter_replaces_list_date_with_verified_detail_date(self):
+        parser = curated_scrapers()["中国民用航空局—政策发布"]()
+        link = "http://www.caac.gov.cn/PHONE/XXGK_17/XXGK/ZCFB/202610/t20261008_231816.html"
+        listing = f'<tr><td><a href="{link}">中国民用航空局关于印发《航班评审优化措施》的通知</a></td><td>2026年08月18日</td></tr>'
+        client = Mock()
+        client.get.side_effect = [Mock(text=listing, url=parser.listing_url),
+                                  Mock(text="var __$pubtime='2026-10-08 19:57:18';", url=link.replace("http://www.caac.gov.cn/PHONE/XXGK_17/", "https://www.caac.gov.cn/XXGK/"))]
+        adapter = GovernmentAnnouncementScraper(client, Mock())
+        items = adapter._listing_items(parser)
+        self.assertEqual(items[0].platform_published_at.isoformat(), "2026-10-08")
+        self.assertTrue(all(call.kwargs["strict_robots"] for call in client.get.call_args_list))
+
     def test_reviewed_channels_are_registered(self):
         self.assertIs(get_scraper_class("国家能源局—通知"), NeaNoticesScraper)
         self.assertIs(get_scraper_class("自然资源部—通知公告"), MnrNoticesScraper)

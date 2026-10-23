@@ -49,6 +49,17 @@ def is_access_challenge_html(value: str) -> bool:
     return any(all(marker in probe for marker in group) for group in ACCESS_CHALLENGE_SIGNATURE_GROUPS)
 
 
+def valid_robots_text(response: requests.Response) -> bool:
+    """Reject HTML and access interstitials masquerading as a 200 robots file."""
+    body = response.text[:100_000]
+    content_type = response.headers.get("content-type", "").lower()
+    if "html" in content_type or is_access_challenge_html(body):
+        return False
+    if body.lstrip().lower().startswith(("<!doctype", "<html", "<script")):
+        return False
+    return any(line.strip().lower().startswith("user-agent:") for line in body.splitlines())
+
+
 def is_cloudflare_challenge_response(response: requests.Response) -> bool:
     """Return whether Cloudflare replaced the requested resource with a challenge."""
     mitigated = str(response.headers.get("cf-mitigated") or "").lower()
@@ -135,6 +146,10 @@ class RobotsCache:
                     parser.parse([])
                 elif response.status_code >= 400:
                     logging.warning("robots.txt unavailable for %s: HTTP %s", root, response.status_code)
+                    self._gate_status[root] = "unavailable"
+                    parser.parse([])
+                elif not valid_robots_text(response):
+                    logging.warning("robots.txt returned invalid content for %s", root)
                     self._gate_status[root] = "unavailable"
                     parser.parse([])
                 else:

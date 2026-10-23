@@ -161,6 +161,28 @@ class CuratedPolicyContractTests(unittest.TestCase):
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0].platform_published_at.isoformat(), "2026-10-16")
 
+    def test_detail_dated_columns_use_verified_publication_field(self):
+        audit = curated_scrapers()["审计署—审计结果公告"]()
+        audit_list = '<dl><a href="../../n5/n25/c10792969/content.html" title="2026年第1号公告：中央部门单位2025年度预算执行情况审计结果">公告</a><dd>[06-23]</dd></dl>'
+        item = audit.parse_listing(audit_list, audit.listing_url)[0]
+        self.assertIsNone(item.platform_published_at)
+        self.assertEqual(audit.verified_date('<meta name="PubDate" content="2026-06-23 08:35">', item.url).isoformat(), "2026-06-23")
+        with self.assertRaises(ValueError):
+            audit.verified_date('<meta name="PubDate" content="">', item.url)
+
+        caac = curated_scrapers()["中国民用航空局—政策发布"]()
+        caac_list = '<tr><td><a href="http://www.caac.gov.cn/PHONE/XXGK_17/XXGK/ZCFB/202610/t20261008_231816.html">中国民用航空局关于印发《国内航线航班评审优化措施》的通知</a></td><td>2026年09月01日</td></tr>'
+        item = caac.parse_listing(caac_list, caac.listing_url)[0]
+        self.assertEqual(item.url, "https://www.caac.gov.cn/XXGK/XXGK/ZCFB/202610/t20261008_231816.html")
+        self.assertIsNone(item.platform_published_at)
+        self.assertEqual(caac.verified_date("<script>var __$pubtime='2026-10-08 19:57:18';</script>", item.url).isoformat(), "2026-10-08")
+
+        sport = curated_scrapers()["国家体育总局—政策法规"]()
+        sport_list = '<li><a href="../../n315/n331/n405/c28934431/content.html">体育总局办公厅关于印发《足球教练员职称评价标准》的通知</a><span>08-05</span></li>'
+        item = sport.parse_listing(sport_list, sport.listing_url)[0]
+        self.assertEqual(sport.verified_date('<meta name="PubDate" content="2025-08-05">', item.url).isoformat(), "2025-08-05")
+
+
 
 if __name__ == "__main__":
     unittest.main()
