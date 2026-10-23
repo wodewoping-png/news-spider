@@ -44,6 +44,23 @@ class StaticClient:
 
 
 class GovernmentAnnouncementProductionTests(unittest.TestCase):
+    def test_sastind_uses_detail_publication_not_listing_month_or_document_date(self):
+        parser = curated_scrapers()["国家国防科技工业局—政策法规"]()
+        url = "https://www.sastind.gov.cn/n10086167/n10086221/c10786994/content.html"
+        listing = f'''<ul><li><a href="{url}" title="国家原子能机构等公告2026年第1号 发布核出口管制清单">
+            国家原子能机构等公告2026年第1号 发布核出口管制清单<span>10-16</span></a></li></ul>'''
+        detail = '''<span class="wz_xx">发布日期：2026-10-16</span>
+            <div>公告署期：2026年10月10日；2026年11月1日起施行。</div>'''
+        client = StaticClient({parser.listing_url: listing, url: detail})
+        scraper = get_scraper_class(parser.source_name)(client, source(parser.source_name, parser.listing_url))
+        items = scraper._listing_items(parser)
+        self.assertEqual([(item.url, item.platform_published_at) for item in items], [(url, date(2026, 10, 16))])
+        self.assertEqual(client.requested, [parser.listing_url, url])
+        self.assertEqual(scraper.scrape(target_date=date(2026, 10, 10)), [])
+        self.assertEqual(scraper.scrape(target_date=date(2026, 10, 16))[0]["content_policy"], "metadata_only")
+        with self.assertRaises(ValueError):
+            parser.verified_date('<p>2026年11月1日起施行</p>', url)
+
     def test_adapter_replaces_list_date_with_verified_detail_date(self):
         parser = curated_scrapers()["中国民用航空局—政策发布"]()
         link = "http://www.caac.gov.cn/PHONE/XXGK_17/XXGK/ZCFB/202610/t20261008_231816.html"

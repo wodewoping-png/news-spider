@@ -890,17 +890,22 @@
     "agency": "国家国防科技工业局",
     "official_domain": "sastind.gov.cn",
     "focus": "政策文件、通知公告",
-    "status": "pending",
-    "reason": "通知栏目摘要含实施日期，页面只显示月日；不能把实施日误作刊发日。",
-    "observed_at": "2026-10-21",
+    "status": "active",
+    "reason": "官网政策法规列表可读；列表仅月日，逐条从正式详情发布日期核实，暂存元数据；不把文件署期当发布日期。",
+    "observed_at": "2026-10-23",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
-        "label": "待定位政策栏目",
-        "category": "政策文件、通知公告",
-        "url": "",
-        "status": "pending"
+        "label": "政策法规",
+        "category": "政策法规",
+        "url": "https://www.sastind.gov.cn/n10086167/n10086221/index.html",
+        "status": "active",
+        "detail_path_re": "/n10086167/n10086221/c\\d+/content\\.html",
+        "detail_date_kind": "sastind",
+        "title_pattern": "公告|通告|通知|条例|办法|规定|意见|规划|政策|清单|法律|法规|标准",
+        "additional_allowed_hosts": [],
+        "body": "metadata_only"
       }
     ]
   },

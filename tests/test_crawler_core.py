@@ -10,7 +10,7 @@ import requests
 
 from src.article_parser import normalize_source_date, parse_article_html
 from src.content_quality import assess_content, is_usable_article
-from src.date_utils import date_from_url, default_target_date, parse_target_date
+from src.date_utils import article_date, date_from_url, default_target_date, parse_target_date
 from src.http_client import (
     BROWSER_USER_AGENT,
     FetchResult,
@@ -20,6 +20,7 @@ from src.http_client import (
     RobotsCache,
     request_headers_for_url,
 )
+from src.ithome_discovery import DISCOVERY_URL, fetch_discovery_entries, parse_discovery_entries
 from src.load_sources import Source, expects_output_on_date
 from src.main import (
     DEFAULT_MIN_CONTENT_CHARS,
@@ -73,6 +74,28 @@ class StaticClient:
 
 
 class DateAndUrlTests(unittest.TestCase):
+    def test_ithome_discovery_uses_dated_science_cards_only(self):
+        html = '''
+        <a href="/space">天文航天</a><div id="list"><ul class="bl">
+          <li><div class="c" data-ot="2026-10-23T09:41:44.5930000+08:00">
+            <h2><a class="title" href="https://www.ithome.com/1/016/816.htm">登月项目进展</a></h2>
+            <div class="m">来自科学探索栏目的摘要</div>
+          </div></li>
+          <li><div class="c" data-ot="2026-10-22T17:44:11+08:00">
+            <a class="title" href="https://www.ithome.com/1/016/620.htm">科研装置验收</a>
+          </div></li>
+          <li><div class="c" data-ot="2026-10-23T09:00:00+08:00">
+            <a class="title" href="https://elsewhere.example/1/016/000.htm">广告</a>
+          </div></li>
+        </ul></div>'''
+        entries = parse_discovery_entries(html, limit=10)
+        self.assertEqual([entry.title for entry in entries], ["登月项目进展", "科研装置验收"])
+        self.assertEqual(entries[0].summary, "来自科学探索栏目的摘要")
+        self.assertEqual(article_date({"published_at": entries[0].published_at}), date(2026, 10, 23))
+        self.assertEqual([entry.url for entry in parse_discovery_entries(html, limit=1)], [entries[0].url])
+        client = StaticClient({DISCOVERY_URL: html})
+        self.assertEqual(fetch_discovery_entries(client, 2), entries)
+
     def test_robots_html_challenge_does_not_grant_access(self):
         session = Mock()
         session.get.return_value = Mock(status_code=200,

@@ -27,6 +27,7 @@ from .date_utils import (
     parse_target_date,
 )
 from .http_client import DEFAULT_USER_AGENT, HttpClient, RequiredFetchError
+from .ithome_discovery import fetch_discovery_entries
 from .industry_classifier import (
     DEFAULT_BATCH_SIZE as DEFAULT_CLASSIFICATION_BATCH_SIZE,
     DEFAULT_MAX_CONTENT_CHARS as DEFAULT_CLASSIFICATION_CONTENT_CHARS,
@@ -616,6 +617,11 @@ def main() -> int:
             ):
                 feed_url = discover_feed(client, source.url)
             entries = []
+            if source_key == "it之家":
+                entries = fetch_discovery_entries(client, candidate_limit)
+                if entries:
+                    feed_crawl_mode = "ithome_discovery"
+                    logging.info("IT之家科学探索主页提供 %s 条候选", len(entries))
             if feed_url:
                 if feed_auth:
                     logging.info(
@@ -632,7 +638,7 @@ def main() -> int:
                         feed_crawl_mode = "rss_aggregator"
                     else:
                         logging.info("Using configured RSS for %s: %s", source.name, feed_url)
-                entries, feed_crawl_mode = fetch_feed_with_public_fallback(
+                rss_entries, rss_crawl_mode = fetch_feed_with_public_fallback(
                     client,
                     source.name,
                     feed_url,
@@ -641,6 +647,12 @@ def main() -> int:
                     required=feed_required,
                     crawl_mode=feed_crawl_mode,
                 )
+                if entries:
+                    entries, added = merge_feed_entries(entries, rss_entries)
+                    if added:
+                        logging.info("IT之家原站 RSS 补充 %s 条候选", added)
+                else:
+                    entries, feed_crawl_mode = rss_entries, rss_crawl_mode
                 primary_entry_count = len(entries)
                 for supplemental_url in supplemental_feed_urls:
                     supplemental_entries = list(
