@@ -1,6 +1,6 @@
 {
   "target_date": "2026-10-22",
-  "generated_at": "2026-10-23T10:05:05.911476+08:00",
+  "generated_at": "2026-10-23T13:32:07.774597+08:00",
   "attachment_bytes": 26624,
   "sources": [
     {
@@ -207,7 +207,7 @@
     {
       "source": "交通运输部—政策解读",
       "status": "ok",
-      "listing_count": 13,
+      "listing_count": 12,
       "notices": [],
       "errors": []
     },
@@ -291,7 +291,18 @@
       "source": "国家知识产权局—政策通知",
       "status": "ok",
       "listing_count": 37,
-      "notices": [],
+      "notices": [
+        {
+          "title": "国家知识产权局办公室关于确定2026年国家地理标志保护示范区创建名单的通知",
+          "published_at": "2026-10-22",
+          "url": "https://www.cnipa.gov.cn/art/2026/10/22/art_75_208712.html",
+          "folder": "政策正文/国家知识产权局—政策通知/国家知识产权局办公室关于确定2026年国家地理标志保护示范区创建名单的通知_fcca954ddd",
+          "attachment_folder": "附件/国家知识产权局—政策通知/国家知识产权局办公室关于确定2026年国家地理标志保护示范区创建名单的通知_fcca954ddd",
+          "content_status": "metadata_only",
+          "attachments": [],
+          "errors": []
+        }
+      ],
       "errors": []
     },
     {
@@ -345,6 +356,13 @@
       ]
     },
     {
+      "source": "国家国防科技工业局—政策法规",
+      "status": "ok",
+      "listing_count": 6,
+      "notices": [],
+      "errors": []
+    },
+    {
       "source": "国家移民管理局—政策文件",
       "status": "ok",
       "listing_count": 4,
@@ -367,8 +385,8 @@
     },
     {
       "source": "中国民用航空局—政策发布",
-      "status": "ok",
-      "listing_count": 10,
+      "status": "listing_empty",
+      "listing_count": 0,
       "notices": [],
       "errors": []
     },
@@ -409,17 +427,21 @@
     },
     {
       "source": "国家外汇管理局—政策法规",
-      "status": "ok",
-      "listing_count": 20,
+      "status": "robots_hold",
+      "listing_count": 0,
       "notices": [],
-      "errors": []
+      "errors": [
+        "blocked by robots.txt"
+      ]
     },
     {
       "source": "国家外汇管理局—政策法规解读",
-      "status": "ok",
-      "listing_count": 6,
+      "status": "robots_hold",
+      "listing_count": 0,
       "notices": [],
-      "errors": []
+      "errors": [
+        "blocked by robots.txt"
+      ]
     },
     {
       "source": "国家疾病预防控制局—政策法规",
@@ -900,8 +922,8 @@
       "status": "hold",
       "reason": "指定两页返回通用信息公开模板而非核准的带日期规则列表；本次 robots.txt HTTP 503，禁止生产请求，待找到实际栏目数据接口。",
       "last_robots_check": {
-        "robots_http": 200,
-        "check": "robots_unavailable"
+        "robots_http": null,
+        "check": "ConnectTimeout"
       },
       "channels": [
         {
@@ -1063,17 +1085,14 @@
     },
     {
       "agency": "国家国防科技工业局",
-      "status": "pending",
-      "reason": "通知栏目摘要含实施日期，页面只显示月日；不能把实施日误作刊发日。",
-      "last_robots_check": {
-        "robots_http": 404,
-        "check": "allowed_needs_column_review"
-      },
+      "status": "active",
+      "reason": "官网政策法规列表可读；列表仅月日，逐条从正式详情发布日期核实，暂存元数据；不把文件署期当发布日期。",
+      "last_robots_check": null,
       "channels": [
         {
-          "label": "待定位政策栏目",
-          "url": "",
-          "status": "pending"
+          "label": "政策法规",
+          "url": "https://www.sastind.gov.cn/n10086167/n10086221/index.html",
+          "status": "active"
         }
       ]
     },
