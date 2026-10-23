@@ -163,6 +163,8 @@ class DetailDatedPolicyListingScraper(CuratedPolicyListingScraper):
             except ContractViolation:
                 continue
             title = normalize_space(str(anchor.get("title") or anchor.get_text(" ", strip=True)))
+            if self.detail_date_kind == "sastind":
+                title = re.sub(r"\s*\d{2}-\d{2}$", "", title)
             if target in seen or not 9 <= len(title) <= 180 or SKIP_TITLE.search(title):
                 continue
             if self.title_pattern and not self.title_pattern.search(title):
@@ -180,6 +182,11 @@ class DetailDatedPolicyListingScraper(CuratedPolicyListingScraper):
             value = str(tag.get("content") or "") if tag else ""
         elif self.detail_date_kind == "caac":
             match = re.search(r"\bvar\s+__\$pubtime\s*=\s*['\"](20\d{2}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?)['\"]", html)
+            value = match.group(1) if match else ""
+        elif self.detail_date_kind == "sastind":
+            soup = BeautifulSoup(html, "html.parser")
+            stamp = soup.select_one("span.wz_xx")
+            match = re.search(r"发布日期\s*[：:]\s*(20\d{2}-\d{2}-\d{2})", stamp.get_text(" ", strip=True)) if stamp else None
             value = match.group(1) if match else ""
         else:
             raise ContractViolation("unverified detail date kind")
@@ -243,7 +250,7 @@ def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
                 raise ValueError(f"duplicate curated policy channel: {name}")
             is_nfra = bool(column.get("api_url"))
             date_kind = column.get("detail_date_kind")
-            if date_kind and date_kind not in {"audit", "caac", "sport"}:
+            if date_kind and date_kind not in {"audit", "caac", "sport", "sastind"}:
                 raise ValueError("unverified detail date kind")
             if is_nfra and (urlparse(url).netloc != "www.nfra.gov.cn" or
                             not column["api_url"].startswith("https://www.nfra.gov.cn/cbircweb/DocInfo/SelectDocByItemIdAndChild?")):
