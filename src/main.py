@@ -113,6 +113,25 @@ def merge_feed_entries(primary: list, supplemental: list) -> tuple[list, int]:
     return merged, added
 
 
+def interleave_feed_entries(primary: list, supplemental: list) -> tuple[list, int]:
+    """Give the science page first place while reserving space for general RSS."""
+    merged = []
+    seen = set()
+    added = 0
+    for index in range(max(len(primary), len(supplemental))):
+        for entries, is_supplemental in ((primary, False), (supplemental, True)):
+            if index >= len(entries):
+                continue
+            entry = entries[index]
+            key = canonicalize_url(entry.url)
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            merged.append(entry)
+            added += int(is_supplemental)
+    return merged, added
+
+
 def default_csv_path(
     now: datetime | None = None,
     *,
@@ -648,7 +667,7 @@ def main() -> int:
                     crawl_mode=feed_crawl_mode,
                 )
                 if entries:
-                    entries, added = merge_feed_entries(entries, rss_entries)
+                    entries, added = interleave_feed_entries(entries, rss_entries)
                     if added:
                         logging.info("IT之家原站 RSS 补充 %s 条候选", added)
                 else:

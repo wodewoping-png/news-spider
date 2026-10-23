@@ -32,6 +32,7 @@ from src.main import (
     fetch_feed_with_public_fallback,
     has_confirmed_non_target_candidates,
     is_uied_aggregator_feed,
+    interleave_feed_entries,
     merge_feed_entries,
     resolve_feed_access,
 )
@@ -389,6 +390,17 @@ class DateAndUrlTests(unittest.TestCase):
 
         self.assertEqual(merged, [first, second])
         self.assertEqual(added, 1)
+
+    def test_ithome_interleave_keeps_both_channels_under_source_limit(self):
+        science = [FeedEntry("science", "https://www.ithome.com/1/016/816.htm", ""),
+                   FeedEntry("science two", "https://www.ithome.com/1/016/620.htm", "")]
+        general = [FeedEntry("duplicate", science[0].url, ""),
+                   FeedEntry("general", "https://www.ithome.com/1/016/900.htm", "")]
+        merged, added = interleave_feed_entries(science, general)
+        self.assertEqual([entry.title for entry in merged], ["science", "science two", "general"])
+        self.assertEqual(added, 1)
+        other, _ = interleave_feed_entries(science, [general[1]])
+        self.assertEqual([entry.title for entry in other[:2]], ["science", "general"])
 
     def test_uied_discovery_entry_keeps_original_publisher_name(self):
         source = make_source("少数派", "https://sspai.com/")
