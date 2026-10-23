@@ -57,7 +57,10 @@ def valid_robots_text(response: requests.Response) -> bool:
         return False
     if body.lstrip().lower().startswith(("<!doctype", "<html", "<script")):
         return False
-    return any(line.strip().lower().startswith("user-agent:") for line in body.splitlines())
+    lines = [line.strip().lower() for line in body.splitlines()
+             if line.strip() and not line.lstrip().startswith("#")]
+    return (any(line.startswith("user-agent:") for line in lines)
+            or all(line.startswith("sitemap:") for line in lines))
 
 
 def is_cloudflare_challenge_response(response: requests.Response) -> bool:

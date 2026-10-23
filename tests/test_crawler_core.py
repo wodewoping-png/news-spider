@@ -81,6 +81,15 @@ class DateAndUrlTests(unittest.TestCase):
         self.assertFalse(cache.can_fetch("https://www.csrc.gov.cn/csrc/policy.html", fail_closed=True))
         session.get.assert_called_once()
 
+    def test_empty_comment_and_sitemap_only_robots_remain_allowed(self):
+        for body in ("", "# No restrictions\n", "Sitemap: https://example.gov.cn/sitemap.xml\n"):
+            with self.subTest(body=body):
+                session = Mock()
+                session.get.return_value = Mock(status_code=200,
+                    headers={"content-type": "text/plain"}, text=body)
+                cache = RobotsCache(session, "DailyNewsSpider/0.1", 5)
+                self.assertTrue(cache.can_fetch("https://example.gov.cn/policy", fail_closed=True))
+
     def test_delayed_run_before_rollover_keeps_nominal_run_day(self):
         now = datetime(2026, 7, 14, 0, 30, tzinfo=ZoneInfo("Asia/Shanghai"))
         self.assertEqual(default_target_date(now=now), date(2026, 7, 12))
