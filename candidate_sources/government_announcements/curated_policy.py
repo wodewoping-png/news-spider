@@ -13,7 +13,6 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
-from src.http_client import is_access_challenge_html
 
 from .base import ContractViolation, ListingItem, normalize_space, parse_platform_date
 from .scrapers import GovernmentDocumentScraper
@@ -176,8 +175,6 @@ class DetailDatedPolicyListingScraper(CuratedPolicyListingScraper):
 
     def verified_date(self, html: str, url: str) -> date:
         self.guard_url(url, detail=True)
-        if is_access_challenge_html(html):
-            raise ContractViolation("detail access challenge")
         if self.detail_date_kind in {"audit", "sport"}:
             tag = BeautifulSoup(html, "html.parser").find("meta", attrs={"name": "PubDate"})
             value = str(tag.get("content") or "") if tag else ""

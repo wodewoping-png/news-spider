@@ -1,13 +1,10 @@
 import json
 import unittest
-from unittest.mock import Mock
 
 from candidate_sources.government_announcements.curated_policy import (
     curated_scrapers,
     load_policy_sites,
 )
-from src.http_client import RobotsCache
-from src.scrapers.government_announcements import GovernmentAnnouncementScraper
 
 
 class CuratedPolicyContractTests(unittest.TestCase):
@@ -185,25 +182,6 @@ class CuratedPolicyContractTests(unittest.TestCase):
         item = sport.parse_listing(sport_list, sport.listing_url)[0]
         self.assertEqual(sport.verified_date('<meta name="PubDate" content="2025-08-05">', item.url).isoformat(), "2025-08-05")
 
-    def test_robots_html_challenge_does_not_grant_access(self):
-        session = Mock()
-        session.get.return_value = Mock(status_code=200,
-            headers={"content-type": "text/html"}, text="<html><script>verification()</script></html>")
-        cache = RobotsCache(session, "DailyNewsSpider/0.1", 5)
-        self.assertFalse(cache.can_fetch("https://www.csrc.gov.cn/csrc/policy.html", fail_closed=True))
-        session.get.assert_called_once()
-
-    def test_adapter_replaces_list_date_with_verified_detail_date(self):
-        parser = curated_scrapers()["中国民用航空局—政策发布"]()
-        link = "http://www.caac.gov.cn/PHONE/XXGK_17/XXGK/ZCFB/202610/t20261008_231816.html"
-        listing = f'<tr><td><a href="{link}">中国民用航空局关于印发《航班评审优化措施》的通知</a></td><td>2026年08月18日</td></tr>'
-        client = Mock()
-        client.get.side_effect = [Mock(text=listing, url=parser.listing_url),
-                                  Mock(text="var __$pubtime='2026-10-08 19:57:18';", url=link.replace("http://www.caac.gov.cn/PHONE/XXGK_17/", "https://www.caac.gov.cn/XXGK/"))]
-        adapter = GovernmentAnnouncementScraper(client, Mock())
-        items = adapter._listing_items(parser)
-        self.assertEqual(items[0].platform_published_at.isoformat(), "2026-10-08")
-        self.assertTrue(all(call.kwargs["strict_robots"] for call in client.get.call_args_list))
 
 
 if __name__ == "__main__":

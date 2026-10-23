@@ -17,6 +17,7 @@ from src.http_client import (
     HttpClient,
     RequiredFetchError,
     is_access_challenge_html,
+    RobotsCache,
     request_headers_for_url,
 )
 from src.load_sources import Source, expects_output_on_date
@@ -72,6 +73,14 @@ class StaticClient:
 
 
 class DateAndUrlTests(unittest.TestCase):
+    def test_robots_html_challenge_does_not_grant_access(self):
+        session = Mock()
+        session.get.return_value = Mock(status_code=200,
+            headers={"content-type": "text/html"}, text="<html><script>verification()</script></html>")
+        cache = RobotsCache(session, "DailyNewsSpider/0.1", 5)
+        self.assertFalse(cache.can_fetch("https://www.csrc.gov.cn/csrc/policy.html", fail_closed=True))
+        session.get.assert_called_once()
+
     def test_delayed_run_before_rollover_keeps_nominal_run_day(self):
         now = datetime(2026, 7, 14, 0, 30, tzinfo=ZoneInfo("Asia/Shanghai"))
         self.assertEqual(default_target_date(now=now), date(2026, 7, 12))
