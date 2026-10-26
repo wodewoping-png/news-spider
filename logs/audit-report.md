@@ -674,7 +674,7 @@
 | pending_confirmation | 2026-10-24 | 国际能源网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-10-24 | 少数派 | 已访问候选正文但目标日期仍为零，检查发布日期解析、正文解析及站点是否确实无更新 | - |
 | pending_confirmation | 2026-10-24 | 电池网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
-| pending_confirmation | 2026-10-25 | interesting engineering | 检测到 2 篇正文不完整或混入页面模板/导航内容；类型：public_preview_only，请检查正文选择器和内容质量规则 | - |
+| pending_confirmation | 2026-10-25 | interesting engineering | 检测到 2 篇正文不完整或混入页面模板/导航内容，请检查正文选择器和内容质量规则 | - |
 | pending_confirmation | 2026-10-25 | 中国核电信息网-国内 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-10-25 | 中国核电信息网-国际 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
 | pending_confirmation | 2026-10-25 | 北极星储能网 | 未发现任何候选文章，优先检查列表/RSS 地址、页面结构、选择器或站点可达性 | - |
