@@ -37,6 +37,13 @@ FIELDNAMES = (
 )
 
 INDUSTRY_FIELDNAMES = FIELDNAMES[-9:]
+POLICY_FIELDNAMES = (
+    "policy_primary_path", "policy_level_1", "policy_level_2", "policy_level_3",
+    "policy_level_4", "policy_level_5", "policy_classifications",
+    "policy_classification_status", "policy_classified_at", "policy_classifier_model",
+    "policy_taxonomy_version", "policy_classification_error",
+)
+FIELDNAMES += POLICY_FIELDNAMES
 
 TRACKING_QUERY_KEYS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 ARCHIVE_THRESHOLD_BYTES = 60 * 1024 * 1024
@@ -216,24 +223,32 @@ def is_better_article(candidate: dict, existing: dict) -> bool:
 
 
 def _preserve_industry_classification(candidate: dict, existing: dict) -> dict:
-    """Keep prior AI enrichment when a content refresh was not reclassified."""
+    """Keep independent AI results when a content refresh was not reclassified."""
     candidate_status = str(
         candidate.get("industry_classification_status") or ""
     ).lower()
     existing_status = str(
         existing.get("industry_classification_status") or ""
     ).lower()
-    if candidate_status in {"classified", "unclassified"}:
-        return candidate
-    if candidate_status == "error" and existing_status not in {
+    merged = dict(candidate)
+    if candidate_status not in {"classified", "unclassified"} and not (candidate_status == "error" and existing_status not in {
         "classified",
         "unclassified",
-    }:
-        return candidate
-    merged = dict(candidate)
-    for key in INDUSTRY_FIELDNAMES:
-        if key in existing:
-            merged[key] = existing[key]
+    }):
+        for key in INDUSTRY_FIELDNAMES:
+            if key in existing:
+                merged[key] = existing[key]
+    policy_status = str(candidate.get("policy_classification_status") or "").lower()
+    old_policy_status = str(existing.get("policy_classification_status") or "").lower()
+    if policy_status not in {"classified", "non_policy"} and not (
+        policy_status == "error" and old_policy_status not in {"classified", "non_policy"}
+    ):
+        for key in POLICY_FIELDNAMES:
+            if key in existing:
+                merged[key] = existing[key]
+    if merged.get("policy_classification_status") == "classified":
+        for key in INDUSTRY_FIELDNAMES:
+            merged.pop(key, None)
     return merged
 
 

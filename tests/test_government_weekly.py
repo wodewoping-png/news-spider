@@ -37,12 +37,14 @@ class GovernmentWeeklyTests(unittest.TestCase):
         ]}
         (day_root / "索引.json").write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
         with (day_root / "国内政策清单.csv").open("w", encoding="utf-8-sig", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹"))
+            writer = csv.DictWriter(handle, fieldnames=("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "政策分类路径", "政策第5级", "政策分类状态"))
             writer.writeheader()
             for item in notices:
                 writer.writerow({"渠道": "国家能源局—通知", "发布日期": day.isoformat(),
                                  "公告名称": item["title"], "原文链接": item["url"],
-                                 "正文状态": "full_text", "公告文件夹": str(folder)})
+                                 "正文状态": "full_text", "公告文件夹": str(folder),
+                                 "政策分类路径": "政策 > 监管落实型政策 > 正外部性 > 消费端优惠 > 初次购置补贴",
+                                 "政策第5级": "初次购置补贴", "政策分类状态": "classified"})
 
     def test_previous_week_and_monday_validation(self):
         self.assertEqual(previous_week(date(2026, 10, 19)), date(2026, 10, 12))
@@ -75,6 +77,8 @@ class GovernmentWeeklyTests(unittest.TestCase):
             self.assertEqual(book["渠道状态"].max_row, 15)
             self.assertEqual(book["政策汇总"]["G2"].value, 1)
             self.assertEqual(book["政策汇总"]["A2"].value.date(), start)
+            self.assertEqual(book["政策汇总"]["J2"].value, "政策 > 监管落实型政策 > 正外部性 > 消费端优惠 > 初次购置补贴")
+            self.assertEqual(book["政策汇总"]["O2"].value, "初次购置补贴")
             self.assertTrue(book["附件明细"]["E2"].hyperlink)
             target_again, info_again = build_week(root, start)
             self.assertEqual(target_again, target)

@@ -8,7 +8,7 @@ import time
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
-from typing import Iterable
+from typing import ClassVar, Iterable
 from urllib.parse import urlparse
 
 import requests
@@ -50,6 +50,7 @@ class PermanentIndustryClassificationError(IndustryClassificationError):
 
 @dataclass(frozen=True)
 class IndustryTaxonomy:
+    minimum_path_length: ClassVar[int] = 2
     version: str
     source: str
     instructions: tuple[str, ...]
@@ -78,7 +79,7 @@ class IndustryTaxonomy:
             if not isinstance(raw_path, list):
                 raise ValueError(f"Category {index} path must be a list")
             category_path = tuple(str(part).strip() for part in raw_path if str(part).strip())
-            if len(category_path) < 2 or not definition:
+            if len(category_path) < cls.minimum_path_length or not definition:
                 raise ValueError(f"Category {index} requires a path and semantic_definition")
             if category_path in seen:
                 raise ValueError(f"Duplicate industry path: {' > '.join(category_path)}")
@@ -154,6 +155,10 @@ def _parse_json_response(content: object) -> dict:
 
 
 class ZAIIndustryClassifier:
+    status_field = "industry_classification_status"
+    version_field = "industry_taxonomy_version"
+    completed_statuses = frozenset({"classified", "unclassified"})
+
     def __init__(
         self,
         *,
@@ -225,8 +230,8 @@ class ZAIIndustryClassifier:
             "请理解新闻的核心事件、技术对象和产业影响，再与下列领域定义匹配，"
             "不能只靠字面关键词。只可返回分类表中完整且完全相同的 path。"
             "分类必须对应标题所述的核心新闻事件；企业背景、产品清单、历史业务和顺带提及的技术，"
-            "不得单独触发分类。人事、认证、会议、融资、政策、科研管理或企业经营新闻应匹配分类表中"
-            "对应的扩展领域；若正文明确其主要关联产业，可以再增加一个该产业路径。"
+            "不得单独触发分类。对人事、认证、会议、融资、科研管理或企业经营新闻，"
+            "只有正文明确关联分类表中的产业领域时才归入该产业。"
             "对企业业绩、销量或市场进退，仅在文本明确主营产品或产业时补充产业路径。"
             "匹配中置信度最高的一项会写入表格主分类，因此必须把标题核心对象、事件或应用场景设为"
             "最高置信度；研究方法、支撑技术和次要产业影响只能作为后续匹配。"
@@ -435,12 +440,7 @@ class ZAIIndustryClassifier:
                 len(batch),
                 safe_error,
             )
-            mark_classification_error(
-                batch,
-                model=self.model,
-                taxonomy_version=self.taxonomy.version,
-                error=safe_error,
-            )
+            self._mark_error(batch, safe_error)
             return 0
         except IndustryClassificationError as exc:
             if len(batch) > 1:
@@ -463,31 +463,30 @@ class ZAIIndustryClassifier:
                 batch_start,
                 safe_error,
             )
-            mark_classification_error(
-                batch,
-                model=self.model,
-                taxonomy_version=self.taxonomy.version,
-                error=safe_error,
-            )
+            self._mark_error(batch, safe_error)
             return 0
 
         classified_at = _now_iso()
         for article, matches in zip(batch, classifications):
-            primary = matches[0] if matches else None
-            article["industry_primary_path"] = (
-                primary["path_text"] if primary else "未分类"
-            )
-            article["industry_top_level"] = primary["path"][0] if primary else ""
-            article["industry_leaf"] = primary["path"][-1] if primary else ""
-            article["industry_classifications"] = matches
-            article["industry_classification_status"] = (
-                "classified" if matches else "unclassified"
-            )
-            article["industry_classified_at"] = classified_at
-            article["industry_classifier_model"] = self.model
-            article["industry_taxonomy_version"] = self.taxonomy.version
-            article.pop("industry_classification_error", None)
+            self._write_result(article, matches, classified_at)
         return len(batch)
+
+    def _mark_error(self, articles: Iterable[dict], error: str) -> None:
+        mark_classification_error(
+            articles, model=self.model, taxonomy_version=self.taxonomy.version, error=error
+        )
+
+    def _write_result(self, article: dict, matches: list[dict], classified_at: str) -> None:
+        primary = matches[0] if matches else None
+        article["industry_primary_path"] = primary["path_text"] if primary else "未分类"
+        article["industry_top_level"] = primary["path"][0] if primary else ""
+        article["industry_leaf"] = primary["path"][-1] if primary else ""
+        article["industry_classifications"] = matches
+        article["industry_classification_status"] = "classified" if matches else "unclassified"
+        article["industry_classified_at"] = classified_at
+        article["industry_classifier_model"] = self.model
+        article["industry_taxonomy_version"] = self.taxonomy.version
+        article.pop("industry_classification_error", None)
 
 
 def mark_classification_error(
@@ -538,9 +537,11 @@ def classify_jsonl(
     for item in records:
         if target_date and article_date(item, timezone_name) != target_date:
             continue
-        status = str(item.get("industry_classification_status") or "")
-        version = str(item.get("industry_taxonomy_version") or "")
-        if not force and status in {"classified", "unclassified"} and version == classifier.taxonomy.version:
+        if classifier.status_field == "industry_classification_status" and item.get("policy_classification_status") == "classified":
+            continue
+        status = str(item.get(classifier.status_field) or "")
+        version = str(item.get(classifier.version_field) or "")
+        if not force and status in classifier.completed_statuses and version == classifier.taxonomy.version:
             continue
         candidates.append(item)
         if limit is not None and len(candidates) >= max(limit, 0):
