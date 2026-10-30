@@ -41,6 +41,7 @@ from .multi_page import (
     SolarInEnScraper,
 )
 from .ne_time import NETimeScraper
+from .ncsti_ai import NCSTIArtificialIntelligenceScraper
 from .pv_magazine import PVMagazineCIPVScraper, PVMagazineScraper
 from .rionews import (
     RIONewsBatteryScraper,
@@ -63,6 +64,7 @@ from .tgs4c import TGS4COffshoreScraper
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "中国石油新闻中心—炼化新材料": CNPCRefiningNewsScraper,
     "ieee spectrum": IEEESpectrumScraper,
+    "北京国际科技创新中心—人工智能热点": NCSTIArtificialIntelligenceScraper,
     "中国政府网—最新政策": GovCnPolicyDocumentsScraper,
     "中国政府网—政策解读": GovCnPolicyInterpretationsScraper,
     "国家粮食和物资储备局—政策发布": LswzPolicyReleasesScraper,

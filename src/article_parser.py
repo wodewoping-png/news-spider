@@ -42,6 +42,9 @@ ARTICLE_SELECTORS = (
 )
 
 STRICT_SOURCE_ARTICLE_SELECTORS = {
+    "北京国际科技创新中心—人工智能热点": (
+        ".trs_editor_view.TRS_UEDITOR",
+    ),
     "中国石油新闻中心—炼化新材料": (
         ".sj-main .as04",
     ),
