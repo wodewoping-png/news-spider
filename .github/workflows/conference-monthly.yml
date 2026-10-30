@@ -1,0 +1,64 @@
+name: Monthly Conference Calendar
+
+on:
+  schedule:
+    # 09:00 Asia/Shanghai on the first day of each month.
+    - cron: "0 1 1 * *"
+  workflow_dispatch:
+    inputs:
+      month:
+        description: "Optional target month (YYYY-MM)"
+        required: false
+        type: string
+
+concurrency:
+  group: news-spider-data-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Collect this month and next month
+        id: collect
+        continue-on-error: true
+        env:
+          TARGET_MONTH: ${{ inputs.month }}
+        run: |
+          args=(--output-dir data/conferences)
+          if [ -n "$TARGET_MONTH" ]; then
+            args+=(--month "$TARGET_MONTH")
+          fi
+          python -m src.conference_monthly "${args[@]}"
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: conference-calendar-${{ github.run_id }}
+          path: data/conferences/
+          if-no-files-found: warn
+      - name: Commit snapshot and source status
+        if: always()
+        run: |
+          branch="${GITHUB_REF_NAME:-main}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -d data/conferences ]; then
+            git add -A data/conferences
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: archive monthly conference calendar"
+            git pull --rebase --autostash origin "$branch"
+            git push origin "HEAD:$branch"
+          fi
+      - name: Report failed sources
+        if: ${{ steps.collect.outcome != 'success' }}
+        run: exit 1
