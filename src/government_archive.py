@@ -38,6 +38,7 @@ from candidate_sources.government_announcements.scrapers import (
 from .date_utils import DEFAULT_TIMEZONE
 from .http_client import BROWSER_USER_AGENT, HttpClient, valid_robots_text
 from .load_sources import Source, load_sources
+from .policy_classifier import ZAIPolicyClassifier, classify_policy_archive
 from .scrapers.government_announcements import GovernmentAnnouncementScraper
 from .scrapers import get_scraper_class
 
@@ -302,6 +303,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path, default=Path("data/government_announcements"))
     parser.add_argument("--only-source", action="append")
     parser.add_argument("--check-pending", action="store_true", help="复查待验证机构的 robots 状态")
+    parser.add_argument("--skip-policy-classification", action="store_true")
     args = parser.parse_args(argv)
     root = args.output_dir / args.target_date.isoformat()
     selected = [s for s in load_sources(args.sources)
@@ -336,6 +338,8 @@ def main(argv: list[str] | None = None) -> int:
         "附件按渠道/公告名称_哈希存放；当天没有下载成功的附件时，此目录仅有本说明。\n",
         encoding="utf-8",
     )
+    policy_classifier = None if args.skip_policy_classification else ZAIPolicyClassifier.from_environment()
+    classify_policy_archive(reports, root, policy_classifier)
     pending_health = check_pending_policy_sites(policy_sites) if args.check_pending else {}
     index = {"target_date": args.target_date.isoformat(), "generated_at": datetime.now(ZoneInfo(DEFAULT_TIMEZONE)).isoformat(),
              "attachment_bytes": total, "sources": reports,
@@ -346,7 +350,8 @@ def main(argv: list[str] | None = None) -> int:
                                                     for c in site["columns"]]}
                                       for site in policy_sites]}
     (root / "索引.json").write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    fields = ("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "附件文件夹", "附件下载", "附件状态")
+    fields = ("渠道", "发布日期", "公告名称", "原文链接", "正文状态", "公告文件夹", "附件文件夹", "附件下载", "附件状态",
+              "政策分类路径", "政策第1级", "政策第2级", "政策第3级", "政策第4级", "政策第5级", "政策分类状态", "政策分类依据", "政策分类明细")
     for filename in ("国内政策清单.csv", "统计数据清单.csv", "事故通报清单.csv"):
         with (root / filename).open("w", encoding="utf-8-sig", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields)
@@ -361,7 +366,12 @@ def main(argv: list[str] | None = None) -> int:
                                      "正文状态": notice["content_status"], "公告文件夹": notice["folder"],
                                      "附件文件夹": notice["attachment_folder"],
                                      "附件下载": "; ".join(downloaded),
-                                     "附件状态": "; ".join(item["status"] for item in notice["attachments"])})
+                                     "附件状态": "; ".join(item["status"] for item in notice["attachments"]),
+                                     "政策分类路径": notice.get("policy_primary_path", ""),
+                                     **{f"政策第{n}级": notice.get(f"policy_level_{n}", "") for n in range(1, 6)},
+                                     "政策分类状态": notice.get("policy_classification_status", ""),
+                                     "政策分类依据": (notice.get("policy_classifications") or [{}])[0].get("reason", ""),
+                                     "政策分类明细": json.dumps(notice.get("policy_classifications") or [], ensure_ascii=False)})
     cleanup_legacy_csv(root)
     print(root / "索引.json")
     return 0 if all(r["status"] in {"ok", "robots_hold"} for r in reports) else 1

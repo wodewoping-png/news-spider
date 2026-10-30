@@ -14,7 +14,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 
 TIMEZONE = ZoneInfo("Asia/Shanghai")
-POLICY_COLUMNS = ("公告日期", "渠道", "公告名称", "原文链接", "正文状态", "正文文件", "附件数量", "附件文件夹", "附件下载")
+POLICY_CLASSIFICATION_COLUMNS = ("政策分类路径", "政策第1级", "政策第2级", "政策第3级", "政策第4级", "政策第5级", "政策分类状态", "政策分类依据", "政策分类明细")
+POLICY_COLUMNS = ("公告日期", "渠道", "公告名称", "原文链接", "正文状态", "正文文件", "附件数量", "附件文件夹", "附件下载") + POLICY_CLASSIFICATION_COLUMNS
 ATTACHMENT_COLUMNS = ("公告日期", "渠道", "公告名称", "附件名称", "周归档路径", "原始地址", "文件大小（字节）", "下载状态", "说明")
 STATUS_COLUMNS = ("归档日期", "渠道", "抓取状态", "列表条目数", "公告数", "错误说明")
 
@@ -42,7 +43,7 @@ def save_workbook(destination: Path, policies: list[dict], attachments: list[dic
         ("渠道状态", STATUS_COLUMNS, statuses, set()),
     )
     widths = {
-        "政策汇总": (15, 31, 65, 64, 16, 72, 12, 72, 90),
+        "政策汇总": (15, 31, 65, 64, 16, 72, 12, 72, 90, 70, 15, 26, 24, 25, 28, 20, 60, 90),
         "附件明细": (15, 31, 65, 65, 90, 64, 18, 15, 44),
         "渠道状态": (15, 31, 18, 16, 13, 54),
     }
@@ -193,7 +194,8 @@ def build_week(root: Path, week_start: date) -> tuple[Path, dict]:
                                      "原文链接": row["原文链接"], "正文状态": row["正文状态"],
                                      "正文文件": str(weekly_folder / "正文.txt") if (staged / weekly_folder / "正文.txt").is_file() else "",
                                      "附件数量": len(files), "附件文件夹": str(weekly_attachment_folder),
-                                     "附件下载": "; ".join(files)})
+                                     "附件下载": "; ".join(files),
+                                     **{key: row.get(key, "") for key in POLICY_CLASSIFICATION_COLUMNS}})
                 if daily_keys != set(indexed):
                     raise ValueError(f"每日清单与索引条目不一致: {listing}")
         save_workbook(staged / "国内政策周汇总.xlsx", policies, attachments, statuses)

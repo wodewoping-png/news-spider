@@ -37,6 +37,7 @@ from .industry_classifier import (
     ZAIIndustryClassifier,
     classify_jsonl,
 )
+from .policy_classifier import DEFAULT_POLICY_TAXONOMY_PATH, ZAIPolicyClassifier
 from .load_sources import (
     default_sources_path,
     expects_daily_output,
@@ -235,6 +236,10 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=DEFAULT_TAXONOMY_PATH,
         help="Semantic industry taxonomy JSON generated from 行业图景.xmind.",
+    )
+    parser.add_argument(
+        "--policy-taxonomy", type=Path, default=DEFAULT_POLICY_TAXONOMY_PATH,
+        help="Independent five-level policy taxonomy JSON.",
     )
     parser.add_argument(
         "--industry-model",
@@ -535,6 +540,7 @@ def main() -> int:
         args, "skip_industry_classification", False
     )
     industry_classifier = None
+    policy_classifier = None
     if not skip_industry_classification:
         industry_classifier = ZAIIndustryClassifier.from_environment(
             taxonomy_path=getattr(
@@ -556,6 +562,13 @@ def main() -> int:
                 "industry_min_confidence",
                 DEFAULT_CLASSIFICATION_CONFIDENCE,
             ),
+        )
+        policy_classifier = ZAIPolicyClassifier.from_environment(
+            taxonomy_path=getattr(args, "policy_taxonomy", DEFAULT_POLICY_TAXONOMY_PATH),
+            model=getattr(args, "industry_model", DEFAULT_CLASSIFICATION_MODEL),
+            batch_size=getattr(args, "industry_batch_size", DEFAULT_CLASSIFICATION_BATCH_SIZE),
+            max_content_chars=getattr(args, "industry_content_chars", DEFAULT_CLASSIFICATION_CONTENT_CHARS),
+            min_confidence=getattr(args, "industry_min_confidence", DEFAULT_CLASSIFICATION_CONFIDENCE),
         )
     if industry_classifier:
         logging.info(
@@ -994,17 +1007,22 @@ def main() -> int:
             status,
         )
 
+    if policy_classifier:
+        policy_result = classify_jsonl(
+            policy_classifier, args.output, target_date=target_date,
+            timezone_name=DEFAULT_CSV_TIMEZONE,
+        )
+        logging.info("Policy classification pass complete: selected=%s total=%s",
+                     policy_result["classified"], policy_result["records"])
+
     if industry_classifier:
         classification_result = classify_jsonl(
-            industry_classifier,
-            args.output,
-            target_date=target_date,
+            industry_classifier, args.output, target_date=target_date,
             timezone_name=DEFAULT_CSV_TIMEZONE,
         )
         logging.info(
             "Industry classification pass complete: selected=%s total=%s malformed=%s",
-            classification_result["classified"],
-            classification_result["records"],
+            classification_result["classified"], classification_result["records"],
             classification_result["malformed"],
         )
 
