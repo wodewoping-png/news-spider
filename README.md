@@ -236,6 +236,8 @@ SCRAPER_REGISTRY = {
 - `pv magazine`: `src/scrapers/pv_magazine.py`
 - `pv magazine C&I PV`: `src/scrapers/pv_magazine.py`（仅抓取 chronological article feed，并跟随分页）
 - `Batteries News`: `src/scrapers/batteries_news.py`（仅抓取首页 Latest 与 Load More 分页）
+
+`Batteries News` 的文章有时晚于标注的发布日期才出现在 Latest。每日抓取完成后，`src/batteries_news_recovery.py` 仅检查首页近 21 天中尚未归档的链接，并按原始发布日期补抓到对应的历史日 CSV 与 JSONL；站点没有新文章时保留零产出，不把旧文改记为当天新闻。首次部署由独立恢复工作流立即复查，之后由每日任务持续回看。
 - `Interesting Engineering`: `src/scrapers/interesting_engineering.py`（归档分页 + 官方公开 RSS 全文；不绕过订阅墙）
 - `科学网新闻`: `src/scrapers/science_net.py`
 - `新华网科技`: `src/scrapers/xinhua_tech.py`

@@ -6,6 +6,8 @@ from datetime import date
 from src.http_client import FetchResult
 from src.load_sources import Source
 from src.scrapers.batteries_news import BatteriesNewsScraper
+from src.scrapers.batteries_news import BatteriesNewsCard
+from src.batteries_news_recovery import missing_dates
 
 
 def source() -> Source:
@@ -67,6 +69,17 @@ class StaticClient:
 
 
 class BatteriesNewsTests(unittest.TestCase):
+    def test_late_listed_cards_recover_only_missing_published_dates(self):
+        cards = [
+            BatteriesNewsCard("https://batteriesnews.com/new/", date(2026, 10, 17)),
+            BatteriesNewsCard("https://batteriesnews.com/already/", date(2026, 10, 17)),
+            BatteriesNewsCard("https://batteriesnews.com/today/", date(2026, 11, 2)),
+            BatteriesNewsCard("https://batteriesnews.com/old/", date(2026, 10, 1)),
+            BatteriesNewsCard("https://batteriesnews.com/future/", date(2026, 11, 4)),
+        ]
+        existing = {"https://batteriesnews.com/already", "https://batteriesnews.com/today"}
+        self.assertEqual(missing_dates(cards, existing, date(2026, 11, 2)), [date(2026, 10, 17)])
+
     def test_reads_only_latest_module_and_target_date(self):
         article_url = "https://batteriesnews.com/current-story/"
         pages = {
