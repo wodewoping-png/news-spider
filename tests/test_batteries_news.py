@@ -74,11 +74,13 @@ class BatteriesNewsTests(unittest.TestCase):
             BatteriesNewsCard("https://batteriesnews.com/new/", date(2026, 10, 17)),
             BatteriesNewsCard("https://batteriesnews.com/already/", date(2026, 10, 17)),
             BatteriesNewsCard("https://batteriesnews.com/today/", date(2026, 11, 2)),
+            BatteriesNewsCard("https://batteriesnews.com/late-october/", date(2026, 10, 10)),
             BatteriesNewsCard("https://batteriesnews.com/old/", date(2026, 10, 1)),
             BatteriesNewsCard("https://batteriesnews.com/future/", date(2026, 11, 4)),
         ]
         existing = {"https://batteriesnews.com/already", "https://batteriesnews.com/today"}
-        self.assertEqual(missing_dates(cards, existing, date(2026, 11, 2)), [date(2026, 10, 17)])
+        self.assertEqual(missing_dates(cards, existing, date(2026, 11, 2)),
+                         [date(2026, 10, 10), date(2026, 10, 17)])
 
     def test_reads_only_latest_module_and_target_date(self):
         article_url = "https://batteriesnews.com/current-story/"

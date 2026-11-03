@@ -21,7 +21,7 @@ from .storage import canonicalize_url, load_existing_content_quality
 
 def missing_dates(
     cards: list[BatteriesNewsCard], existing_urls: set[str], target_date: date,
-    *, lookback_days: int = 21,
+    *, lookback_days: int = 31,
 ) -> list[date]:
     first = target_date - timedelta(days=lookback_days)
     return sorted({card.published_date for card in cards
@@ -35,7 +35,7 @@ def main() -> int:
     parser.add_argument("--sources", type=Path, default=Path("sources.xlsx"))
     parser.add_argument("--output", type=Path, default=Path("data/articles.jsonl"))
     parser.add_argument("--logs", type=Path, default=Path("logs/batteries-recovery"))
-    parser.add_argument("--lookback-days", type=int, default=21)
+    parser.add_argument("--lookback-days", type=int, default=31)
     args = parser.parse_args()
     if not 1 <= args.lookback_days <= 31:
         parser.error("lookback-days must be between 1 and 31")
