@@ -16,6 +16,8 @@ USER_AGENT = "news-spider-policy-rss-probe/1.0"
 FEEDS = {
     "人社部—政策法规": "http://www.mohrss.gov.cn/gkml/xxgk/rss.xml",
     "人社部—政策解读": "http://www.mohrss.gov.cn/gkml/zcjd/rss.xml",
+    "人社部—政策法规 HTTPS": "https://www.mohrss.gov.cn/gkml/xxgk/rss.xml",
+    "人社部—政策解读 HTTPS": "https://www.mohrss.gov.cn/gkml/zcjd/rss.xml",
     "国防科工局—政策法规": "https://www.sastind.gov.cn/n10086167/n10086221/rss.xml",
     "统计局—最新发布（对照）": "https://www.stats.gov.cn/sj/zxfb/rss.xml",
     "统计局—数据解读（对照）": "https://www.stats.gov.cn/sj/sjjd/rss.xml",
@@ -69,7 +71,7 @@ def probe(url: str) -> dict[str, object]:
             fields = {child.tag.rsplit("}", 1)[-1].lower(): (child.text or "").strip()
                       for child in item}
             samples.append({"title": fields.get("title", "")[:120],
-                            "date": fields.get("pubdate") or fields.get("published") or fields.get("updated") or "",
+                            "date": fields.get("pubdate") or fields.get("published") or fields.get("updated") or fields.get("date") or "",
                             "link": fields.get("link") or ""})
         return {"status": "feed", "url": actual, "content_type": content_type,
                 "robots_status": robots_status, "entries": len(entries), "samples": samples}
