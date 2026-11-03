@@ -19,8 +19,6 @@ FEEDS = {
     "人社部—政策法规 HTTPS": "https://www.mohrss.gov.cn/gkml/xxgk/rss.xml",
     "人社部—政策解读 HTTPS": "https://www.mohrss.gov.cn/gkml/zcjd/rss.xml",
     "国防科工局—政策法规": "https://www.sastind.gov.cn/n10086167/n10086221/rss.xml",
-    "统计局—最新发布（对照）": "https://www.stats.gov.cn/sj/zxfb/rss.xml",
-    "统计局—数据解读（对照）": "https://www.stats.gov.cn/sj/sjjd/rss.xml",
 }
 
 
