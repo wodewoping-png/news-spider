@@ -97,6 +97,17 @@ jobs:
           fi
           python -m src.channel_ops cycle "${args[@]}"
 
+      - name: Recover late-listed Batteries News posts
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true }}
+        continue-on-error: true
+        env:
+          TARGET_DATE: ${{ inputs.target_date }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          ZAI_MODEL: ${{ vars.ZAI_MODEL || 'glm-5.2' }}
+          ZAI_API_URL: ${{ vars.ZAI_API_URL || 'https://open.bigmodel.cn/api/anthropic' }}
+        run: |
+          python -m src.batteries_news_recovery --target-date "$TARGET_DATE" --logs "$RUNNER_TEMP/batteries-news-recovery"
+
       - name: Detect The Information access failure
         id: the_information_status
         if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.dingtalk_test != true) }}
