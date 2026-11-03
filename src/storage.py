@@ -45,6 +45,14 @@ POLICY_FIELDNAMES = (
 )
 FIELDNAMES += POLICY_FIELDNAMES
 
+# Human-readable policy columns belong in the daily news CSV itself. Keep the
+# existing machine-readable fields for JSONL and downstream consumers.
+POLICY_CSV_COLUMNS = (
+    "政策分类路径", "政策第1级", "政策第2级", "政策第3级", "政策第4级", "政策第5级",
+    "政策分类状态", "政策分类依据",
+)
+DAILY_CSV_FIELDNAMES = FIELDNAMES[:2] + POLICY_CSV_COLUMNS + FIELDNAMES[2:]
+
 TRACKING_QUERY_KEYS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 ARCHIVE_THRESHOLD_BYTES = 60 * 1024 * 1024
 
@@ -258,6 +266,21 @@ def _csv_value(value: object) -> object:
     return value
 
 
+def _policy_csv_values(item: dict) -> dict[str, str]:
+    status = str(item.get("policy_classification_status") or "")
+    labels = {"classified": "已分类", "non_policy": "非政策", "error": "分类失败",
+              "not_configured": "未配置"}
+    matches = item.get("policy_classifications")
+    primary = matches[0] if isinstance(matches, list) and matches and isinstance(matches[0], dict) else {}
+    return {
+        "政策分类路径": str(item.get("policy_primary_path") or ""),
+        **{f"政策第{level}级": str(item.get(f"policy_level_{level}") or "")
+           for level in range(1, 6)},
+        "政策分类状态": labels.get(status, "未执行" if not status else status),
+        "政策分类依据": str(primary.get("reason") or ""),
+    }
+
+
 def append_jsonl(jsonl_path: Path, articles: Iterable[dict]) -> int:
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
@@ -349,7 +372,7 @@ def export_csv(
 ) -> None:
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     with csv_path.open("w", encoding="utf-8-sig", newline="") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=FIELDNAMES)
+        writer = csv.DictWriter(csv_file, fieldnames=DAILY_CSV_FIELDNAMES, lineterminator="\n")
         writer.writeheader()
         for line in article_lines(jsonl_path):
             if not line.strip():
@@ -360,6 +383,6 @@ def export_csv(
                 continue
             if target_date and article_date(item, timezone_name) != target_date:
                 continue
-            writer.writerow(
-                {key: _csv_value(item.get(key, "")) for key in FIELDNAMES}
-            )
+            values = {key: _csv_value(item.get(key, "")) for key in FIELDNAMES}
+            values.update(_policy_csv_values(item))
+            writer.writerow(values)

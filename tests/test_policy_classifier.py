@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import csv
 import json
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 
 from src.industry_classifier import classify_jsonl
@@ -10,7 +12,7 @@ from src.policy_classifier import (
     DEFAULT_POLICY_TAXONOMY_PATH, PolicyTaxonomy, ZAIPolicyClassifier,
     classify_policy_archive,
 )
-from src.storage import _preserve_industry_classification
+from src.storage import _preserve_industry_classification, export_csv, upsert_jsonl
 
 
 class PolicyClassifierTests(unittest.TestCase):
@@ -78,6 +80,37 @@ class PolicyClassifierTests(unittest.TestCase):
         merged = _preserve_industry_classification({"title": "新"}, existing)
         self.assertEqual(merged["policy_level_1"], "政策")
         self.assertNotIn("industry_classification_status", merged)
+
+    def test_daily_news_csv_shows_readable_policy_levels(self):
+        with tempfile.TemporaryDirectory() as temp:
+            journal = Path(temp) / "articles.jsonl"
+            daily = Path(temp) / "articles-2026-10-31.csv"
+            matched = {"title": "碳市场配额政策", "url": "https://example.com/policy",
+                       "published_at": "2026-10-30"}
+            path = ["政策", "监管落实型政策", "负外部性", "碳市场", "配额分配机制"]
+            self.classifier._write_result(matched, self.classifier._validate_matches([
+                {"path": path, "confidence": 0.95, "reason": "明确规定碳市场配额分配"}
+            ]), "now")
+            ordinary = {"title": "新型电池量产", "url": "https://example.com/battery",
+                        "published_at": "2026-10-30"}
+            self.classifier._write_result(ordinary, [], "now")
+            upsert_jsonl(journal, [matched, ordinary])
+            export_csv(journal, daily, date(2026, 10, 30))
+            with daily.open(encoding="utf-8-sig", newline="") as handle:
+                reader = csv.DictReader(handle)
+                self.assertEqual(reader.fieldnames[2:10], [
+                    "政策分类路径", "政策第1级", "政策第2级", "政策第3级", "政策第4级",
+                    "政策第5级", "政策分类状态", "政策分类依据",
+                ])
+                rows = {row["title"]: row for row in reader}
+            policy = rows["碳市场配额政策"]
+            self.assertEqual(policy["政策分类路径"], " > ".join(path))
+            self.assertEqual(policy["政策第5级"], "配额分配机制")
+            self.assertEqual(policy["政策分类状态"], "已分类")
+            self.assertEqual(policy["政策分类依据"], "明确规定碳市场配额分配")
+            self.assertEqual(policy["policy_level_5"], "配额分配机制")
+            self.assertEqual(rows["新型电池量产"]["政策分类状态"], "非政策")
+            self.assertEqual(rows["新型电池量产"]["政策第1级"], "")
 
 
 if __name__ == "__main__":
