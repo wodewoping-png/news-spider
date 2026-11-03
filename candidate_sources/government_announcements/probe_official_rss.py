@@ -39,7 +39,15 @@ def probe(url: str) -> dict[str, object]:
     origin = urlparse(url)
     robots_url = f"{origin.scheme}://{origin.netloc}/robots.txt"
     try:
-        robots, _, content_type = _read(robots_url)
+        try:
+            robots, _, content_type = _read(robots_url)
+            robots_status = "found"
+        except HTTPError as exc:
+            if exc.code != 404:
+                raise
+            # Match the repository's RobotsCache: a missing robots file has
+            # no restrictions; an error or HTML interstitial remains blocked.
+            robots, content_type, robots_status = b"", "", "not_found"
         if "html" in content_type.lower() or robots.lstrip().lower().startswith((b"<!doctype", b"<html")):
             return {"status": "robots_unavailable", "robots": robots_url,
                     "reason": "HTML returned instead of robots.txt"}
@@ -64,7 +72,7 @@ def probe(url: str) -> dict[str, object]:
                             "date": fields.get("pubdate") or fields.get("published") or fields.get("updated") or "",
                             "link": fields.get("link") or ""})
         return {"status": "feed", "url": actual, "content_type": content_type,
-                "entries": len(entries), "samples": samples}
+                "robots_status": robots_status, "entries": len(entries), "samples": samples}
     except (HTTPError, URLError, TimeoutError, ValueError, ElementTree.ParseError) as exc:
         return {"status": "unavailable", "error": f"{type(exc).__name__}: {exc}"[:200]}
 
