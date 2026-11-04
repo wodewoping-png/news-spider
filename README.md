@@ -161,6 +161,7 @@ workflow 文件位于 `.github/workflows/daily-news.yml`。
 - `logs/channel-ops-report.json` / `.md`：机器可读与人工可读的渠道运维总览；Markdown 会写入 GitHub Actions 任务摘要。
 - `logs/channel-daily-stats.csv`：每个渠道每天一行，包含收集量、唯一文章数、全文可用率、不完整正文数、正文最小/中位/最大字符数、短正文数、前次收集量、7 日中位数、变化倍数、连续为零天数和异常原因。
 - `logs/channel-daily-volume.csv`：便于直接观察的宽表，每行一个日期、每列一个渠道，单元格为当天文章数；无法确认历史状态的位置保留为空。
+- `logs/source-daily-counts.csv`：参照公众号项目的逐渠道长表，每天每个已纳入监控的渠道一行，列出星期、开始追踪日期、收录篇数、抓取状态和异常原因。`article_count` 是仓库收录量，并非网站的实际发文总量；`0` 表示已运行但没有收录，空白且 `not_run/unverified` 表示缺少该渠道当天的运行记录，`historical/partial_archive` 表示仅有部分归档文章，不能视为完成抓取。每天随新闻抓取自动更新，补抓后也会重新计算历史日期。
 - `logs/daily-collection-summary.csv`：每天一行，包含整体文章量、有产出渠道数、零产出渠道数、失败渠道数和整体异常。
 - `logs/audit-report.json`：便于其他程序读取的本次异常清单。
 - `logs/audit-report.md`：便于人工阅读的本次中文审查报告，并会显示在 GitHub Actions 任务摘要中。
