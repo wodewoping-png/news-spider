@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from .base import BaseScraper
 from .cnpc_news import CNPCRefiningNewsScraper
+from .ccedia import CCEDIAScraper
 from .batteries_international import BatteriesInternationalScraper
 from .batteries_news import BatteriesNewsScraper
 from .batterytechonline import BatteryTechOnlineScraper
@@ -63,6 +64,9 @@ from .tgs4c import TGS4COffshoreScraper
 
 
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
+    **{f"中国能源产业发展网—{section}": CCEDIAScraper for section in (
+        "煤炭", "油气", "发电", "新能源", "电网", "科技装备", "储能", "氢能", "新能源汽车", "能源头条",
+    )},
     "中国石油新闻中心—炼化新材料": CNPCRefiningNewsScraper,
     "ieee spectrum": IEEESpectrumScraper,
     "mtl.inew.cn—学术前沿": INEWFrontierScraper,

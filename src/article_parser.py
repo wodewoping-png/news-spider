@@ -42,6 +42,9 @@ ARTICLE_SELECTORS = (
 )
 
 STRICT_SOURCE_ARTICLE_SELECTORS = {
+    **{f"中国能源产业发展网—{section}": (".e_richText-7",) for section in (
+        "煤炭", "油气", "发电", "新能源", "电网", "科技装备", "储能", "氢能", "新能源汽车", "能源头条",
+    )},
     "北京国际科技创新中心—人工智能热点": (
         ".trs_editor_view.TRS_UEDITOR",
     ),
@@ -319,6 +322,8 @@ def extract_title(soup: BeautifulSoup, source_name: str = "") -> str:
 
 
 def normalize_source_title(title: str, content: str, source_name: str) -> str:
+    if source_name.strip().startswith("中国能源产业发展网—"):
+        return re.sub(r"\s*[-－|｜_]\s*中国能源产业发展网\s*$", "", title).strip()
     if source_name.strip().lower() == "中国石油新闻中心—炼化新材料":
         return re.sub(r"(?:[-－]中国石油新闻中心)+\s*$", "", title).strip()
     if source_name.strip().lower() != "ne时代":
@@ -344,6 +349,11 @@ def _iter_json_objects(value):
 
 
 def extract_date(soup: BeautifulSoup) -> str:
+    ccedia_date = soup.select_one(".e_timeFormat-30")
+    if ccedia_date and soup.select_one(".e_richText-7"):
+        value = DATE_VALUE_RE.search(ccedia_date.get_text(" ", strip=True))
+        if value:
+            return value.group(1)
     meta_date = first_meta(
         soup,
         (
