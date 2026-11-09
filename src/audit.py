@@ -12,6 +12,7 @@ from .content_quality import assess_content, is_usable_article
 from .date_utils import DEFAULT_TIMEZONE, article_date
 from .load_sources import expects_output_on_date
 from .recovery import sync_recovery_queue
+from .source_daily_counts import write_counts
 from .storage import article_lines, canonicalize_url
 
 
@@ -594,6 +595,8 @@ def run_daily_audit(
         _source_metrics(row, channel_rows, target_date)
     _write_csv(channel_path, CHANNEL_FIELDS, channel_rows)
     _write_volume_matrix(volume_path, channel_rows)
+    counts_path = logs_dir / "source-daily-counts.csv"
+    write_counts(channel_path, counts_path)
     recovery_rows = current_rows + [
         row
         for row in channel_rows
@@ -688,6 +691,7 @@ def run_daily_audit(
         "paths": {
             "channel_daily_stats": str(channel_path),
             "channel_daily_volume": str(volume_path),
+            "source_daily_counts": str(counts_path),
             "daily_collection_summary": str(summary_path),
             "markdown_report": str(markdown_path),
             "recovery_queue": str(recovery_path),
