@@ -49,9 +49,16 @@ def is_access_challenge_html(value: str) -> bool:
     return any(all(marker in probe for marker in group) for group in ACCESS_CHALLENGE_SIGNATURE_GROUPS)
 
 
+def robots_text(response: requests.Response) -> str:
+    """Decode UTF-8 robots files independently of a server's Latin-1 default."""
+    if isinstance(response.content, bytes) and response.content.startswith(b"\xef\xbb\xbf"):
+        return response.content.decode("utf-8-sig", errors="replace")
+    return response.text.lstrip("\ufeff")
+
+
 def valid_robots_text(response: requests.Response) -> bool:
     """Reject HTML and access interstitials masquerading as a 200 robots file."""
-    body = response.text[:100_000]
+    body = robots_text(response)[:100_000]
     content_type = response.headers.get("content-type", "").lower()
     if "html" in content_type or is_access_challenge_html(body):
         return False
@@ -157,7 +164,7 @@ class RobotsCache:
                     parser.parse([])
                 else:
                     self._gate_status[root] = "found"
-                    parser.parse(response.text.splitlines())
+                    parser.parse(robots_text(response).splitlines())
             except requests.RequestException as exc:
                 logging.warning("robots.txt fetch failed for %s: %s", root, exc)
                 self._gate_status[root] = "unavailable"
@@ -283,7 +290,9 @@ class HttpClient:
             logging.warning("Fetch failed: %s (%s)", url, exc)
             status_code = getattr(getattr(exc, "response", None), "status_code", None)
             error_text = str(exc).lower()
-            if status_code:
+            if isinstance(exc, requests.TooManyRedirects):
+                self.last_failure_reason = "redirect loop"
+            elif status_code:
                 self.last_failure_reason = f"HTTP {status_code}"
             elif "read timed out" in error_text:
                 self.last_failure_reason = "ReadTimeout"

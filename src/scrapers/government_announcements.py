@@ -144,11 +144,19 @@ class GovernmentAnnouncementScraper(BaseScraper):
     ) -> list[dict]:
         parser = self.parser_type()
         self.last_fetched_count = 0
+        self.last_failed_fetch_count = 0
+        self.last_fetch_issues = ""
         try:
             items = self._listing_items(parser)
         except ContractViolation as exc:
             logging.warning("Government listing contract rejected for %s: %s", self.source.name, exc)
             items = []
+
+        if not items:
+            issue = str(getattr(self.client, "last_failure_reason", "") or "")
+            if issue:
+                self.last_failed_fetch_count = 1
+                self.last_fetch_issues = issue
 
         effective_candidate_limit = candidate_limit or max(limit * 5, limit)
         items = items[:effective_candidate_limit]
