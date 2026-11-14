@@ -1,0 +1,45 @@
+name: Recover November policy and INEW gaps
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/repair-20261114.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: news-spider-data-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Recover verified channels for November 7 to 13
+        env:
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+        run: |
+          for day in 07 08 09 10 11 12 13; do
+            python -m src.main --target-date "2026-11-$day" \
+              --only-source '中国政府网—最新政策' \
+              --only-source '中国政府网—政策解读' \
+              --only-source 'mtl.inew.cn—学术前沿'
+          done
+          python -m src.channel_ops reconcile
+      - name: Save recovered articles and monitoring
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data logs
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: recover November policy and INEW channel gaps'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
