@@ -122081,3 +122081,303 @@ src.http_client.RequiredFetchError: Required fetch failed: https://www.theinform
 2026-11-14 02:50:19,002 INFO Skipped sources: [('Battery Council International', '备注包含“需邮箱订阅”'), ('中粉固态电池', '备注包含“公众号”'), ('起点钠电', '备注包含“公众号”'), ('能源学人', '备注包含“公众号”'), ('钙钛矿工厂', '备注包含“公众号”'), ('钙钛矿学习xx平台', '备注包含“公众号”'), ('风电世界', '链接为空'), ('全球风电网', '备注包含“无法访问”'), ('新能源网', '备注包含“无法访问”'), ('ESPLAZA长时储能网', '备注包含“公众号”'), ('地热能在线', '备注包含“公众号”'), ('中国新能源网-新闻', '备注包含“无法访问”'), ('X-MOL', '备注包含“需账号登录”')]
 2026-11-14 02:50:19,002 INFO Failed sources: []
 2026-11-14 02:50:19,002 INFO Degraded sources: [('electrive', '1 articles were not verified as full text (rss_excerpt_only)'), ('Supply Chain Digital', 'article fetch failures: Cloudflare access challenge (1)'), ('scitechdaily', '13 articles were not verified as full text (rss_excerpt_only)'), ('the information', '8 articles were not verified as full text (truncated_ending)'), ('pv magazine C&I PV', '1 articles were not verified as full text (truncated_ending)'), ('H2 View', 'article fetch failures: Cloudflare access challenge (1)'), ('中国核电信息网-国内', 'article fetch failures: HTTP 404 (1)'), ('中国核电信息网-国际', 'article fetch failures: HTTP 404 (1)'), ('Renewables Now', 'article fetch failures: Cloudflare access challenge (1)'), ('北极星储能网', 'no target-date articles were collected'), ('NE时代', '13 article pages failed (HTTP 301 (13))'), ('电池网', 'no target-date articles were collected'), ('自然资源部—通知公告', 'no target-date articles were collected'), ('中国政府网—最新政策', 'no target-date articles were collected'), ('中国政府网—政策解读', 'no target-date articles were collected'), ('mtl.inew.cn—学术前沿', 'no target-date articles were collected')]
+2026-11-14 05:15:13,702 INFO Starting daily news spider
+2026-11-14 05:15:13,702 INFO Source file: sources.xlsx
+2026-11-14 05:15:13,703 INFO Date filter: today, target date=2026-11-07
+2026-11-14 05:15:13,703 INFO Per-source limits: final=20, candidates=100
+2026-11-14 05:15:19,388 INFO Industry classification enabled: model=glm-5.3-flash, taxonomy=industry-2026-10-30
+2026-11-14 05:15:19,388 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-14 05:15:25,324 INFO Source complete: 中国政府网—最新政策, new articles=1, refreshed=0, usable=1, status=healthy
+2026-11-14 05:15:25,324 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-14 05:15:27,455 INFO Source complete: 中国政府网—政策解读, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:15:27,455 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-14 05:15:31,120 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:15:33,674 WARNING Industry classification batch failed permanently: start=0 size=1 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:15:33,685 INFO Policy classification pass complete: selected=1 total=25658
+2026-11-14 05:15:35,864 WARNING Industry classification batch failed permanently: start=0 size=1 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:15:35,875 INFO Industry classification pass complete: selected=1 total=25658 malformed=165
+2026-11-14 05:15:44,663 INFO Run complete. New articles: 1
+2026-11-14 05:15:44,663 INFO Run complete. Refreshed short articles: 0
+2026-11-14 05:15:44,663 INFO Channel health report: logs/channel-health.json
+2026-11-14 05:15:44,663 INFO Daily audit: status=normal, anomalies=12
+2026-11-14 05:15:44,664 INFO Skipped sources: []
+2026-11-14 05:15:44,664 INFO Failed sources: []
+2026-11-14 05:15:44,664 INFO Degraded sources: []
+2026-11-14 05:15:45,540 INFO Starting daily news spider
+2026-11-14 05:15:45,541 INFO Source file: sources.xlsx
+2026-11-14 05:15:45,541 INFO Date filter: today, target date=2026-11-08
+2026-11-14 05:15:45,541 INFO Per-source limits: final=20, candidates=100
+2026-11-14 05:15:51,214 INFO Industry classification enabled: model=glm-5.3-flash, taxonomy=industry-2026-10-30
+2026-11-14 05:15:51,215 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-14 05:15:53,458 INFO Source complete: 中国政府网—最新政策, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:15:53,458 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-14 05:15:55,283 INFO Source complete: 中国政府网—政策解读, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:15:55,283 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-14 05:15:58,768 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:16:00,830 INFO Policy classification pass complete: selected=0 total=25658
+2026-11-14 05:16:02,543 INFO Industry classification pass complete: selected=0 total=25658 malformed=165
+2026-11-14 05:16:11,112 INFO Run complete. New articles: 0
+2026-11-14 05:16:11,112 INFO Run complete. Refreshed short articles: 0
+2026-11-14 05:16:11,112 INFO Channel health report: logs/channel-health.json
+2026-11-14 05:16:11,112 INFO Daily audit: status=warning, anomalies=19
+2026-11-14 05:16:11,113 WARNING Daily collection anomaly: 总量仅为 7 日中位数的 0.31 倍
+2026-11-14 05:16:11,113 INFO Skipped sources: []
+2026-11-14 05:16:11,113 INFO Failed sources: []
+2026-11-14 05:16:11,113 INFO Degraded sources: []
+2026-11-14 05:16:11,992 INFO Starting daily news spider
+2026-11-14 05:16:11,992 INFO Source file: sources.xlsx
+2026-11-14 05:16:11,992 INFO Date filter: today, target date=2026-11-09
+2026-11-14 05:16:11,992 INFO Per-source limits: final=20, candidates=100
+2026-11-14 05:16:17,672 INFO Industry classification enabled: model=glm-5.3-flash, taxonomy=industry-2026-10-30
+2026-11-14 05:16:17,672 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-14 05:16:22,257 INFO Source complete: 中国政府网—最新政策, new articles=1, refreshed=0, usable=1, status=healthy
+2026-11-14 05:16:22,257 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-14 05:16:24,155 INFO Source complete: 中国政府网—政策解读, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:16:24,155 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-14 05:16:27,721 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:16:30,568 WARNING Industry classification batch failed permanently: start=0 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,568 WARNING Industry classification batch failed permanently: start=6 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,568 WARNING Industry classification batch failed permanently: start=12 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,568 WARNING Industry classification batch failed permanently: start=18 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,568 WARNING Industry classification batch failed permanently: start=24 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,568 WARNING Industry classification batch failed permanently: start=30 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=36 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=42 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=48 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=54 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=60 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=66 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=72 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=78 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=84 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=90 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=96 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=102 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=108 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=114 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=120 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,569 WARNING Industry classification batch failed permanently: start=126 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=132 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=138 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=144 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=150 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=156 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=162 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=168 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=174 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=180 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=186 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=192 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=198 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=204 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=210 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=216 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=222 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,570 WARNING Industry classification batch failed permanently: start=228 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,571 WARNING Industry classification batch failed permanently: start=234 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,571 WARNING Industry classification batch failed permanently: start=240 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,571 WARNING Industry classification batch failed permanently: start=246 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:30,571 WARNING Industry classification batch failed permanently: start=252 size=4 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:31,004 INFO Policy classification pass complete: selected=256 total=25659
+2026-11-14 05:16:33,018 WARNING Industry classification batch failed permanently: start=0 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,018 WARNING Industry classification batch failed permanently: start=6 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,018 WARNING Industry classification batch failed permanently: start=12 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,018 WARNING Industry classification batch failed permanently: start=18 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,018 WARNING Industry classification batch failed permanently: start=24 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,018 WARNING Industry classification batch failed permanently: start=30 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=36 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=42 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=48 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=54 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=60 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=66 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=72 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=78 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=84 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=90 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=96 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=102 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=108 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=114 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=120 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,019 WARNING Industry classification batch failed permanently: start=126 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=132 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=138 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=144 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=150 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=156 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=162 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=168 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=174 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=180 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=186 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=192 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=198 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=204 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=210 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=216 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=222 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=228 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=234 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,020 WARNING Industry classification batch failed permanently: start=240 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,021 WARNING Industry classification batch failed permanently: start=246 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,021 WARNING Industry classification batch failed permanently: start=252 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,021 WARNING Industry classification batch failed permanently: start=258 size=3 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:16:33,444 INFO Industry classification pass complete: selected=261 total=25659 malformed=165
+2026-11-14 05:16:42,291 INFO Run complete. New articles: 1
+2026-11-14 05:16:42,292 INFO Run complete. Refreshed short articles: 0
+2026-11-14 05:16:42,292 INFO Channel health report: logs/channel-health.json
+2026-11-14 05:16:42,292 INFO Daily audit: status=warning, anomalies=26
+2026-11-14 05:16:42,292 WARNING Daily collection anomaly: 21/75 个活跃渠道当天为 0
+2026-11-14 05:16:42,292 INFO Skipped sources: []
+2026-11-14 05:16:42,292 INFO Failed sources: []
+2026-11-14 05:16:42,292 INFO Degraded sources: []
+2026-11-14 05:16:43,172 INFO Starting daily news spider
+2026-11-14 05:16:43,172 INFO Source file: sources.xlsx
+2026-11-14 05:16:43,172 INFO Date filter: today, target date=2026-11-10
+2026-11-14 05:16:43,173 INFO Per-source limits: final=20, candidates=100
+2026-11-14 05:16:48,840 INFO Industry classification enabled: model=glm-5.3-flash, taxonomy=industry-2026-10-30
+2026-11-14 05:16:48,840 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-14 05:16:53,986 INFO Source complete: 中国政府网—最新政策, new articles=1, refreshed=0, usable=1, status=healthy
+2026-11-14 05:16:53,987 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-14 05:16:56,739 WARNING Source degraded: 中国政府网—政策解读 (3 articles were not verified as full text (empty_content))
+2026-11-14 05:16:56,739 INFO Source complete: 中国政府网—政策解读, new articles=3, refreshed=0, usable=0, status=degraded
+2026-11-14 05:16:56,739 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-14 05:17:00,437 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=0 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=6 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=12 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=18 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=24 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=30 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=36 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=42 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=48 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=54 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,998 WARNING Industry classification batch failed permanently: start=60 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=66 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=72 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=78 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=84 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=90 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=96 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=102 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=108 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=114 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=120 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=126 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=132 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=138 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=144 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=150 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=156 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:02,999 WARNING Industry classification batch failed permanently: start=162 size=1 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:03,397 INFO Policy classification pass complete: selected=163 total=25663
+2026-11-14 05:17:05,445 WARNING Industry classification batch failed permanently: start=0 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,445 WARNING Industry classification batch failed permanently: start=6 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=12 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=18 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=24 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=30 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=36 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=42 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=48 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=54 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=60 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=66 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=72 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=78 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,446 WARNING Industry classification batch failed permanently: start=84 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=90 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=96 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=102 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=108 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=114 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=120 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=126 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=132 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=138 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=144 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=150 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,447 WARNING Industry classification batch failed permanently: start=156 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:05,828 INFO Industry classification pass complete: selected=162 total=25663 malformed=165
+2026-11-14 05:17:14,670 INFO Run complete. New articles: 4
+2026-11-14 05:17:14,670 INFO Run complete. Refreshed short articles: 0
+2026-11-14 05:17:14,671 INFO Channel health report: logs/channel-health.json
+2026-11-14 05:17:14,671 INFO Daily audit: status=warning, anomalies=29
+2026-11-14 05:17:14,671 WARNING Daily collection anomaly: 21/75 个活跃渠道当天为 0
+2026-11-14 05:17:14,671 INFO Skipped sources: []
+2026-11-14 05:17:14,671 INFO Failed sources: []
+2026-11-14 05:17:14,671 INFO Degraded sources: [('中国政府网—政策解读', '3 articles were not verified as full text (empty_content)')]
+2026-11-14 05:17:15,558 INFO Starting daily news spider
+2026-11-14 05:17:15,558 INFO Source file: sources.xlsx
+2026-11-14 05:17:15,558 INFO Date filter: today, target date=2026-11-11
+2026-11-14 05:17:15,558 INFO Per-source limits: final=20, candidates=100
+2026-11-14 05:17:21,251 INFO Industry classification enabled: model=glm-5.3-flash, taxonomy=industry-2026-10-30
+2026-11-14 05:17:21,251 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-14 05:17:26,107 INFO Source complete: 中国政府网—最新政策, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:17:26,108 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-14 05:17:27,936 INFO Source complete: 中国政府网—政策解读, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:17:27,937 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-14 05:17:31,538 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=0 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=6 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=12 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=18 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=24 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=30 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=36 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=42 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,270 WARNING Industry classification batch failed permanently: start=48 size=6 error=Z.AI HTTP 400: {"error":{"code":"1210","message":"该模型始终思考，不支持关闭思考；请使用 low、high 或 max。"}}
+2026-11-14 05:17:34,579 INFO Policy classification pass complete: selected=54 total=25663
+2026-11-14 05:17:36,317 INFO Industry classification pass complete: selected=0 total=25663 malformed=165
+2026-11-14 05:17:44,969 INFO Run complete. New articles: 0
+2026-11-14 05:17:44,969 INFO Run complete. Refreshed short articles: 0
+2026-11-14 05:17:44,969 INFO Channel health report: logs/channel-health.json
+2026-11-14 05:17:44,969 INFO Daily audit: status=warning, anomalies=32
+2026-11-14 05:17:44,969 WARNING Daily collection anomaly: 25/75 个活跃渠道当天为 0
+2026-11-14 05:17:44,970 INFO Skipped sources: []
+2026-11-14 05:17:44,970 INFO Failed sources: []
+2026-11-14 05:17:44,970 INFO Degraded sources: []
+2026-11-14 05:17:45,851 INFO Starting daily news spider
+2026-11-14 05:17:45,851 INFO Source file: sources.xlsx
+2026-11-14 05:17:45,851 INFO Date filter: today, target date=2026-11-12
+2026-11-14 05:17:45,851 INFO Per-source limits: final=20, candidates=100
+2026-11-14 05:17:51,513 INFO Industry classification enabled: model=glm-5.3-flash, taxonomy=industry-2026-10-30
+2026-11-14 05:17:51,513 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-14 05:17:54,149 INFO Source complete: 中国政府网—最新政策, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:17:54,149 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-14 05:17:56,323 INFO Source complete: 中国政府网—政策解读, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:17:56,323 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-14 05:17:59,918 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:18:01,986 INFO Policy classification pass complete: selected=0 total=25663
+2026-11-14 05:18:03,684 INFO Industry classification pass complete: selected=0 total=25663 malformed=165
+2026-11-14 05:18:12,297 INFO Run complete. New articles: 0
+2026-11-14 05:18:12,297 INFO Run complete. Refreshed short articles: 0
+2026-11-14 05:18:12,297 INFO Channel health report: logs/channel-health.json
+2026-11-14 05:18:12,297 INFO Daily audit: status=warning, anomalies=26
+2026-11-14 05:18:12,297 WARNING Daily collection anomaly: 25/75 个活跃渠道当天为 0
+2026-11-14 05:18:12,297 INFO Skipped sources: []
+2026-11-14 05:18:12,297 INFO Failed sources: []
+2026-11-14 05:18:12,297 INFO Degraded sources: []
+2026-11-14 05:18:13,185 INFO Starting daily news spider
+2026-11-14 05:18:13,186 INFO Source file: sources.xlsx
+2026-11-14 05:18:13,186 INFO Date filter: today, target date=2026-11-13
+2026-11-14 05:18:13,186 INFO Per-source limits: final=20, candidates=100
+2026-11-14 05:18:18,881 INFO Industry classification enabled: model=glm-5.3-flash, taxonomy=industry-2026-10-30
+2026-11-14 05:18:18,881 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-14 05:18:20,843 INFO Source complete: 中国政府网—最新政策, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:18:20,843 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-14 05:18:22,679 INFO Source complete: 中国政府网—政策解读, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:18:22,679 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-14 05:18:26,071 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-14 05:18:28,130 INFO Policy classification pass complete: selected=0 total=25663
+2026-11-14 05:18:29,851 INFO Industry classification pass complete: selected=0 total=25663 malformed=165
+2026-11-14 05:18:38,459 INFO Run complete. New articles: 0
+2026-11-14 05:18:38,460 INFO Run complete. Refreshed short articles: 0
+2026-11-14 05:18:38,460 INFO Channel health report: logs/channel-health.json
+2026-11-14 05:18:38,460 INFO Daily audit: status=warning, anomalies=28
+2026-11-14 05:18:38,460 WARNING Daily collection anomaly: 20/75 个活跃渠道当天为 0
+2026-11-14 05:18:38,460 INFO Skipped sources: []
+2026-11-14 05:18:38,460 INFO Failed sources: []
+2026-11-14 05:18:38,460 INFO Degraded sources: []

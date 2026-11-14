@@ -1,10 +1,10 @@
 # 渠道运维总览
 
-- 生成时间：2026-11-14T10:50:19.151371+08:00
+- 生成时间：2026-11-14T13:18:38.944388+08:00
 - 渠道数：89
-- 健康/正常空闲：59
-- 异常渠道：16
-- 待处理缺口：865
+- 健康/正常空闲：62
+- 异常渠道：13
+- 待处理缺口：851
 
 ## 需要处理的渠道
 
@@ -21,7 +21,7 @@
 | interesting engineering | 2026-11-13 | healthy | 3790 | 0 | 0 | 0 | 20 | - | repair_then_reconfirm |
 | IT之家 | 2026-11-13 | healthy | 757 | 0 | 3 | 0 | 3 | - | repair_then_reconfirm |
 | MIT Technology Review | 2026-11-13 | healthy | 7310 | 0 | 0 | 0 | 15 | - | repair_then_reconfirm |
-| mtl.inew.cn—学术前沿 | 2026-11-13 | zero | 0 | 0 | 0 | 5 | 11 | no target-date articles were collected | repair_then_confirm |
+| mtl.inew.cn—学术前沿 | 2026-11-13 | idle | 0 | 0 | 0 | 0 | 6 | all observed candidates were published outside the target date (2025-05-15 to 2026-10-29) | repair_then_confirm |
 | NE时代 | 2026-11-13 | degraded | 3942 | 0 | 0 | 5 | 19 | 13 article pages failed (HTTP 301 (13)) | repair_then_confirm |
 | perovskite-info | 2026-11-13 | healthy | 2746 | 0 | 0 | 0 | 13 | - | repair_then_reconfirm |
 | pv magazine | 2026-11-13 | healthy | 3390 | 0 | 0 | 0 | 7 | - | repair_then_reconfirm |
@@ -30,8 +30,8 @@
 | scitechdaily | 2026-11-13 | degraded | 360 | 13 | 13 | 1 | 2 | 13 articles were not verified as full text (rss_excerpt_only) | repair_then_reconfirm |
 | Supply Chain Digital | 2026-11-13 | zero | 0 | 0 | 0 | 1 | 5 | article fetch failures: Cloudflare access challenge (1) | repair_then_confirm |
 | the information | 2026-11-13 | degraded | 383 | 8 | 9 | 1 | 4 | 8 articles were not verified as full text (truncated_ending) | repair_then_confirm |
-| 中国政府网—政策解读 | 2026-11-13 | zero | 0 | 0 | 0 | 5 | 18 | no target-date articles were collected | repair_then_confirm |
-| 中国政府网—最新政策 | 2026-11-13 | zero | 0 | 0 | 0 | 5 | 16 | no target-date articles were collected | repair_then_confirm |
+| 中国政府网—政策解读 | 2026-11-13 | idle | 0 | 0 | 0 | 0 | 14 | all observed candidates were published outside the target date (2026-06-08 to 2026-11-10) | repair_then_confirm |
+| 中国政府网—最新政策 | 2026-11-13 | idle | 0 | 0 | 0 | 0 | 11 | all observed candidates were published outside the target date (2026-06-02 to 2026-11-10) | repair_then_confirm |
 | 中国核电信息网-国内 | 2026-11-13 | zero | 0 | 0 | 0 | 25 | 29 | article fetch failures: HTTP 404 (1) | repair_then_reconfirm |
 | 中国核电信息网-国际 | 2026-11-13 | zero | 0 | 0 | 0 | 25 | 28 | article fetch failures: HTTP 404 (1) | repair_then_reconfirm |
 | 中国电力新闻网-新能源 | 2026-11-13 | healthy | 741 | 0 | 0 | 0 | 28 | - | repair_then_confirm |
