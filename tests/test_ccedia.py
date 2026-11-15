@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
+import requests
 from datetime import date
 from pathlib import Path
 
 from src.article_parser import parse_article_html
-from src.http_client import FetchResult
+from src.http_client import FetchResult, HttpClient
 from src.load_sources import Source, load_sources
 from src.scrapers import get_scraper_class
 from src.scrapers.ccedia import CCEDIAScraper
@@ -42,6 +44,41 @@ class CCEDIATests(unittest.TestCase):
         self.assertEqual(len(items), 10)
         self.assertEqual(len({item.url for item in items}), 10)
         self.assertTrue(all(get_scraper_class(item.name) is CCEDIAScraper for item in items))
+
+    def test_ccedia_skips_feed_discovery(self):
+        self.assertTrue(CCEDIAScraper.handles_configured_feed)
+
+    def test_waf_pauses_all_sections_but_not_other_sites(self):
+        client = HttpClient(sleep_seconds=0, respect_robots=False)
+        blocked = requests.Response()
+        blocked.status_code = 430
+        blocked.url = "https://www.ccedia.com/verify430251023manu.html"
+        blocked._content = b"challenge"
+        ok = requests.Response()
+        ok.status_code = 200
+        ok.url = "https://example.com/"
+        ok._content = b"<html>other site</html>"
+        ok.headers['Content-Type'] = 'text/html'
+        with patch.object(client.session, 'get', side_effect=[blocked, ok]) as fetch, patch('src.http_client.time.sleep'):
+            self.assertIsNone(client.get('https://www.ccedia.com/news/10/'))
+            self.assertIsNone(client.get('https://www.ccedia.com/news/7/'))
+            self.assertIn('430', client.last_failure_reason)
+            self.assertIsNotNone(client.get('https://example.com/'))
+            self.assertEqual(fetch.call_count, 2)
+
+    def test_shared_article_cache_and_throttle(self):
+        client = HttpClient(sleep_seconds=0, respect_robots=False)
+        response = requests.Response()
+        response.status_code = 200
+        response.url = 'https://www.ccedia.com/energy_detail/c-_detailId%3D123.html'
+        response._content = b'<html>article</html>'
+        response.headers['Content-Type'] = 'text/html'
+        with patch.object(client.session, 'get', return_value=response) as fetch, patch('src.http_client.time.sleep') as sleep:
+            first = client.get(response.url)
+            second = client.get(response.url.replace('%3D', '='))
+            self.assertIs(first, second)
+            fetch.assert_called_once()
+            sleep.assert_called_once_with(4.0)
 
     def test_pinned_old_item_does_not_prevent_pagination(self):
         root = "https://www.ccedia.com/news/11/"

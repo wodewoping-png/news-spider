@@ -1,0 +1,64 @@
+name: Recover CCEDIA November 14
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ccedia-recovery.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: news-spider-data-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Low frequency targeted recovery
+        env:
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+        run: |
+          python - <<'PY'
+          import subprocess, sys, json
+          from datetime import date
+          from pathlib import Path
+          from src.load_sources import load_sources
+          from src.audit import run_daily_audit
+          selected = [s for s in load_sources(Path('sources.xlsx')) if s.name.startswith('中国能源产业发展网—')]
+          args = [sys.executable, '-m', 'src.main', '--target-date', '2026-11-14', '--logs', 'logs/ccedia-recovery-20261115', '--skip-audit', '--sleep', '4']
+          for source in selected:
+              args.extend(['--only-source', source.name])
+          subprocess.run(args, check=True)
+          health = json.loads(Path('logs/ccedia-recovery-20261115/channel-health.json').read_text())
+          run_daily_audit(Path('data/articles.jsonl'), Path('logs'), date(2026,11,14), health['sources'])
+          PY
+          python -m src.channel_ops reconcile --health logs/ccedia-recovery-20261115/channel-health.json
+      - name: Commit recovery results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data logs
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: record CCEDIA targeted recovery results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Require successful access
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          rows = json.loads(Path('logs/ccedia-recovery-20261115/channel-health.json').read_text())['sources']
+          for row in rows:
+              print(row.get('source'), row.get('status'), row.get('reason'))
+          if any(row.get('status') in {'zero', 'failed', 'degraded'} for row in rows):
+              raise SystemExit('Some CCEDIA channels remain blocked or incomplete; see recovery health report.')
+          PY

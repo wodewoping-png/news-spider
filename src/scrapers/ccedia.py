@@ -13,6 +13,9 @@ class CCEDIAScraper(GenericListingScraper):
     """Chinese Energy Industry Development Network's dated category listings."""
 
     max_listing_pages = 5
+    # This publisher has a dedicated HTML listing; do not probe guessed feeds
+    # for each of its ten sections before the actual crawl.
+    handles_configured_feed = True
     article_path = re.compile(r"^/energy_detail/c-_detailId(?:%3[Dd]|=)\d+\.html$")
 
     def scrape(self, limit=20, *, target_date=None, candidate_limit=None):

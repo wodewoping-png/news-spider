@@ -189,6 +189,8 @@ class HttpClient:
         self.sleep_seconds = sleep_seconds
         self.respect_robots = respect_robots
         self.last_failure_reason = ""
+        self._ccedia_blocked = False
+        self._ccedia_cache: dict[str, FetchResult] = {}
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -236,6 +238,13 @@ class HttpClient:
         strict_robots: bool = False,
     ) -> Optional[FetchResult]:
         self.last_failure_reason = ""
+        is_ccedia = (urlparse(url).hostname or "").lower() in {"ccedia.com", "www.ccedia.com"}
+        cache_key = url.replace("%3D", "=").replace("%3d", "=")
+        if is_ccedia and self._ccedia_blocked:
+            self.last_failure_reason = "HTTP 430 (CCEDIA WAF; paused for this run)"
+            if required:
+                raise RequiredFetchError(self.last_failure_reason)
+            return None
         if self.respect_robots and not self.robots.can_fetch(
             url,
             fail_closed=strict_robots,
@@ -246,7 +255,11 @@ class HttpClient:
             self.last_failure_reason = "blocked by robots.txt"
             return None
 
-        time.sleep(self.sleep_seconds)
+        if is_ccedia and auth is None and cache_key in self._ccedia_cache:
+            cached = self._ccedia_cache[cache_key]
+            if allow_non_html or "html" in cached.content_type.lower():
+                return cached
+        time.sleep(max(self.sleep_seconds, 4.0) if is_ccedia else self.sleep_seconds)
         try:
             response = None
             for attempt in range(CLOUDFLARE_CHALLENGE_MAX_ATTEMPTS):
@@ -270,6 +283,16 @@ class HttpClient:
                     time.sleep(delay)
             if response is None:
                 raise requests.RequestException("request produced no response")
+            if is_ccedia and (
+                response.status_code == 430
+                or "/verify430" in str(response.url)
+            ):
+                self._ccedia_blocked = True
+                self.last_failure_reason = "HTTP 430 (CCEDIA WAF; paused for this run)"
+                logging.warning("CCEDIA WAF blocked access; pausing this host for this run")
+                if required:
+                    raise RequiredFetchError(self.last_failure_reason)
+                return None
             if is_cloudflare_challenge_response(response):
                 if required:
                     raise RequiredFetchError(
@@ -337,9 +360,12 @@ class HttpClient:
             logging.warning("Access challenge response: %s", response.url)
             self.last_failure_reason = "access challenge"
             return None
-        return FetchResult(
+        result = FetchResult(
             url=response.url,
             text=response_text,
             status_code=response.status_code,
             content_type=content_type,
         )
+        if is_ccedia and auth is None and "html" in content_type.lower():
+            self._ccedia_cache[cache_key] = result
+        return result
