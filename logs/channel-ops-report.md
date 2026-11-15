@@ -1,10 +1,10 @@
 # 渠道运维总览
 
-- 生成时间：2026-11-15T09:57:45.568416+08:00
+- 生成时间：2026-11-15T11:17:44.013124+08:00
 - 渠道数：89
-- 健康/正常空闲：59
-- 异常渠道：16
-- 待处理缺口：867
+- 健康/正常空闲：58
+- 异常渠道：17
+- 待处理缺口：868
 
 ## 需要处理的渠道
 
@@ -36,15 +36,16 @@
 | 中国核电信息网-国际 | 2026-11-14 | zero | 0 | 0 | 0 | 26 | 29 | article fetch failures: HTTP 404 (1) | repair_then_reconfirm |
 | 中国电力新闻网-新能源 | 2026-11-14 | idle | 0 | 0 | 0 | 0 | 28 | no target-date articles were expected for this source schedule | repair_then_confirm |
 | 中国电力新闻网-科技 | 2026-11-14 | idle | 0 | 0 | 0 | 0 | 40 | no target-date articles were expected for this source schedule | repair_then_reconfirm |
-| 中国能源产业发展网—储能 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—发电 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—新能源 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—氢能 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—油气 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—煤炭 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—电网 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—科技装备 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
-| 中国能源产业发展网—能源头条 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (1) | repair_then_confirm |
+| 中国能源产业发展网—储能 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—发电 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—新能源 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—新能源汽车 | 2026-11-14 | zero | 0 | 0 | 0 | 1 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—氢能 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—油气 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—煤炭 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—电网 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—科技装备 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
+| 中国能源产业发展网—能源头条 | 2026-11-14 | zero | 0 | 0 | 0 | 2 | 1 | article fetch failures: HTTP 430 (CCEDIA WAF; paused for this run) (1) | repair_then_confirm |
 | 中国能源网 | 2026-11-14 | idle | 0 | 0 | 0 | 0 | 36 | no target-date articles were expected for this source schedule | repair_then_confirm |
 | 光伏测试网 | 2026-11-14 | idle | 0 | 0 | 0 | 0 | 36 | all observed candidates were published outside the target date (2026-11-02 to 2026-11-13) | repair_then_confirm |
 | 北极星储能网 | 2026-11-14 | zero | 0 | 0 | 0 | 48 | 88 | no target-date articles were collected | repair_then_reconfirm |
