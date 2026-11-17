@@ -216,7 +216,7 @@ def check_pending_policy_sites(sites: list[dict]) -> dict[str, dict]:
 
 def archive_bucket(source_name: str) -> tuple[str, str]:
     """Keep statistical releases and accident reports out of the policy list."""
-    if source_name.startswith("国家统计局—"):
+    if source_name.startswith("国家统计局—") or source_name == "中国民用航空局—统计数据":
         return "统计数据清单.csv", "统计数据"
     if source_name == "国家矿山安全监察局—事故查处":
         return "事故通报清单.csv", "事故通报"
@@ -239,9 +239,12 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
         report["errors"].append(str(exc))
         return report, 0
     report["listing_count"] = len(items)
+    if getattr(scraper, "listing_note", ""):
+        report["listing_note"] = scraper.listing_note
+        report["status"] = "partial_fallback"
     if not items:
         reason = getattr(client, "last_failure_reason", "")
-        report["status"] = ("robots_hold" if reason == "blocked by robots.txt" else
+        report["status"] = ("robots_hold" if "robots.txt" in reason else
                             "listing_failed" if reason else "listing_empty")
         if reason:
             report["errors"].append(reason)
@@ -253,6 +256,7 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
         attachment_folder = Path("附件") / relative_notice
         folder.mkdir(parents=True, exist_ok=True)
         notice = {"title": item.title, "published_at": target.isoformat(), "url": item.url,
+                  "listing_note": getattr(scraper, "listing_note", ""),
                   "folder": str(folder.relative_to(root)), "attachment_folder": str(attachment_folder),
                   "content_status": "metadata_only", "attachments": [], "errors": []}
         if parser.fetch_detail:
@@ -291,7 +295,7 @@ def archive_source(source, client: HttpClient, target: date, root: Path,
         cleanup_legacy_notice(root, relative_notice)
     if any(notice["errors"] or any(item["status"] != "downloaded" for item in notice["attachments"])
            for notice in report["notices"]):
-        report["status"] = "partial"
+        report["status"] = "partial_fallback" if report.get("listing_note") else "partial"
     return report, used
 
 

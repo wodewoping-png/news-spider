@@ -45,6 +45,7 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
     title_pattern: re.Pattern[str] | None = None
     embedded_records: bool = False
     embedded_json_items: bool = False
+    row_class: str | None = None
 
     def _guard_path(self, path: str, *, detail: bool) -> None:
         if not (self.detail_path_re.fullmatch(path) if detail else path == urlparse(self.listing_url).path):
@@ -118,7 +119,8 @@ class CuratedPolicyListingScraper(GovernmentDocumentScraper):
                 continue
             if self.title_pattern and not self.title_pattern.search(title):
                 continue
-            container = anchor.find_parent(["li", "tr"]) or anchor.parent
+            container = (anchor.find_parent(class_=self.row_class) if self.row_class else
+                         anchor.find_parent(["li", "tr"])) or anchor.parent
             stamp = normalize_space(container.get_text(" ", strip=True)) if container else ""
             try:
                 published = parse_platform_date(stamp[:350])
@@ -146,6 +148,12 @@ class DetailDatedPolicyListingScraper(CuratedPolicyListingScraper):
     """Keep an undated candidate only after checking the official detail publication field."""
 
     detail_date_kind: str
+
+    def publication_urls(self, url: str) -> list[str]:
+        self.guard_url(url, detail=True)
+        if self.detail_date_kind == "caac":
+            return [url, url.replace("https://www.caac.gov.cn/XXGK/", "https://www.caac.gov.cn/PHONE/XXGK_17/", 1)]
+        return [url]
 
     def parse_listing(self, html: str, page_url: str) -> list[ListingItem]:
         self.guard_url(page_url)
@@ -176,10 +184,16 @@ class DetailDatedPolicyListingScraper(CuratedPolicyListingScraper):
         return items
 
     def verified_date(self, html: str, url: str) -> date:
+        if self.detail_date_kind == "caac":
+            url = url.replace("https://www.caac.gov.cn/PHONE/XXGK_17/", "https://www.caac.gov.cn/XXGK/", 1)
         self.guard_url(url, detail=True)
-        if self.detail_date_kind in {"audit", "sport"}:
+        if self.detail_date_kind in {"audit", "sport", "cgs"}:
             tag = BeautifulSoup(html, "html.parser").find("meta", attrs={"name": "PubDate"})
             value = str(tag.get("content") or "") if tag else ""
+            if self.detail_date_kind == "cgs":
+                source = BeautifulSoup(html, "html.parser").find("meta", attrs={"name": "ContentSource"})
+                if not source or "自然资源部" not in str(source.get("content") or ""):
+                    raise ContractViolation("CGS document is not attributed to MNR")
         elif self.detail_date_kind == "caac":
             match = re.search(r"\bvar\s+__\$pubtime\s*=\s*['\"](20\d{2}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?)['\"]", html)
             value = match.group(1) if match else ""
@@ -191,6 +205,19 @@ class DetailDatedPolicyListingScraper(CuratedPolicyListingScraper):
         else:
             raise ContractViolation("unverified detail date kind")
         return parse_platform_date(value)
+
+
+class CgsMnrPolicyScraper(DetailDatedPolicyListingScraper):
+    """Official MNR republications; partial fallback, never a full MNR mirror."""
+
+    source_id = "mnr_cgs_republications"
+    source_name = "自然资源部政策（中国地质调查局转载）"
+    allowed_host = "www.cgs.gov.cn"
+    listing_url = "https://www.cgs.gov.cn/zcwj/"
+    detail_path_re = re.compile(r"/zcwj/20\d{4}/t20\d{6}_\d+\.html")
+    title_pattern = re.compile(r"^自然资源部.*(?:关于|通知|办法|意见|规定)")
+    detail_date_kind = "cgs"
+    max_items = 15
 
 
 class NfraPolicyApiListingScraper(CuratedPolicyListingScraper):
@@ -262,6 +289,7 @@ def curated_scrapers() -> dict[str, type[CuratedPolicyListingScraper]]:
                  "detail_path_re": re.compile(column.get("detail_path_re") or r"/cn/view/pages/ItemDetail\.html"),
                  "embedded_records": bool(column.get("embedded_records", False)),
                  "embedded_json_items": bool(column.get("embedded_json_items", False)),
+                 "row_class": column.get("row_class"),
                  "title_pattern": re.compile(column["title_pattern"]) if column.get("title_pattern") else None,
                  "detail_date_kind": date_kind,
             }

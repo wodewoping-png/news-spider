@@ -73,7 +73,7 @@
     "focus": "政策文件、通知公告",
     "status": "active",
     "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
-    "observed_at": "2026-10-21",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
@@ -91,7 +91,8 @@
         "label": "待验证栏目1",
         "category": "政策文件、通知公告",
         "url": "https://www.moe.gov.cn/jyb_xxgk/gk_gbgg/moe_0/",
-        "status": "pending"
+        "status": "pending",
+        "reason": "本次待核公告栏目及robots返回403；原最新文件渠道不变。"
       }
     ]
   },
@@ -180,8 +181,8 @@
     "official_domain": "moj.gov.cn",
     "focus": "政策文件、立法征求意见",
     "status": "active",
-    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
-    "observed_at": "2026-10-21",
+    "reason": "已核验政策公告与立法征集栏目，排除考试、科研立项等非政策通知；保留原政策解读。",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
@@ -196,10 +197,13 @@
         "body": "metadata_only"
       },
       {
-        "label": "待验证栏目1",
-        "category": "政策文件、立法征求意见",
+        "label": "政策公告与立法征集",
+        "category": "政策公告、立法征求意见",
         "url": "https://www.moj.gov.cn/zwxxgk/fdzdgknr/fdzdgknrtzwj/",
-        "status": "pending"
+        "status": "active",
+        "detail_path_re": "/pub/sfbgw/zwxxgk/fdzdgknr/fdzdgknrtzwj/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "body": "metadata_only",
+        "title_pattern": "立法|域外管辖|法规|规章|征求意见|管理办法"
       }
     ]
   },
@@ -236,17 +240,26 @@
     "agency": "人力资源和社会保障部",
     "official_domain": "mohrss.gov.cn",
     "focus": "政策文件、公告",
-    "status": "pending",
-    "reason": "就业政策列表在当前抓取环境返回脚本访问挑战，无法核验发布日期与详情链接；不绕过访问限制。",
-    "observed_at": "2026-10-21",
+    "status": "active",
+    "reason": "主站仍返回脚本验证页；已启用中国就业网政策文件同站转载，按栏目发布日期记录，含地方政策；外站链接不自动放行。",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
       {
         "label": "待定位政策栏目",
         "category": "政策文件、公告",
-        "url": "",
+        "url": "https://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/",
         "status": "pending"
+      },
+      {
+        "label": "中国就业网政策文件",
+        "category": "就业政策（含地方政策）",
+        "url": "https://chinajob.mohrss.gov.cn/hlwzyzd/zcwjhgzzx/zcwj/index.shtml",
+        "status": "active",
+        "detail_path_re": "/c/20\\d{2}-\\d{2}-\\d{2}/\\d+\\.shtml",
+        "body": "metadata_only",
+        "row_class": "item"
       }
     ]
   },
@@ -255,8 +268,8 @@
     "official_domain": "mnr.gov.cn",
     "focus": "政策文件、通知公告",
     "status": "existing",
-    "reason": "原有渠道，继续每日归档",
-    "observed_at": "2026-10-21",
+    "reason": "主站、gi及移动站本次均连接失败；原渠道保留，失败时读取中国地质调查局同站转载，核验来源自然资源部及PubDate，仅部分覆盖；不将补充来源无更新当作原站无发文。",
+    "observed_at": "2026-11-17",
     "home_http": null,
     "robots_http": 503,
     "columns": [
@@ -305,15 +318,15 @@
     "official_domain": "mohurd.gov.cn",
     "focus": "政策文件、通知公告",
     "status": "pending",
-    "reason": "首页可读，政策发布栏目 robots 检查不可用；暂停该栏目请求。",
-    "observed_at": "2026-10-21",
+    "reason": "2026-11-17栏目及robots复测均HTTP 503连接失败，尚不能验证可用抓取；保留待验证。",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
       {
         "label": "待定位政策栏目",
         "category": "政策文件、通知公告",
-        "url": "",
+        "url": "https://www.mohurd.gov.cn/gongkai/fdzdgknr/zfhcxjsbwj/index.html",
         "status": "pending"
       }
     ]
@@ -560,8 +573,8 @@
     "official_domain": "chinatax.gov.cn",
     "focus": "政策文件、解读",
     "status": "pending",
-    "reason": "最新政策文件库列表可读，但列标题为“成文日期”，不能当作发布日期；需核准各详情页的发布字段后接入日清单。",
-    "observed_at": "2026-10-21",
+    "reason": "列表可读，成文日期不可作为发布日；抽测两个官方详情页HTTP 403，暂不能核准发布字段。",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
@@ -925,8 +938,8 @@
     "official_domain": "nia.gov.cn",
     "focus": "出入境政策、公告",
     "status": "active",
-    "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
-    "observed_at": "2026-10-21",
+    "reason": "已核验通知公告列表，筛选出入境办理、免签等政策公告，排除招聘、公务员、采访通知。",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
@@ -951,10 +964,13 @@
         "body": "metadata_only"
       },
       {
-        "label": "待验证栏目1",
-        "category": "出入境政策、公告",
+        "label": "出入境政策公告",
+        "category": "出入境政策公告",
         "url": "https://www.nia.gov.cn/n741440/n741542/index.html",
-        "status": "pending"
+        "status": "active",
+        "detail_path_re": "/n741440/n741542/c\\d+/content\\.html",
+        "body": "metadata_only",
+        "title_pattern": "关于.*(公告|通知)|管理办法"
       }
     ]
   },
@@ -1003,8 +1019,8 @@
     "official_domain": "caac.gov.cn",
     "focus": "政策法规、适航指令",
     "status": "active",
-    "reason": "政策发布检索页的发文日期不是网页发布日期；逐条读取官方详情脚本 __$pubtime，使用核实后的网页发布日期入库。分类9、11仍暂缓。",
-    "observed_at": "2026-10-22",
+    "reason": "分类10政策发布和11统计数据启用；电脑版缺少发布日期时改读官方移动版 __$pubtime。分类9内容可读但抽样仍缺网页发布日期，保留待核。",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 200,
     "columns": [
@@ -1018,16 +1034,24 @@
         "title_pattern": "通知|公告|办法|规定|方案|意见|政策|指引"
       },
       {
-        "label": "信息公开分类 9",
-        "category": "待确认政策分类",
-        "url": "https://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=9",
-        "status": "pending"
+        "label": "通知公告",
+        "category": "通知公告",
+        "url": "https://www.caac.gov.cn/was5/web/search?channelid=271536&fl=9&orderby=-fabuDate",
+        "status": "pending",
+        "detail_path_re": "/XXGK/XXGK/TZTG/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "body": "metadata_only",
+        "detail_date_kind": "caac",
+        "title_pattern": "关于|通告|标准|办法|补贴",
+        "reason": "通知公告列表和详情可读，但电脑版、移动版抽样均无网页发布日期，仅有发文/成文日期；暂不将此日期冒充日清单发布日期。"
       },
       {
-        "label": "信息公开分类 11",
-        "category": "待确认政策分类",
-        "url": "https://www.caac.gov.cn/XXGK/XXGK/index_172.html?fl=11",
-        "status": "pending"
+        "label": "统计数据",
+        "category": "统计数据",
+        "url": "https://www.caac.gov.cn/was5/web/search?channelid=271536&fl=11&orderby=-fabuDate",
+        "status": "active",
+        "detail_path_re": "/XXGK/XXGK/TJSJ/20\\d{4}/t20\\d{6}_\\d+\\.html",
+        "body": "metadata_only",
+        "detail_date_kind": "caac"
       }
     ]
   },
@@ -1037,7 +1061,7 @@
     "focus": "政策文件、通知公告",
     "status": "active",
     "reason": "新栏目经过官方列表和日期链接实测；正文暂存元数据",
-    "observed_at": "2026-10-21",
+    "observed_at": "2026-11-17",
     "home_http": 200,
     "robots_http": 404,
     "columns": [
@@ -1065,7 +1089,8 @@
         "label": "待验证栏目1",
         "category": "政策文件、通知公告",
         "url": "https://www.spb.gov.cn/gjyzj/c100009/c100014/xxgk_index.shtml",
-        "status": "pending"
+        "status": "pending",
+        "reason": "已核验为政府信息公开导航/指南页面，并非独立的最新政策列表；已有通知公告、政策解读继续运行。"
       }
     ]
   },

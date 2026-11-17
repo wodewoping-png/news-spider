@@ -124,6 +124,7 @@ class RobotsCache:
         self.timeout = timeout
         self._cache: dict[str, RobotFileParser] = {}
         self._gate_status: dict[str, str] = {}
+        self._gate_errors: dict[str, str] = {}
 
     def can_fetch(self, url: str, *, fail_closed: bool = False) -> bool:
         parsed = urlparse(url)
@@ -155,10 +156,12 @@ class RobotsCache:
                     self._gate_status[root] = "not_found"
                     parser.parse([])
                 elif response.status_code >= 400:
+                    self._gate_errors[root] = f"HTTP {response.status_code}"
                     logging.warning("robots.txt unavailable for %s: HTTP %s", root, response.status_code)
                     self._gate_status[root] = "unavailable"
                     parser.parse([])
                 elif not valid_robots_text(response):
+                    self._gate_errors[root] = "invalid response or access challenge"
                     logging.warning("robots.txt returned invalid content for %s", root)
                     self._gate_status[root] = "unavailable"
                     parser.parse([])
@@ -166,6 +169,7 @@ class RobotsCache:
                     self._gate_status[root] = "found"
                     parser.parse(robots_text(response).splitlines())
             except requests.RequestException as exc:
+                self._gate_errors[root] = type(exc).__name__
                 logging.warning("robots.txt fetch failed for %s: %s", root, exc)
                 self._gate_status[root] = "unavailable"
                 parser.parse([])
@@ -174,6 +178,13 @@ class RobotsCache:
         if fail_closed and self._gate_status.get(root) == "unavailable":
             return False
         return parser.can_fetch(self.user_agent, url)
+
+    def denial_reason(self, url: str) -> str:
+        parsed = urlparse(url)
+        root = f"{parsed.scheme}://{parsed.netloc}"
+        if self._gate_status.get(root) == "unavailable":
+            return f"robots.txt unavailable ({self._gate_errors.get(root, 'unknown')}); strict check deferred"
+        return "blocked by robots.txt"
 
 
 class HttpClient:
@@ -249,10 +260,10 @@ class HttpClient:
             url,
             fail_closed=strict_robots,
         ):
+            self.last_failure_reason = self.robots.denial_reason(url)
             if required:
-                raise RequiredFetchError(f"Required fetch blocked by robots.txt: {url}")
-            logging.warning("Blocked by robots.txt: %s", url)
-            self.last_failure_reason = "blocked by robots.txt"
+                raise RequiredFetchError(f"Required fetch {self.last_failure_reason}: {url}")
+            logging.warning("%s: %s", self.last_failure_reason, url)
             return None
 
         if is_ccedia and auth is None and cache_key in self._ccedia_cache:
