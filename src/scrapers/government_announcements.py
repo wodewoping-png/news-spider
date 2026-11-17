@@ -6,7 +6,7 @@ from typing import ClassVar
 from urllib.parse import urlencode
 
 from candidate_sources.government_announcements.base import ContractViolation, ListingItem
-from candidate_sources.government_announcements.curated_policy import CuratedPolicyListingScraper, DetailDatedPolicyListingScraper, NfraPolicyApiListingScraper, curated_scrapers
+from candidate_sources.government_announcements.curated_policy import CgsMnrPolicyScraper, CuratedPolicyListingScraper, DetailDatedPolicyListingScraper, NfraPolicyApiListingScraper, curated_scrapers
 from candidate_sources.government_announcements.gov_cn import (
     GovCnJsonScraper,
     GovCnPolicyDocumentsScraper as GovCnPolicyDocumentsParser,
@@ -76,15 +76,17 @@ class GovernmentAnnouncementScraper(BaseScraper):
             if isinstance(parser, DetailDatedPolicyListingScraper):
                 verified = []
                 for item in items:
-                    detail = self.client.get(item.url, allow_non_html=False, strict_robots=True)
-                    if not detail:
-                        continue
-                    try:
-                        published = parser.verified_date(detail.text, detail.url)
-                    except (ContractViolation, ValueError) as exc:
-                        logging.warning("Unverified policy publication date %s: %s", item.url, exc)
-                        continue
-                    verified.append(ListingItem(item.title, item.url, published))
+                    for date_url in parser.publication_urls(item.url):
+                        detail = self.client.get(date_url, allow_non_html=False, strict_robots=True)
+                        if not detail:
+                            continue
+                        try:
+                            published = parser.verified_date(detail.text, detail.url)
+                        except (ContractViolation, ValueError) as exc:
+                            logging.debug("Unverified policy publication date %s: %s", date_url, exc)
+                            continue
+                        verified.append(ListingItem(item.title, item.url, published))
+                        break
                 return verified
             return items
         raise TypeError(f"unsupported government parser: {type(parser).__name__}")
@@ -96,6 +98,7 @@ class GovernmentAnnouncementScraper(BaseScraper):
             "content": "",
             "content_extraction": "metadata_only",
             "content_policy": "metadata_only",
+            "listing_note": getattr(self, "listing_note", ""),
             "url": item.url,
             "source_name": self.source.name,
             "domain": self.source.domain,
@@ -176,6 +179,11 @@ class GovernmentAnnouncementScraper(BaseScraper):
         self.last_target_date_absent = bool(
             target_date and items and not selected and self.last_undated_candidate_count == 0
         )
+        if getattr(self, "listing_note", ""):
+            # Partial republications cannot prove that the primary site was idle.
+            self.last_target_date_absent = False
+            self.last_failed_fetch_count = max(1, self.last_failed_fetch_count)
+            self.last_fetch_issues = self.listing_note
 
         articles: list[dict] = []
         for item in selected:
@@ -208,6 +216,23 @@ class MostNoticesScraper(GovernmentAnnouncementScraper):
 
 class MnrNoticesScraper(GovernmentAnnouncementScraper):
     parser_type = MnrNoticesParser
+
+    def _listing_items(self, parser):
+        self.listing_note = ""
+        try:
+            items = super()._listing_items(parser)
+            primary_reason = str(getattr(self.client, "last_failure_reason", "") or "empty listing")
+        except ContractViolation as exc:
+            items, primary_reason = [], str(exc)
+        if items:
+            return items
+        self.listing_note = (f"MNR primary unavailable ({primary_reason}); partial official "
+                             "republications from https://www.cgs.gov.cn/zcwj/")
+        logging.warning(self.listing_note)
+        items = super()._listing_items(CgsMnrPolicyScraper())
+        if not items and not getattr(self.client, "last_failure_reason", ""):
+            self.client.last_failure_reason = primary_reason
+        return items
 
 
 class MotPolicyDocumentsScraper(GovernmentAnnouncementScraper):
