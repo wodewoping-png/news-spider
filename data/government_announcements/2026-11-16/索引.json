@@ -1,6 +1,6 @@
 {
   "target_date": "2026-11-16",
-  "generated_at": "2026-11-17T16:58:44.500933+08:00",
+  "generated_at": "2026-11-17T19:05:06.421817+08:00",
   "attachment_bytes": 208896,
   "sources": [
     {
@@ -42,12 +42,12 @@
                 "可再生能源优惠"
               ],
               "path_text": "政策 > 监管落实型政策 > 正外部性 > 可再生能源优惠",
-              "confidence": 0.72,
-              "reason": "国家能源局公示拟支持47个地热能高质量开发利用试点，属对可再生能源开发利用项目的支持措施，但具体支持工具（补贴/电价等）未明"
+              "confidence": 0.7,
+              "reason": "国家能源局公示地热能高质量开发利用试点名单，属于对可再生能源（地热能）开发利用的项目支持政策，具体支持工具未明确"
             }
           ],
           "policy_classification_status": "classified",
-          "policy_classified_at": "2026-11-17T08:58:27.567360+00:00",
+          "policy_classified_at": "2026-11-17T11:04:49.265434+00:00",
           "policy_classifier_model": "glm-5.2",
           "policy_taxonomy_version": "policy-2026-10-30",
           "policy_classification_error": ""
@@ -216,7 +216,7 @@
           "policy_level_5": "",
           "policy_classifications": [],
           "policy_classification_status": "non_policy",
-          "policy_classified_at": "2026-11-17T08:58:27.567360+00:00",
+          "policy_classified_at": "2026-11-17T11:04:49.265434+00:00",
           "policy_classifier_model": "glm-5.2",
           "policy_taxonomy_version": "policy-2026-10-30",
           "policy_classification_error": ""
@@ -257,15 +257,25 @@
           "content_status": "metadata_only",
           "attachments": [],
           "errors": [],
-          "policy_primary_path": "",
-          "policy_level_1": "",
-          "policy_level_2": "",
-          "policy_level_3": "",
-          "policy_level_4": "",
-          "policy_level_5": "",
-          "policy_classifications": [],
-          "policy_classification_status": "non_policy",
-          "policy_classified_at": "2026-11-17T08:58:27.567360+00:00",
+          "policy_primary_path": "政策 > 监管落实型政策",
+          "policy_level_1": "政策",
+          "policy_level_2": "监管落实型政策",
+          "policy_level_3": "NA",
+          "policy_level_4": "NA",
+          "policy_level_5": "NA",
+          "policy_classifications": [
+            {
+              "path": [
+                "政策",
+                "监管落实型政策"
+              ],
+              "path_text": "政策 > 监管落实型政策",
+              "confidence": 0.75,
+              "reason": "城市轨道交通运营管理规定属正式监管规定解读，但正文缺失，无法可靠细分具体机制"
+            }
+          ],
+          "policy_classification_status": "classified",
+          "policy_classified_at": "2026-11-17T11:04:49.265434+00:00",
           "policy_classifier_model": "glm-5.2",
           "policy_taxonomy_version": "policy-2026-10-30",
           "policy_classification_error": ""
@@ -1485,8 +1495,8 @@
       "status": "hold",
       "reason": "HTTP 栏目可返回页面外框但未提供带日期条目；HTTPS robots.txt 和栏目返回 503，不能按现有 HTTPS 生产合同抓取。",
       "last_robots_check": {
-        "robots_http": null,
-        "check": "ReadTimeout"
+        "robots_http": 503,
+        "check": "robots_unavailable"
       },
       "channels": [
         {
