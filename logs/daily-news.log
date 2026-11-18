@@ -124976,3 +124976,855 @@ src.http_client.RequiredFetchError: Required fetch failed: https://www.theinform
 2026-11-17 05:18:10,837 INFO Skipped sources: [('Battery Council International', '备注包含“需邮箱订阅”'), ('中粉固态电池', '备注包含“公众号”'), ('起点钠电', '备注包含“公众号”'), ('能源学人', '备注包含“公众号”'), ('钙钛矿工厂', '备注包含“公众号”'), ('钙钛矿学习xx平台', '备注包含“公众号”'), ('风电世界', '链接为空'), ('全球风电网', '备注包含“无法访问”'), ('新能源网', '备注包含“无法访问”'), ('ESPLAZA长时储能网', '备注包含“公众号”'), ('地热能在线', '备注包含“公众号”'), ('中国新能源网-新闻', '备注包含“无法访问”'), ('X-MOL', '备注包含“需账号登录”')]
 2026-11-17 05:18:10,837 INFO Failed sources: []
 2026-11-17 05:18:10,837 INFO Degraded sources: [('electrive', '3 articles were not verified as full text (rss_excerpt_only)'), ('Supply Chain Digital', 'article fetch failures: Cloudflare access challenge (1)'), ('scitechdaily', '14 articles were not verified as full text (rss_excerpt_only)'), ('H2 View', '2 articles were not verified as full text (paywall_or_login_wall)'), ('中国核电信息网-国内', 'article fetch failures: HTTP 404 (1)'), ('中国核电信息网-国际', 'article fetch failures: HTTP 404 (1)'), ('Renewables Now', 'article fetch failures: Cloudflare access challenge (1)'), ('北极星储能网', 'no target-date articles were collected'), ('NE时代', '1 articles were not verified as full text (truncated_ending)'), ('自然资源部—通知公告', 'article fetch failures: blocked by robots.txt')]
+2026-11-18 03:22:10,536 INFO Starting daily news spider
+2026-11-18 03:22:10,536 INFO Source file: sources.xlsx
+2026-11-18 03:22:10,536 INFO Date filter: today, target date=2026-11-17
+2026-11-18 03:22:10,536 INFO Per-source limits: final=20, candidates=100
+2026-11-18 03:22:15,990 INFO Industry classification enabled: model=glm-5.2, taxonomy=industry-2026-10-30
+2026-11-18 03:22:15,990 INFO Processing source: electrive <https://www.electrive.com/category/battery-fuel-cell/>
+2026-11-18 03:22:15,991 INFO Using configured RSS for electrive: https://www.electrive.com/category/battery-fuel-cell/feed/
+2026-11-18 03:22:18,055 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/16/us-researchers-identify-electrode-drying-risk-during-fast-charging/ (Mon, 16 Nov 2026 15:30:00 +0000)
+2026-11-18 03:22:18,055 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/16/bmw-opens-battery-assembly-plant-for-the-new-ix5/ (Mon, 16 Nov 2026 09:29:35 +0000)
+2026-11-18 03:22:18,055 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/16/veolia-opens-battery-black-mass-recycling-plant-in-france/ (Mon, 16 Nov 2026 09:03:43 +0000)
+2026-11-18 03:22:18,056 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/13/uk-battery-recycling-project-cascade-focuses-on-recovering-nickel-cobalt-and-copper/ (Fri, 13 Nov 2026 10:30:00 +0000)
+2026-11-18 03:22:18,056 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/12/quantumscape-launches-open-platform-for-sulphide-based-solid-state-batteries/ (Thu, 12 Nov 2026 15:30:00 +0000)
+2026-11-18 03:22:18,056 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/11/tozero-announces-first-delivery-of-recycled-lithium-carbonate-to-customers/ (Wed, 11 Nov 2026 10:01:21 +0000)
+2026-11-18 03:22:18,056 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/10/catl-explores-lithium-air-batteries-as-a-long-term-research-focus/ (Tue, 10 Nov 2026 12:30:00 +0000)
+2026-11-18 03:22:18,056 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/10/byd-considers-building-a-battery-factory-in-portugal/ (Tue, 10 Nov 2026 11:30:00 +0000)
+2026-11-18 03:22:18,056 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/09/bmw-to-source-battery-cells-from-lges-and-samsung-sdi/ (Mon, 09 Nov 2026 12:30:00 +0000)
+2026-11-18 03:22:18,057 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/09/used-ev-batteries-marketplace-rebattex-partners-with-lkq-atracco/ (Mon, 09 Nov 2026 11:30:00 +0000)
+2026-11-18 03:22:18,057 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/09/posco-future-m-to-supply-720000-tonnes-of-battery-materials-to-lg-energy-solution/ (Mon, 09 Nov 2026 11:00:00 +0000)
+2026-11-18 03:22:18,057 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/09/bmw-to-partially-use-lfp-batteries-in-neue-klasse/ (Mon, 09 Nov 2026 10:01:00 +0000)
+2026-11-18 03:22:18,057 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/06/sne-research-chinese-oems-increasingly-dominate-global-ev-battery-market/ (Fri, 06 Nov 2026 13:30:00 +0000)
+2026-11-18 03:22:18,057 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/05/lg-energy-solution-launches-battery-research-competition/ (Thu, 05 Nov 2026 14:30:00 +0000)
+2026-11-18 03:22:18,057 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/05/fraunhofer-develops-tool-for-battery-recycling/ (Thu, 05 Nov 2026 13:30:00 +0000)
+2026-11-18 03:22:18,058 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/04/mercedes-power-converter-decouples-high-voltage-supply-from-battery-state/ (Wed, 04 Nov 2026 12:15:52 +0000)
+2026-11-18 03:22:18,058 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/03/rio-tinto-expands-lithium-production-in-argentina/ (Tue, 03 Nov 2026 13:30:00 +0000)
+2026-11-18 03:22:18,058 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/03/edenenergy-builds-storage-systems-from-used-e-scooter-batteries/ (Tue, 03 Nov 2026 13:00:00 +0000)
+2026-11-18 03:22:18,058 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/11/02/webasto-poised-to-sell-its-battery-systems-business/ (Mon, 02 Nov 2026 14:00:00 +0000)
+2026-11-18 03:22:18,058 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/31/gac-launches-battery-production-in-thailand/ (Sat, 31 Oct 2026 09:00:00 +0000)
+2026-11-18 03:22:18,058 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/30/oems-may-have-to-take-back-evs-with-faulty-batteries/ (Fri, 30 Oct 2026 16:00:00 +0000)
+2026-11-18 03:22:18,058 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/30/allye-introduces-400-kw-fast-charger-with-second-life-batteries/ (Fri, 30 Oct 2026 14:04:09 +0000)
+2026-11-18 03:22:18,059 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/30/group14-to-build-battery-material-factory-in-sagunt/ (Fri, 30 Oct 2026 13:30:00 +0000)
+2026-11-18 03:22:18,059 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/29/catl-advances-solid-state-battery-development-to-20-ah-samples/ (Thu, 29 Oct 2026 14:30:00 +0000)
+2026-11-18 03:22:18,059 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/28/amg-lithium-opens-test-laboratory-for-solid-electrolytes-in-frankfurt/ (Wed, 28 Oct 2026 13:30:00 +0000)
+2026-11-18 03:22:18,059 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/27/nexeon-secures-52-6m-from-uk-national-wealth-fund/ (Tue, 27 Oct 2026 16:30:00 +0000)
+2026-11-18 03:22:18,059 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/27/svolt-launches-series-production-of-its-semi-solid-state-battery/ (Tue, 27 Oct 2026 11:02:43 +0000)
+2026-11-18 03:22:18,059 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/24/fraunhofer-researchers-aim-to-unlock-the-potential-of-lithium-metal-anodes/ (Sat, 24 Oct 2026 08:00:00 +0000)
+2026-11-18 03:22:18,060 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/22/greater-range-at-the-same-weight-silicon-battery-passes-laboratory-test/ (Thu, 22 Oct 2026 13:00:00 +0000)
+2026-11-18 03:22:18,060 INFO Skip non-target-date RSS entry: https://www.electrive.com/2026/10/22/catls-akin-li-whichever-battery-type-the-market-demands-well-have-it/ (Thu, 22 Oct 2026 11:00:00 +0000)
+2026-11-18 03:22:18,060 INFO Source complete: electrive, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:22:18,060 INFO Processing source: Batteries International <https://www.batteriesinternational.com/>
+2026-11-18 03:22:25,754 INFO RSS discovered for https://www.batteriesinternational.com/: https://www.batteriesinternational.com/feed (10 entries)
+2026-11-18 03:22:27,316 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/exide-industries-mulls-lead-acid-expansion-to-cash-in-on-sweet-spot/ (Sun, 15 Nov 2026 03:27:39 +0000)
+2026-11-18 03:22:27,316 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/former-enersys-exec-schmitlein-joins-siliconjoule-as-cfo/ (Sun, 15 Nov 2026 03:15:35 +0000)
+2026-11-18 03:22:27,316 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/india-bans-lithium-black-mass-exports-to-boost-domestic-battery-minerals-recovery/ (Sun, 15 Nov 2026 03:06:27 +0000)
+2026-11-18 03:22:27,316 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/china-sets-target-for-new-type-ess-boom-by-2030/ (Sun, 15 Nov 2026 03:02:15 +0000)
+2026-11-18 03:22:27,316 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/bmw-powers-up-battery-supply-chain-with-new-samsung-and-lg-agreements/ (Sun, 15 Nov 2026 02:53:29 +0000)
+2026-11-18 03:22:27,317 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/bci-launches-call-for-amplify-award-contenders-for-2027/ (Sun, 15 Nov 2026 02:38:42 +0000)
+2026-11-18 03:22:27,317 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/australian-vanadium-grant-deal-for-mobile-electrolyte-tech-facility/ (Sun, 15 Nov 2026 02:16:12 +0000)
+2026-11-18 03:22:27,317 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/veolia-unveils-7000-tonne-black-mass-capacity-plant-in-france/ (Sun, 15 Nov 2026 02:03:23 +0000)
+2026-11-18 03:22:27,317 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/ebrd-in-e50m-boost-for-tunisias-first-utility-scale-bess/ (Sun, 15 Nov 2026 01:41:35 +0000)
+2026-11-18 03:22:27,317 INFO Skip non-target-date RSS entry: https://www.batteriesinternational.com/news/tianneng-hails-bid-to-become-battery-supplier-for-un-procurement-support/ (Sat, 14 Nov 2026 21:01:47 +0000)
+2026-11-18 03:22:27,317 INFO Source complete: Batteries International, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:22:27,317 INFO Processing source: Volta Foundation <https://volta.foundation/battery-news>
+2026-11-18 03:22:34,435 WARNING TODO scraper needed for Volta Foundation: unable to identify article links from listing page. Please provide article-list CSS selectors or API details.
+2026-11-18 03:22:34,435 INFO Source complete: Volta Foundation, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:22:34,435 INFO Processing source: Batteries News <https://batteriesnews.com/>
+2026-11-18 03:22:56,100 WARNING Retrying (Retry(total=2, connect=3, read=2, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='batteriesnews.com', port=443): Read timed out. (read timeout=20)")': /
+2026-11-18 03:23:18,273 WARNING Retrying (Retry(total=1, connect=3, read=1, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='batteriesnews.com', port=443): Read timed out. (read timeout=20)")': /
+2026-11-18 03:23:42,435 WARNING Retrying (Retry(total=0, connect=3, read=0, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='batteriesnews.com', port=443): Read timed out. (read timeout=20)")': /
+2026-11-18 03:24:02,590 WARNING Fetch failed: https://batteriesnews.com/ (HTTPSConnectionPool(host='batteriesnews.com', port=443): Max retries exceeded with url: / (Caused by ReadTimeoutError("HTTPSConnectionPool(host='batteriesnews.com', port=443): Read timed out. (read timeout=20)")))
+2026-11-18 03:24:02,590 WARNING Source degraded: Batteries News (no target-date articles were collected)
+2026-11-18 03:24:02,590 INFO Source complete: Batteries News, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:24:02,590 INFO Processing source: Battery Tech Online <https://www.batterytechonline.com/>
+2026-11-18 03:24:04,228 WARNING Fetch failed: https://www.batterytechonline.com/ (403 Client Error: Forbidden for url: https://www.batterytechonline.com/)
+2026-11-18 03:24:05,772 WARNING Fetch failed: https://www.batterytechonline.com/feed (403 Client Error: Forbidden for url: https://www.batterytechonline.com/feed)
+2026-11-18 03:24:07,289 WARNING Fetch failed: https://www.batterytechonline.com/rss (403 Client Error: Forbidden for url: https://www.batterytechonline.com/rss)
+2026-11-18 03:24:08,802 WARNING Fetch failed: https://www.batterytechonline.com/atom.xml (403 Client Error: Forbidden for url: https://www.batterytechonline.com/atom.xml)
+2026-11-18 03:24:10,317 WARNING Fetch failed: https://www.batterytechonline.com/feed.xml (403 Client Error: Forbidden for url: https://www.batterytechonline.com/feed.xml)
+2026-11-18 03:24:11,835 WARNING Fetch failed: https://www.batterytechonline.com/rss.xml (403 Client Error: Forbidden for url: https://www.batterytechonline.com/rss.xml)
+2026-11-18 03:24:13,351 WARNING Fetch failed: https://www.batterytechonline.com/index.xml (403 Client Error: Forbidden for url: https://www.batterytechonline.com/index.xml)
+2026-11-18 03:24:13,351 INFO No RSS discovered for https://www.batterytechonline.com/
+2026-11-18 03:24:14,863 WARNING Fetch failed: https://www.batterytechonline.com/ (403 Client Error: Forbidden for url: https://www.batterytechonline.com/)
+2026-11-18 03:24:14,863 WARNING TODO scraper needed for Battery Tech Online: unable to identify article links from listing page. Please provide article-list CSS selectors or API details.
+2026-11-18 03:24:14,863 INFO Source complete: Battery Tech Online, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:24:14,863 INFO Processing source: Supply Chain Digital <https://supplychaindigital.com/news>
+2026-11-18 03:24:16,873 WARNING Cloudflare challenge for https://supplychaindigital.com/news; retrying in 2s (1/3)
+2026-11-18 03:24:18,959 WARNING Cloudflare challenge for https://supplychaindigital.com/news; retrying in 5s (2/3)
+2026-11-18 03:24:24,032 WARNING Cloudflare challenge response: https://supplychaindigital.com/news
+2026-11-18 03:24:25,617 WARNING Cloudflare challenge for https://supplychaindigital.com/feed; retrying in 2s (1/3)
+2026-11-18 03:24:27,694 WARNING Cloudflare challenge for https://supplychaindigital.com/feed; retrying in 5s (2/3)
+2026-11-18 03:24:32,795 WARNING Cloudflare challenge response: https://supplychaindigital.com/feed
+2026-11-18 03:24:34,368 WARNING Cloudflare challenge for https://supplychaindigital.com/rss; retrying in 2s (1/3)
+2026-11-18 03:24:36,442 WARNING Cloudflare challenge for https://supplychaindigital.com/rss; retrying in 5s (2/3)
+2026-11-18 03:24:41,524 WARNING Cloudflare challenge response: https://supplychaindigital.com/rss
+2026-11-18 03:24:43,110 WARNING Cloudflare challenge for https://supplychaindigital.com/atom.xml; retrying in 2s (1/3)
+2026-11-18 03:24:45,191 WARNING Cloudflare challenge for https://supplychaindigital.com/atom.xml; retrying in 5s (2/3)
+2026-11-18 03:24:50,265 WARNING Cloudflare challenge response: https://supplychaindigital.com/atom.xml
+2026-11-18 03:24:51,838 WARNING Cloudflare challenge for https://supplychaindigital.com/feed.xml; retrying in 2s (1/3)
+2026-11-18 03:24:53,926 WARNING Cloudflare challenge for https://supplychaindigital.com/feed.xml; retrying in 5s (2/3)
+2026-11-18 03:24:58,962 WARNING Retrying (Retry(total=2, connect=3, read=2, redirect=None, status=None)) after connection broken by 'ConnectionResetError(104, 'Connection reset by peer')': /feed.xml
+2026-11-18 03:24:59,048 WARNING Cloudflare challenge response: https://supplychaindigital.com/feed.xml
+2026-11-18 03:25:00,621 WARNING Cloudflare challenge for https://supplychaindigital.com/rss.xml; retrying in 2s (1/3)
+2026-11-18 03:25:02,692 WARNING Cloudflare challenge for https://supplychaindigital.com/rss.xml; retrying in 5s (2/3)
+2026-11-18 03:25:07,766 WARNING Cloudflare challenge response: https://supplychaindigital.com/rss.xml
+2026-11-18 03:25:09,325 WARNING Cloudflare challenge for https://supplychaindigital.com/index.xml; retrying in 2s (1/3)
+2026-11-18 03:25:11,407 WARNING Cloudflare challenge for https://supplychaindigital.com/index.xml; retrying in 5s (2/3)
+2026-11-18 03:25:16,464 WARNING Cloudflare challenge response: https://supplychaindigital.com/index.xml
+2026-11-18 03:25:16,464 INFO No RSS discovered for https://supplychaindigital.com/news
+2026-11-18 03:25:18,037 WARNING Cloudflare challenge for https://supplychaindigital.com/news; retrying in 2s (1/3)
+2026-11-18 03:25:20,138 WARNING Cloudflare challenge for https://supplychaindigital.com/news; retrying in 5s (2/3)
+2026-11-18 03:25:25,221 WARNING Cloudflare challenge response: https://supplychaindigital.com/news
+2026-11-18 03:25:25,221 WARNING TODO scraper needed for Supply Chain Digital: unable to identify article links from listing page. Please provide article-list CSS selectors or API details.
+2026-11-18 03:25:25,222 WARNING Source degraded: Supply Chain Digital (article fetch failures: Cloudflare access challenge (1))
+2026-11-18 03:25:25,222 INFO Source complete: Supply Chain Digital, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:25:25,222 INFO Skip source: Battery Council International (备注包含“需邮箱订阅”)
+2026-11-18 03:25:25,222 INFO Processing source: Electrek <https://electrek.co/>
+2026-11-18 03:25:25,222 INFO Using configured RSS for Electrek: https://electrek.co/feed/
+2026-11-18 03:25:27,008 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/e-quipment-highlight-110-hp-greenworks-optimus-electric-utv-video/ (Wed, 18 Nov 2026 01:28:03 +0000)
+2026-11-18 03:25:27,008 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/solarcycle-pedalpoint-recycling-merge-to-feed-a-7-4b-us-metals-refinery/ (Tue, 17 Nov 2026 23:04:02 +0000)
+2026-11-18 03:25:27,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/iceland-first-wind-farm-gives-its-hydropower-a-winter-boost/ (Tue, 17 Nov 2026 22:12:53 +0000)
+2026-11-18 03:25:27,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/hyundai-reveals-new-7-seat-neira-electric-suv/ (Tue, 17 Nov 2026 22:01:42 +0000)
+2026-11-18 03:25:27,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/waymo-halts-highway-operation-nationwide-after-ca-dmv-pause/ (Tue, 17 Nov 2026 21:26:19 +0000)
+2026-11-18 03:25:27,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/scout-motors-validation-builds-south-carolina-deliveries-2028/ (Tue, 17 Nov 2026 21:15:34 +0000)
+2026-11-18 03:25:27,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/toyota-adds-1000-off-0-apr-to-bigger-electric-suv/ (Tue, 17 Nov 2026 20:19:21 +0000)
+2026-11-18 03:25:27,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/juiced-scrambler-mini-launched-as-a-cooler-and-safer-e-bike-option-for-teens-and-parents/ (Tue, 17 Nov 2026 19:20:09 +0000)
+2026-11-18 03:25:27,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/ecoflow-5018wh-titan-classic-hiboy-evs-more/ (Tue, 17 Nov 2026 19:00:00 +0000)
+2026-11-18 03:25:27,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/bmws-first-us-built-ev-delivers-435-miles-range-fast-charging/ (Tue, 17 Nov 2026 18:23:03 +0000)
+2026-11-18 03:25:27,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/this-boomer-rep-mocked-a-child-about-the-4-trillion-debt-she-saddled-him-with/ (Tue, 17 Nov 2026 16:48:00 +0000)
+2026-11-18 03:25:27,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/tesla-powercore-solid-state-transformer-heron-link/ (Tue, 17 Nov 2026 16:35:25 +0000)
+2026-11-18 03:25:27,011 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/17/gm-easier-ev-drivers-charge-electrify-america/ (Tue, 17 Nov 2026 16:27:53 +0000)
+2026-11-18 03:25:31,937 INFO Skip non-target-date article: https://electrek.co/2026/11/16/reo-returns-to-challenge-slate-and-fathom-in-a-cheap-truck-showdown/ (2026-11-16)
+2026-11-18 03:25:33,575 INFO Skip non-target-date article: https://electrek.co/2026/11/16/adding-wind-cuts-solar-battery-storage-power-costs-nearly-20-percent/ (2026-11-16)
+2026-11-18 03:25:35,250 INFO Skip non-target-date article: https://electrek.co/2026/11/16/tesla-cybercab-crashes-speed-problem/ (2026-11-16)
+2026-11-18 03:25:36,907 INFO Skip non-target-date article: https://electrek.co/2026/11/16/ausom-black-friday-sale-right-scooter-right-job-at-right-price/ (2026-11-16)
+2026-11-18 03:25:38,532 INFO Skip non-target-date article: https://electrek.co/2026/11/16/volkswagens-cheapest-ev-buyers-waiting-nearly-2-years/ (2026-11-16)
+2026-11-18 03:25:40,196 INFO Skip non-target-date article: https://electrek.co/2026/11/16/motorcycles-are-notoriously-dangerous-could-electric-motorcycles-actually-change-that/ (2026-11-16)
+2026-11-18 03:25:41,869 INFO Skip non-target-date article: https://electrek.co/2026/11/16/anker-solix-s5000-power-station-navee-st3-pro-e-scooter-lectric-e-bike-accessory-sale-more/ (2026-11-16)
+2026-11-18 03:25:43,512 INFO Skip non-target-date article: https://electrek.co/2026/11/16/tesla-autopilot-fsd-model-x-pole-rollover-naples/ (2026-11-16)
+2026-11-18 03:25:45,164 INFO Skip non-target-date article: https://electrek.co/2026/11/16/byd-bringing-10000-great-seagull-ev-overseas/ (2026-11-16)
+2026-11-18 03:25:46,822 INFO Skip non-target-date article: https://electrek.co/2026/11/16/tesla-cybercab-giga-berlin-3-billion-1-million/ (2026-11-16)
+2026-11-18 03:25:48,460 INFO Skip non-target-date article: https://electrek.co/2026/11/16/trump-again-orders-broken-coal-plant-to-stay-open-even-after-court-said-its-illegal/ (2026-11-16)
+2026-11-18 03:25:50,367 INFO Skip non-target-date article: https://electrek.co/2026/11/16/hyundai-ioniq-5-caught-new-high-tech-interior-big-display/ (2026-11-16)
+2026-11-18 03:25:52,008 INFO Skip non-target-date article: https://electrek.co/2026/11/16/tesla-autopilot-fsd-fiery-crash-el-dorado-hills/ (2026-11-16)
+2026-11-18 03:25:52,008 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/16/tesla-autopilot-fsd-overturned-truck-naples-i75/ (Mon, 16 Nov 2026 15:13:45 +0000)
+2026-11-18 03:25:52,008 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/16/volkswagen-prices-new-id-cross-35000-version-comes-later-uk/ (Mon, 16 Nov 2026 15:02:03 +0000)
+2026-11-18 03:25:52,008 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/15/tesla-cybercab-mkbhd-bet-musk-chicken/ (Sun, 15 Nov 2026 16:31:24 +0000)
+2026-11-18 03:25:52,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/15/mowing-milestone-greenzie-surpasses-255000-autonomous-miles-mowed/ (Sun, 15 Nov 2026 16:07:39 +0000)
+2026-11-18 03:25:52,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/15/high-altitude-bitter-cold-zero-drivers-autonomous-trucks-take-on-tibetan-mine/ (Sun, 15 Nov 2026 15:02:35 +0000)
+2026-11-18 03:25:52,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/15/china-comac-ce-25a-electric-plane-crewed-flight/ (Sun, 15 Nov 2026 14:43:57 +0000)
+2026-11-18 03:25:52,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/14/20k-nissan-nx7-phev-goes-on-sale-with-nearly-200-miles-of-electric-range/ (Sat, 14 Nov 2026 21:26:03 +0000)
+2026-11-18 03:25:52,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/14/check-your-ego-at-the-door-stellantis-new-electric-dolly-turns-any-car-into-a-tow-rig/ (Sat, 14 Nov 2026 17:35:39 +0000)
+2026-11-18 03:25:52,009 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/14/huawei-set-to-challenge-tesla-powerwall-with-new-20-kw-home-battery/ (Sat, 14 Nov 2026 16:25:02 +0000)
+2026-11-18 03:25:52,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/14/tesla-cybercab-autonomy-subscription-agreement-terms/ (Sat, 14 Nov 2026 13:33:00 +0000)
+2026-11-18 03:25:52,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/14/i-finally-got-a-usb-c-charging-e-bike-and-it-costs-75-less-than-rivians-bike/ (Sat, 14 Nov 2026 13:02:00 +0000)
+2026-11-18 03:25:52,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/tesla-cybercab-personal-use-orders-299-subscription-geofence/ (Sat, 14 Nov 2026 02:11:39 +0000)
+2026-11-18 03:25:52,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/rinnai-new-heat-pump-water-heaters-get-smarter-and-easier-to-install/ (Sat, 14 Nov 2026 00:53:37 +0000)
+2026-11-18 03:25:52,010 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/volkswagen-trademark-name-next-affordable-ev/ (Fri, 13 Nov 2026 22:14:38 +0000)
+2026-11-18 03:25:52,011 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/byd-opens-tang-ev-orders-two-enormous-screens-for-34000/ (Fri, 13 Nov 2026 21:38:04 +0000)
+2026-11-18 03:25:52,011 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/podcast-tesla-trims-are-falling-like-flies-hyundai-2027-lineup-and-byds-rolls-royce/ (Fri, 13 Nov 2026 20:49:15 +0000)
+2026-11-18 03:25:52,011 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/volkswagen-delaying-another-ev-ssp/ (Fri, 13 Nov 2026 19:03:28 +0000)
+2026-11-18 03:25:52,011 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/velotric-discover-m-mid-drive-multi-terrain-e-bike-aventon-ecoflow-power-station/ (Fri, 13 Nov 2026 19:00:00 +0000)
+2026-11-18 03:25:52,011 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/tesla-only-sells-cybertruck-cyberbeast-109990/ (Fri, 13 Nov 2026 18:13:44 +0000)
+2026-11-18 03:25:52,011 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/hyundai-overhauling-kona-ev/ (Fri, 13 Nov 2026 17:47:19 +0000)
+2026-11-18 03:25:52,012 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/here-are-the-coolest-e-motorcycles-and-gear-we-saw-at-eicma-2026/ (Fri, 13 Nov 2026 15:39:00 +0000)
+2026-11-18 03:25:52,012 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/meta-to-deploy-25-electric-semi-trucks-across-i-10-corridor-but-has-nothing-to-ship/ (Fri, 13 Nov 2026 15:34:20 +0000)
+2026-11-18 03:25:52,012 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/tesla-kills-41990-model-y-awd-configurator/ (Fri, 13 Nov 2026 15:32:28 +0000)
+2026-11-18 03:25:52,012 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/zonveer-zx3-review-1299-electric-dirt-bike-beginners/ (Fri, 13 Nov 2026 14:06:44 +0000)
+2026-11-18 03:25:52,012 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/wheel-e-podcast-juiced-scrambler-core-battery-passports-engwe-m20-more/ (Fri, 13 Nov 2026 13:43:28 +0000)
+2026-11-18 03:25:52,013 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/13/review-engwes-m20-3-0-is-a-60v-super73-killer-at-a-fraction-of-the-price/ (Fri, 13 Nov 2026 13:32:11 +0000)
+2026-11-18 03:25:52,013 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/sonnens-new-smart-breakers-help-your-home-battery-last-longer/ (Thu, 12 Nov 2026 23:22:43 +0000)
+2026-11-18 03:25:52,013 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/byd-wins-round-one-defender-copycat-battle-jlr-told-to-destroy-documents/ (Thu, 12 Nov 2026 22:03:03 +0000)
+2026-11-18 03:25:52,013 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/lunars-new-home-dc-fast-charger-puts-your-ev-battery-to-work/ (Thu, 12 Nov 2026 21:41:32 +0000)
+2026-11-18 03:25:52,013 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/spacex-tesla-merger-announcement-december-report/ (Thu, 12 Nov 2026 20:39:14 +0000)
+2026-11-18 03:25:52,013 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/kia-giving-ev5-update-leaked-images/ (Thu, 12 Nov 2026 19:39:04 +0000)
+2026-11-18 03:25:52,014 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/ride1up-vorsa-e-bikes-ego-power-cordless-snow-blowers-bluetti-ecoflow-power-stations-more/ (Thu, 12 Nov 2026 19:00:00 +0000)
+2026-11-18 03:25:52,014 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/byds-new-luxury-suv-brings-big-screens-big-range-starts-at-40000/ (Thu, 12 Nov 2026 17:46:48 +0000)
+2026-11-18 03:25:52,014 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/volkswagens-new-electric-suv-taking-over-where-id-4-left-off/ (Thu, 12 Nov 2026 15:42:15 +0000)
+2026-11-18 03:25:52,014 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/tesla-driver-asleep-ottawa-opp-careless-driving-fsd/ (Thu, 12 Nov 2026 14:36:09 +0000)
+2026-11-18 03:25:52,014 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/latest-canadian-budget-packs-funding-for-55000-new-ev-chargers/ (Thu, 12 Nov 2026 12:53:50 +0000)
+2026-11-18 03:25:52,015 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/12/hondas-2000-electric-moped-is-a-winner-so-why-cant-americans-buy-it/ (Thu, 12 Nov 2026 12:28:02 +0000)
+2026-11-18 03:25:52,015 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/europes-electric-car-sales-jump-49-as-global-ev-sales-grow/ (Thu, 12 Nov 2026 00:01:00 +0000)
+2026-11-18 03:25:52,015 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/byd-shows-new-cloud-carriage-body-control-system-video/ (Wed, 11 Nov 2026 22:13:48 +0000)
+2026-11-18 03:25:52,015 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/kia-made-history-germanys-most-prestigious-auto-awards/ (Wed, 11 Nov 2026 20:41:03 +0000)
+2026-11-18 03:25:52,015 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/segway-muxi-cargo-e-bike-black-friday-navimow-robot-anker-eufy-s340-4-cam-kit/ (Wed, 11 Nov 2026 19:00:00 +0000)
+2026-11-18 03:25:52,015 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/byds-flagship-suv-wheel-problem-fixing-for-free/ (Wed, 11 Nov 2026 18:58:08 +0000)
+2026-11-18 03:25:52,016 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/tesla-extends-cybertruck-production-summer-2027-fan-backlash/ (Wed, 11 Nov 2026 18:24:50 +0000)
+2026-11-18 03:25:52,016 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/tesla-semi-delivery-50-trucks-chicago-hmd/ (Wed, 11 Nov 2026 18:03:12 +0000)
+2026-11-18 03:25:52,016 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/hyundai-shaking-up-2027-ev-lineup-whats-changing/ (Wed, 11 Nov 2026 17:23:27 +0000)
+2026-11-18 03:25:52,016 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/toyota-subaru-hit-sweet-spot-affordable-electric-suvs/ (Wed, 11 Nov 2026 15:41:10 +0000)
+2026-11-18 03:25:52,016 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/porsche-ceo-tesla-flying-roadster-stunt/ (Wed, 11 Nov 2026 14:34:00 +0000)
+2026-11-18 03:25:52,017 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/genesis-reveals-gv90-prices-start-at-100k-korea-cost-more-for-coach-doors/ (Wed, 11 Nov 2026 14:22:54 +0000)
+2026-11-18 03:25:52,017 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/quantumscape-osprey-all-solid-state-sulfide-battery/ (Wed, 11 Nov 2026 14:00:00 +0000)
+2026-11-18 03:25:52,017 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/11/its-that-time-again-honda-needs-to-roll-out-an-electric-super-cub/ (Wed, 11 Nov 2026 11:40:00 +0000)
+2026-11-18 03:25:52,017 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/unplugged-performance-offers-take-over-tesla-cybertruck-production/ (Wed, 11 Nov 2026 01:48:28 +0000)
+2026-11-18 03:25:52,017 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/kia-launches-two-new-pv5-electric-van-variants-uk/ (Tue, 10 Nov 2026 22:29:08 +0000)
+2026-11-18 03:25:52,017 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/lucid-ceo-did-not-know-where-cars-were-lost-orders/ (Tue, 10 Nov 2026 21:03:24 +0000)
+2026-11-18 03:25:52,018 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/tesla-cybertruck-had-its-best-month-in-over-a-year-its-still-going-away/ (Tue, 10 Nov 2026 20:45:45 +0000)
+2026-11-18 03:25:52,018 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/byds-robot-charger-plugs-itself-in-charges-evs-5-mins-video/ (Tue, 10 Nov 2026 20:43:51 +0000)
+2026-11-18 03:25:52,018 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/byd-geely-fia-talks-12th-f1-team/ (Tue, 10 Nov 2026 19:33:44 +0000)
+2026-11-18 03:25:52,018 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/anker-solix-early-black-friday-power-stations-velotric-fold-1-plus-e-bike-more/ (Tue, 10 Nov 2026 19:00:00 +0000)
+2026-11-18 03:25:52,018 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/bmw-i3-efficiency-record-3700-mile-trip/ (Tue, 10 Nov 2026 18:40:17 +0000)
+2026-11-18 03:25:52,018 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/garmin-and-waze-just-teamed-up-on-a-clever-new-way-to-keep-cyclists-safer/ (Tue, 10 Nov 2026 18:34:11 +0000)
+2026-11-18 03:25:52,019 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/juiced-unveils-another-lower-cost-moto-styled-electric-bike-scrambler-core/ (Tue, 10 Nov 2026 18:00:55 +0000)
+2026-11-18 03:25:52,019 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/the-coolest-ride-in-town-is-englands-first-electric-ice-cream-truck/ (Tue, 10 Nov 2026 16:44:34 +0000)
+2026-11-18 03:25:52,019 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/tesla-china-sales-crash-october-2026-lowest-four-years/ (Tue, 10 Nov 2026 16:04:43 +0000)
+2026-11-18 03:25:52,019 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/unit1-faro-and-neon-review-i-just-found-my-new-favorite-e-bike-helmets/ (Tue, 10 Nov 2026 15:46:08 +0000)
+2026-11-18 03:25:52,019 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/lucid-service-wait-times-drop-20-percent-staffing/ (Tue, 10 Nov 2026 14:24:55 +0000)
+2026-11-18 03:25:52,020 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/polestar-formula-2030-concept-unveiled-next-polestar-2/ (Tue, 10 Nov 2026 14:10:36 +0000)
+2026-11-18 03:25:52,020 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/cat-puts-century-old-train-tech-to-work-in-its-biggest-underground-machine-yet/ (Tue, 10 Nov 2026 12:10:00 +0000)
+2026-11-18 03:25:52,020 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/10/honda-shows-off-its-next-electric-motorcycle-and-its-wilder-than-you-thought/ (Tue, 10 Nov 2026 09:07:02 +0000)
+2026-11-18 03:25:52,020 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/09/humble-hauler-autonomous-trailer-takes-the-truck-out-of-trucking/ (Tue, 10 Nov 2026 01:05:00 +0000)
+2026-11-18 03:25:52,020 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/09/plugshare-finally-adds-dark-mode-and-theres-more-for-ev-drivers/ (Tue, 10 Nov 2026 00:37:02 +0000)
+2026-11-18 03:25:52,020 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/09/mercedes-eqs-drove-539-miles-without-stopping-to-charge/ (Mon, 09 Nov 2026 21:49:32 +0000)
+2026-11-18 03:25:52,021 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/09/toyota-sells-3-electric-suvs-which-one-is-best/ (Mon, 09 Nov 2026 19:13:49 +0000)
+2026-11-18 03:25:52,021 INFO Skip non-target-date RSS entry: https://electrek.co/2026/11/09/yozma-in-10-pro-electric-dirt-bike-anker-black-friday-security-sale-ecoflow-more/ (Mon, 09 Nov 2026 19:00:00 +0000)
+2026-11-18 03:25:52,877 INFO Source complete: Electrek, new articles=2, refreshed=0, usable=2, status=healthy
+2026-11-18 03:25:52,877 INFO Skip source: 中粉固态电池 (备注包含“公众号”)
+2026-11-18 03:25:52,877 INFO Skip source: 起点钠电 (备注包含“公众号”)
+2026-11-18 03:25:52,877 INFO Skip source: 能源学人 (备注包含“公众号”)
+2026-11-18 03:25:52,877 INFO Skip source: 钙钛矿工厂 (备注包含“公众号”)
+2026-11-18 03:25:52,877 INFO Skip source: 钙钛矿学习xx平台 (备注包含“公众号”)
+2026-11-18 03:25:52,877 INFO Processing source: pv magazine <https://www.pv-magazine.com/>
+2026-11-18 03:25:56,589 INFO RSS discovered for https://www.pv-magazine.com/: https://www.pv-magazine.com/feed/ (10 entries)
+2026-11-18 03:25:58,283 INFO Skip non-target-date RSS entry: https://www.pv-magazine.com/2026/11/17/the-us-solar-manufacturing-landscape-in-2026/ (Tue, 17 Nov 2026 17:00:00 +0000)
+2026-11-18 03:26:16,529 INFO Source complete: pv magazine, new articles=9, refreshed=0, usable=9, status=healthy
+2026-11-18 03:26:16,529 INFO Processing source: interesting engineering <https://interestingengineering.com/news>
+2026-11-18 03:28:18,024 INFO Source complete: interesting engineering, new articles=16, refreshed=0, usable=16, status=healthy
+2026-11-18 03:28:18,024 INFO Processing source: scitechdaily <https://scitechdaily.com/>
+2026-11-18 03:28:18,024 INFO Using configured RSS for scitechdaily: https://scitechdaily.com/feed/
+2026-11-18 03:28:20,829 INFO Skip non-target-date RSS entry: https://scitechdaily.com/for-the-first-time-scientists-capture-molecular-scale-images-of-the-poles-of-bacteria/ (Wed, 18 Nov 2026 01:34:38 +0000)
+2026-11-18 03:28:20,829 INFO Skip non-target-date RSS entry: https://scitechdaily.com/a-simple-cable-reveals-hidden-cracks-that-could-weaken-glaciers-from-within/ (Wed, 18 Nov 2026 00:23:42 +0000)
+2026-11-18 03:28:20,829 INFO Skip non-target-date RSS entry: https://scitechdaily.com/scientists-discover-alarming-signs-of-extinction-risk-deep-beneath-the-ocean/ (Tue, 17 Nov 2026 23:12:41 +0000)
+2026-11-18 03:28:20,829 INFO Skip non-target-date RSS entry: https://scitechdaily.com/a-common-gut-antibody-may-be-the-key-to-preventing-colon-cancer-before-it-starts/ (Tue, 17 Nov 2026 20:52:05 +0000)
+2026-11-18 03:28:20,829 INFO Skip non-target-date RSS entry: https://scitechdaily.com/a-five-day-experiment-reveals-a-surprising-secret-of-deadly-brain-cancer/ (Tue, 17 Nov 2026 20:27:37 +0000)
+2026-11-18 03:28:20,830 INFO Skip non-target-date RSS entry: https://scitechdaily.com/scientists-discover-a-disturbing-link-between-cannabis-use-and-earlier-psychosis/ (Tue, 17 Nov 2026 19:17:53 +0000)
+2026-11-18 03:28:20,830 INFO Skip non-target-date RSS entry: https://scitechdaily.com/quantum-breakthrough-scientists-develop-a-detector-that-can-count-over-9000-photons/ (Tue, 17 Nov 2026 16:08:05 +0000)
+2026-11-18 03:28:22,356 WARNING Cloudflare challenge for https://scitechdaily.com/scientists-discover-a-bizarre-quantum-state-that-exists-at-room-temperature/; retrying in 2s (1/3)
+2026-11-18 03:28:24,423 WARNING Cloudflare challenge for https://scitechdaily.com/scientists-discover-a-bizarre-quantum-state-that-exists-at-room-temperature/; retrying in 5s (2/3)
+2026-11-18 03:28:29,489 WARNING Cloudflare challenge response: https://scitechdaily.com/scientists-discover-a-bizarre-quantum-state-that-exists-at-room-temperature/
+2026-11-18 03:28:31,048 WARNING Cloudflare challenge for https://scitechdaily.com/scientists-discover-two-monster-black-holes-at-the-dawn-of-time-that-shouldnt-exist/; retrying in 2s (1/3)
+2026-11-18 03:28:33,117 WARNING Cloudflare challenge for https://scitechdaily.com/scientists-discover-two-monster-black-holes-at-the-dawn-of-time-that-shouldnt-exist/; retrying in 5s (2/3)
+2026-11-18 03:28:38,183 WARNING Cloudflare challenge response: https://scitechdaily.com/scientists-discover-two-monster-black-holes-at-the-dawn-of-time-that-shouldnt-exist/
+2026-11-18 03:28:39,749 WARNING Cloudflare challenge for https://scitechdaily.com/scientists-discover-a-powerful-new-way-to-kill-prostate-cancer-cells/; retrying in 2s (1/3)
+2026-11-18 03:28:41,811 WARNING Cloudflare challenge for https://scitechdaily.com/scientists-discover-a-powerful-new-way-to-kill-prostate-cancer-cells/; retrying in 5s (2/3)
+2026-11-18 03:28:46,870 WARNING Cloudflare challenge response: https://scitechdaily.com/scientists-discover-a-powerful-new-way-to-kill-prostate-cancer-cells/
+2026-11-18 03:28:48,439 WARNING Cloudflare challenge for https://scitechdaily.com/fda-approves-breakthrough-treatment-that-helps-children-with-type-1-diabetes-keep-producing-insulin/; retrying in 2s (1/3)
+2026-11-18 03:28:50,506 WARNING Cloudflare challenge for https://scitechdaily.com/fda-approves-breakthrough-treatment-that-helps-children-with-type-1-diabetes-keep-producing-insulin/; retrying in 5s (2/3)
+2026-11-18 03:28:55,574 WARNING Cloudflare challenge response: https://scitechdaily.com/fda-approves-breakthrough-treatment-that-helps-children-with-type-1-diabetes-keep-producing-insulin/
+2026-11-18 03:28:57,132 WARNING Cloudflare challenge for https://scitechdaily.com/not-all-physical-activity-protects-your-brain-scientists-warn/; retrying in 2s (1/3)
+2026-11-18 03:28:59,205 WARNING Cloudflare challenge for https://scitechdaily.com/not-all-physical-activity-protects-your-brain-scientists-warn/; retrying in 5s (2/3)
+2026-11-18 03:29:04,283 WARNING Cloudflare challenge response: https://scitechdaily.com/not-all-physical-activity-protects-your-brain-scientists-warn/
+2026-11-18 03:29:05,847 WARNING Cloudflare challenge for https://scitechdaily.com/arctic-bacteria-may-be-using-sunlight-and-co2-in-a-way-scientists-never-expected/; retrying in 2s (1/3)
+2026-11-18 03:29:07,933 WARNING Cloudflare challenge for https://scitechdaily.com/arctic-bacteria-may-be-using-sunlight-and-co2-in-a-way-scientists-never-expected/; retrying in 5s (2/3)
+2026-11-18 03:29:12,989 WARNING Cloudflare challenge response: https://scitechdaily.com/arctic-bacteria-may-be-using-sunlight-and-co2-in-a-way-scientists-never-expected/
+2026-11-18 03:29:14,546 WARNING Cloudflare challenge for https://scitechdaily.com/earths-ancient-oceans-may-have-fooled-scientists-about-the-rise-of-oxygen/; retrying in 2s (1/3)
+2026-11-18 03:29:16,611 WARNING Cloudflare challenge for https://scitechdaily.com/earths-ancient-oceans-may-have-fooled-scientists-about-the-rise-of-oxygen/; retrying in 5s (2/3)
+2026-11-18 03:29:21,680 WARNING Cloudflare challenge response: https://scitechdaily.com/earths-ancient-oceans-may-have-fooled-scientists-about-the-rise-of-oxygen/
+2026-11-18 03:29:23,250 WARNING Cloudflare challenge for https://scitechdaily.com/rewriting-history-new-research-reveals-ancient-iron-age-king-may-have-been-a-woman/; retrying in 2s (1/3)
+2026-11-18 03:29:25,325 WARNING Cloudflare challenge for https://scitechdaily.com/rewriting-history-new-research-reveals-ancient-iron-age-king-may-have-been-a-woman/; retrying in 5s (2/3)
+2026-11-18 03:29:30,387 WARNING Cloudflare challenge response: https://scitechdaily.com/rewriting-history-new-research-reveals-ancient-iron-age-king-may-have-been-a-woman/
+2026-11-18 03:29:31,969 WARNING Cloudflare challenge for https://scitechdaily.com/glass-behaves-strangely-when-stretched-to-one-atom-wide-the-discovery-could-transform-electronics/; retrying in 2s (1/3)
+2026-11-18 03:29:34,032 WARNING Cloudflare challenge for https://scitechdaily.com/glass-behaves-strangely-when-stretched-to-one-atom-wide-the-discovery-could-transform-electronics/; retrying in 5s (2/3)
+2026-11-18 03:29:39,093 WARNING Cloudflare challenge response: https://scitechdaily.com/glass-behaves-strangely-when-stretched-to-one-atom-wide-the-discovery-could-transform-electronics/
+2026-11-18 03:29:40,661 WARNING Cloudflare challenge for https://scitechdaily.com/a-superheated-plasma-zone-could-explain-how-black-holes-launch-powerful-jets/; retrying in 2s (1/3)
+2026-11-18 03:29:42,737 WARNING Cloudflare challenge for https://scitechdaily.com/a-superheated-plasma-zone-could-explain-how-black-holes-launch-powerful-jets/; retrying in 5s (2/3)
+2026-11-18 03:29:47,797 WARNING Cloudflare challenge response: https://scitechdaily.com/a-superheated-plasma-zone-could-explain-how-black-holes-launch-powerful-jets/
+2026-11-18 03:29:49,374 WARNING Cloudflare challenge for https://scitechdaily.com/a-strange-black-hole-gap-could-reveal-stars-that-died-without-exploding/; retrying in 2s (1/3)
+2026-11-18 03:29:51,434 WARNING Cloudflare challenge for https://scitechdaily.com/a-strange-black-hole-gap-could-reveal-stars-that-died-without-exploding/; retrying in 5s (2/3)
+2026-11-18 03:29:56,504 WARNING Cloudflare challenge response: https://scitechdaily.com/a-strange-black-hole-gap-could-reveal-stars-that-died-without-exploding/
+2026-11-18 03:29:58,066 WARNING Cloudflare challenge for https://scitechdaily.com/a-deadly-brain-disorder-has-baffled-doctors-for-years-researchers-may-have-finally-solved-the-mystery/; retrying in 2s (1/3)
+2026-11-18 03:30:00,136 WARNING Cloudflare challenge for https://scitechdaily.com/a-deadly-brain-disorder-has-baffled-doctors-for-years-researchers-may-have-finally-solved-the-mystery/; retrying in 5s (2/3)
+2026-11-18 03:30:05,200 WARNING Cloudflare challenge response: https://scitechdaily.com/a-deadly-brain-disorder-has-baffled-doctors-for-years-researchers-may-have-finally-solved-the-mystery/
+2026-11-18 03:30:05,201 INFO Skip non-target-date RSS entry: https://scitechdaily.com/type-2-diabetes-linked-to-a-53-higher-risk-of-alzheimers-massive-study-finds/ (Mon, 16 Nov 2026 15:46:27 +0000)
+2026-11-18 03:30:05,201 INFO Skip non-target-date RSS entry: https://scitechdaily.com/a-deadly-blood-cancer-may-begin-more-than-50-years-before-symptoms-appear/ (Mon, 16 Nov 2026 15:11:29 +0000)
+2026-11-18 03:30:05,201 INFO Skip non-target-date RSS entry: https://scitechdaily.com/12-years-of-research-reveal-something-alarming-happening-to-wild-elephants/ (Mon, 16 Nov 2026 12:48:13 +0000)
+2026-11-18 03:30:05,201 INFO Skip non-target-date RSS entry: https://scitechdaily.com/a-lost-world-of-hippos-and-ancient-humans-emerges-from-the-arabian-desert/ (Mon, 16 Nov 2026 12:13:05 +0000)
+2026-11-18 03:30:05,202 INFO Skip non-target-date RSS entry: https://scitechdaily.com/scientists-discover-a-giant-66-pound-rodent-that-lived-34-million-years-ago/ (Mon, 16 Nov 2026 11:38:08 +0000)
+2026-11-18 03:30:06,049 WARNING Source degraded: scitechdaily (12 articles were not verified as full text (rss_excerpt_only))
+2026-11-18 03:30:06,049 INFO Source complete: scitechdaily, new articles=12, refreshed=0, usable=0, status=degraded
+2026-11-18 03:30:06,049 INFO Processing source: perovskite-info <https://www.perovskite-info.com/perovskite-solar>
+2026-11-18 03:30:06,049 INFO Using configured RSS for perovskite-info: https://www.perovskite-info.com/rss.xml
+2026-11-18 03:30:13,747 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/polymer-nanospheres-cushion-flexible-perovskite-cells-against-bending-without (Mon, 16 Nov 2026 06:00:00 +0200)
+2026-11-18 03:30:13,747 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/new-analysis-puts-utilization-china-s-perovskite-plants-below-20 (Sun, 15 Nov 2026 06:00:00 +0200)
+2026-11-18 03:30:13,747 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/gcl-et-and-catl-say-fujian-truck-charging-station-first-use-perovskite-tandem (Sat, 14 Nov 2026 11:29:00 +0200)
+2026-11-18 03:30:13,748 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/yanhe-puts-three-more-perovskite-solar-modules-orbit-space-testing (Sat, 14 Nov 2026 06:00:00 +0200)
+2026-11-18 03:30:13,748 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/gas-flow-assisted-flash-evaporation-deposits-perovskite-films-over-1-m-minute (Fri, 13 Nov 2026 06:00:00 +0200)
+2026-11-18 03:30:13,748 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/perovskite-connect-2026-review-30-growth-top-keynotes-and-what-our-attendees (Thu, 12 Nov 2026 17:11:00 +0200)
+2026-11-18 03:30:13,748 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/perovskite-nanocrystal-leds-reach-four-times-higher-efficiency-without-ligand (Thu, 12 Nov 2026 11:45:30 +0200)
+2026-11-18 03:30:13,748 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/i-components-says-customer-will-test-its-perovskite-barrier-film-space-year (Thu, 12 Nov 2026 06:00:09 +0200)
+2026-11-18 03:30:13,749 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/caelux-and-heliene-start-us-production-perovskite-tandem-modules-rated-above-27 (Wed, 11 Nov 2026 08:32:04 +0200)
+2026-11-18 03:30:13,749 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/hkust-led-team-builds-chiral-multiple-quantum-wells-2d-3d-perovskite-phases (Wed, 11 Nov 2026 06:00:09 +0200)
+2026-11-18 03:30:13,749 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/anputai-new-energy-gets-new-investment-space-grade-perovskite-silicon-tandem (Tue, 10 Nov 2026 10:00:15 +0200)
+2026-11-18 03:30:13,749 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/slot-die-coated-perovskite-module-reaches-2270-efficiency-devices-retaining (Tue, 10 Nov 2026 06:00:09 +0200)
+2026-11-18 03:30:13,749 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/perocycle-and-glass-futures-plan-two-tonne-pilot-reactor-perovskite-based-co (Mon, 09 Nov 2026 16:19:34 +0200)
+2026-11-18 03:30:13,749 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/japan-s-iodine-producers-expand-output-perovskite-solar-cells-view (Mon, 09 Nov 2026 10:50:45 +0200)
+2026-11-18 03:30:13,750 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/atomic-scale-imaging-reveals-polar-nanodomains-cspbi-perovskite (Mon, 09 Nov 2026 06:00:10 +0200)
+2026-11-18 03:30:13,750 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/graphenergytech-closes-first-part-seed-round-advance-metal-free-solar (Sun, 08 Nov 2026 10:00:06 +0200)
+2026-11-18 03:30:13,750 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/balancing-charge-losses-between-neighboring-grains-extends-perovskite-solar (Sun, 08 Nov 2026 06:00:07 +0200)
+2026-11-18 03:30:13,750 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/perovskite-silicon-tandem-solar-cell-reaches-efficiency-351-85-fill-factor (Sat, 07 Nov 2026 10:00:14 +0200)
+2026-11-18 03:30:13,750 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/new-synchrotron-platform-enables-researchers-watch-perovskite-solar-cells-work (Sat, 07 Nov 2026 06:00:12 +0200)
+2026-11-18 03:30:13,750 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/swift-solar-begins-shipping-hjt-cells-us-space-customers-plans-fly-perovskite (Fri, 06 Nov 2026 18:55:18 +0200)
+2026-11-18 03:30:13,751 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/radianx-secures-9-million-and-starts-dedicated-perovskite-module-production (Fri, 06 Nov 2026 17:54:31 +0200)
+2026-11-18 03:30:13,751 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/fill-factor-retention-helps-perovskite-mini-module-reach-certified-239 (Fri, 06 Nov 2026 06:00:10 +0200)
+2026-11-18 03:30:13,751 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/japan-s-proposed-solar-panel-recycling-rules-would-leave-perovskite-out-now (Thu, 05 Nov 2026 15:12:07 +0200)
+2026-11-18 03:30:13,751 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/researchers-identify-spin-mechanism-limits-spin-polarized-lasing-quasi-2d (Thu, 05 Nov 2026 08:54:03 +0200)
+2026-11-18 03:30:13,751 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/researchers-use-2d-perovskite-films-image-long-wave-infrared-light-standard (Wed, 04 Nov 2026 08:37:13 +0200)
+2026-11-18 03:30:13,751 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/perovskite-info-launches-new-edition-its-perovskites-solar-industry-market (Tue, 03 Nov 2026 13:42:11 +0200)
+2026-11-18 03:30:13,752 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/flexell-space-and-satoro-plan-two-orbit-demonstrations-space-solar-cells (Mon, 02 Nov 2026 06:00:07 +0200)
+2026-11-18 03:30:13,752 INFO Skip non-target-date RSS entry: https://www.perovskite-info.com/new-additive-slows-crystallization-push-evaporated-perovskite-led-efficiency-25 (Sun, 01 Nov 2026 06:00:10 +0200)
+2026-11-18 03:30:14,599 INFO Source complete: perovskite-info, new articles=2, refreshed=0, usable=2, status=healthy
+2026-11-18 03:30:14,599 INFO Processing source: 索比光伏 <https://news.solarbe.com/yaowen>
+2026-11-18 03:30:22,083 INFO Source complete: 索比光伏, new articles=2, refreshed=0, usable=2, status=healthy
+2026-11-18 03:30:22,083 INFO Skip source: 风电世界 (链接为空)
+2026-11-18 03:30:22,083 INFO Processing source: 4C Offshore <https://www.tgs4c.com/news/>
+2026-11-18 03:30:27,655 WARNING Fetch failed: https://www.tgs4c.com/feed (404 Client Error: Not Found for url: https://www.tgs4c.com/feed)
+2026-11-18 03:30:29,429 WARNING Fetch failed: https://www.tgs4c.com/rss (403 Client Error: Forbidden for url: https://www.tgs4c.com/rss/)
+2026-11-18 03:30:31,122 WARNING Fetch failed: https://www.tgs4c.com/atom.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/atom.xml)
+2026-11-18 03:30:32,749 WARNING Fetch failed: https://www.tgs4c.com/feed.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/feed.xml)
+2026-11-18 03:30:34,396 WARNING Fetch failed: https://www.tgs4c.com/rss.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/rss.xml)
+2026-11-18 03:30:36,021 WARNING Fetch failed: https://www.tgs4c.com/index.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/index.xml)
+2026-11-18 03:30:37,650 WARNING Fetch failed: https://www.tgs4c.com/news/feed (404 Client Error: Not Found for url: https://www.tgs4c.com/news/feed)
+2026-11-18 03:30:39,308 WARNING Fetch failed: https://www.tgs4c.com/news/rss (404 Client Error: Not Found for url: https://www.tgs4c.com/news/rss)
+2026-11-18 03:30:40,969 WARNING Fetch failed: https://www.tgs4c.com/news/atom.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/news/atom.xml)
+2026-11-18 03:30:42,595 WARNING Fetch failed: https://www.tgs4c.com/news/feed.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/news/feed.xml)
+2026-11-18 03:30:44,273 WARNING Fetch failed: https://www.tgs4c.com/news/rss.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/news/rss.xml)
+2026-11-18 03:30:45,933 WARNING Fetch failed: https://www.tgs4c.com/news/index.xml (404 Client Error: Not Found for url: https://www.tgs4c.com/news/index.xml)
+2026-11-18 03:30:45,933 INFO No RSS discovered for https://www.tgs4c.com/news/
+2026-11-18 03:31:24,984 INFO Source complete: 4C Offshore, new articles=5, refreshed=0, usable=5, status=healthy
+2026-11-18 03:31:24,984 INFO Skip source: 全球风电网 (备注包含“无法访问”)
+2026-11-18 03:31:24,984 INFO Skip source: 新能源网 (备注包含“无法访问”)
+2026-11-18 03:31:24,984 INFO Processing source: the information <https://www.theinformation.com/>
+2026-11-18 03:31:24,984 INFO Using authenticated subscriber RSS for the information
+2026-11-18 03:31:25,048 WARNING robots.txt unavailable for https://www.theinformation.com: HTTP 403
+2026-11-18 03:31:27,269 INFO Skip non-target-date RSS entry: https://www.theinformation.com/articles/nvidia-introduced-alibaba-alice-huang-workaround-u-s-export-controls (2026-11-18T03:05:46Z)
+2026-11-18 03:31:27,269 INFO Skip non-target-date RSS entry: https://www.theinformation.com/newsletters/the-briefing/nvidias-board-rebuffs-jensen (2026-11-18T01:01:04Z)
+2026-11-18 03:31:27,269 INFO Skip non-target-date RSS entry: https://www.theinformation.com/newsletters/dealmaker/browser-hosting-startups-cashing-instincts-growth (2026-11-18T00:46:32Z)
+2026-11-18 03:31:27,270 INFO Skip non-target-date RSS entry: https://www.theinformation.com/articles/jensen-huangs-right-hand-man-oversaw-chip-customers-including-alice-huang (2026-11-18T00:33:57Z)
+2026-11-18 03:31:27,270 INFO Skip non-target-date RSS entry: https://www.theinformation.com/articles/jpmorgan-citi-missed-megaspeed-risks-2-8-billion-data-center-loan (2026-11-17T21:32:45Z)
+2026-11-18 03:31:27,270 INFO Skip non-target-date RSS entry: https://www.theinformation.com/articles/anthropics-vc-investors-hit-10x-returns-ipo (2026-11-17T21:01:11Z)
+2026-11-18 03:31:27,270 INFO Skip non-target-date RSS entry: https://www.theinformation.com/newsletters/applied-ai/googles-new-ai-chip-software-helps-battle-nvidia (2026-11-17T20:49:14Z)
+2026-11-18 03:31:27,270 INFO Skip non-target-date RSS entry: https://www.theinformation.com/articles/brockman-pushes-openai-toward-cybersecurity-and-showdown-ai-safety (2026-11-17T16:46:30Z)
+2026-11-18 03:31:28,785 WARNING Cloudflare challenge for https://www.theinformation.com/newsletters/ai-agenda/startup-emerges-stealth-highly-personalized-ai; retrying in 2s (1/3)
+2026-11-18 03:31:30,832 WARNING Cloudflare challenge for https://www.theinformation.com/newsletters/ai-agenda/startup-emerges-stealth-highly-personalized-ai; retrying in 5s (2/3)
+2026-11-18 03:31:35,877 WARNING Cloudflare challenge response: https://www.theinformation.com/newsletters/ai-agenda/startup-emerges-stealth-highly-personalized-ai
+2026-11-18 03:31:37,428 WARNING Cloudflare challenge for https://www.theinformation.com/articles/road-ipo-getting-longer; retrying in 2s (1/3)
+2026-11-18 03:31:39,474 WARNING Cloudflare challenge for https://www.theinformation.com/articles/road-ipo-getting-longer; retrying in 5s (2/3)
+2026-11-18 03:31:44,517 WARNING Cloudflare challenge response: https://www.theinformation.com/articles/road-ipo-getting-longer
+2026-11-18 03:31:46,066 WARNING Cloudflare challenge for https://www.theinformation.com/articles/amd-google-chip-away-nvidia-huang-exit-shakes-customers; retrying in 2s (1/3)
+2026-11-18 03:31:48,103 WARNING Cloudflare challenge for https://www.theinformation.com/articles/amd-google-chip-away-nvidia-huang-exit-shakes-customers; retrying in 5s (2/3)
+2026-11-18 03:31:53,136 WARNING Cloudflare challenge response: https://www.theinformation.com/articles/amd-google-chip-away-nvidia-huang-exit-shakes-customers
+2026-11-18 03:31:54,675 WARNING Cloudflare challenge for https://www.theinformation.com/articles/openais-astra-boon-robotics-says-nvidia-robotics-chief-deepu-talla; retrying in 2s (1/3)
+2026-11-18 03:31:56,712 WARNING Cloudflare challenge for https://www.theinformation.com/articles/openais-astra-boon-robotics-says-nvidia-robotics-chief-deepu-talla; retrying in 5s (2/3)
+2026-11-18 03:32:01,762 WARNING Cloudflare challenge response: https://www.theinformation.com/articles/openais-astra-boon-robotics-says-nvidia-robotics-chief-deepu-talla
+2026-11-18 03:32:03,317 WARNING Cloudflare challenge for https://www.theinformation.com/newsletters/the-briefing/nvidias-board-come-clean-huangs-resignation; retrying in 2s (1/3)
+2026-11-18 03:32:05,353 WARNING Cloudflare challenge for https://www.theinformation.com/newsletters/the-briefing/nvidias-board-come-clean-huangs-resignation; retrying in 5s (2/3)
+2026-11-18 03:32:10,391 WARNING Cloudflare challenge response: https://www.theinformation.com/newsletters/the-briefing/nvidias-board-come-clean-huangs-resignation
+2026-11-18 03:32:11,942 WARNING Cloudflare challenge for https://www.theinformation.com/articles/pwc-ai-can-help-drive-revenue; retrying in 2s (1/3)
+2026-11-18 03:32:13,981 WARNING Cloudflare challenge for https://www.theinformation.com/articles/pwc-ai-can-help-drive-revenue; retrying in 5s (2/3)
+2026-11-18 03:32:19,018 WARNING Cloudflare challenge response: https://www.theinformation.com/articles/pwc-ai-can-help-drive-revenue
+2026-11-18 03:32:20,563 WARNING Cloudflare challenge for https://www.theinformation.com/articles/microsoft-data-shows-claude-stalling-copilot-office; retrying in 2s (1/3)
+2026-11-18 03:32:22,605 WARNING Cloudflare challenge for https://www.theinformation.com/articles/microsoft-data-shows-claude-stalling-copilot-office; retrying in 5s (2/3)
+2026-11-18 03:32:27,648 WARNING Cloudflare challenge response: https://www.theinformation.com/articles/microsoft-data-shows-claude-stalling-copilot-office
+2026-11-18 03:32:27,650 INFO Skip non-target-date RSS entry: https://www.theinformation.com/newsletters/ai-agenda/controversial-ai-interpretability-research-caught-sam-altmans-eye (2026-11-16T15:01:04Z)
+2026-11-18 03:32:27,650 INFO Skip non-target-date RSS entry: https://www.theinformation.com/articles/openai-explored-5-billion-plus-acquisition-startup-decodes-ai-thinks (2026-11-16T14:00:58Z)
+2026-11-18 03:32:27,650 INFO Skip non-target-date RSS entry: https://www.theinformation.com/newsletters/the-briefing/nvidias-earnings-deck-anthropics-public-debut (2026-11-15T23:00:54Z)
+2026-11-18 03:32:27,650 INFO Skip non-target-date RSS entry: https://www.theinformation.com/newsletters/the-electric/exclusive-three-veterans-teslas-autopilot-team-got-1-billion-valuation-ai-simulation-startup (2026-11-15T22:00:59Z)
+2026-11-18 03:32:27,651 INFO Skip non-target-date RSS entry: https://www.theinformation.com/newsletters/ai-infrastructure/chinese-energy-company-outpacing-u-s-ai-power-technology (2026-11-15T16:30:59Z)
+2026-11-18 03:32:28,517 INFO Source complete: the information, new articles=7, refreshed=0, usable=7, status=healthy
+2026-11-18 03:32:28,517 INFO Processing source: MIT Technology Review <https://www.technologyreview.com/>
+2026-11-18 03:32:31,766 INFO RSS discovered for https://www.technologyreview.com/: https://www.technologyreview.com/feed (10 entries)
+2026-11-18 03:32:33,345 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/17/1148049/roundtables-inside-the-quest-for-cognitive-immortality/ (Tue, 17 Nov 2026 18:46:47 +0000)
+2026-11-18 03:32:33,345 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/17/1148742/hydropower-drought-colorado-river/ (Tue, 17 Nov 2026 17:52:10 +0000)
+2026-11-18 03:32:38,352 INFO Skip non-target-date article: https://www.technologyreview.com/2026/11/16/1148624/the-open-source-movement-wants-jensen-huang-back/ (2026-11-16)
+2026-11-18 03:32:40,020 INFO Skip non-target-date article: https://www.technologyreview.com/2026/11/16/1148565/building-trustworthy-ai-by-fencing-it-in-not-predicting-it/ (2026-11-16)
+2026-11-18 03:32:40,021 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/16/1148599/the-download-testing-tech-promises-cognitive-immortality-quest/ (Mon, 16 Nov 2026 13:10:00 +0000)
+2026-11-18 03:32:40,021 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/16/1146070/building-ai-that-can-work-across-the-enterprise/ (Mon, 16 Nov 2026 13:00:00 +0000)
+2026-11-18 03:32:40,021 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/13/1148551/the-download-silicon-valley-midterms-nvidia-chip-tracking/ (Fri, 13 Nov 2026 13:10:00 +0000)
+2026-11-18 03:32:40,021 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/13/1148474/more-autonomy-fewer-ndas-volunteers-have-new-requests-for-brain-implant-trials/ (Fri, 13 Nov 2026 10:00:00 +0000)
+2026-11-18 03:32:40,867 INFO Source complete: MIT Technology Review, new articles=2, refreshed=0, usable=2, status=healthy
+2026-11-18 03:32:40,868 INFO Skip source: ESPLAZA长时储能网 (备注包含“公众号”)
+2026-11-18 03:32:40,868 INFO Skip source: 地热能在线 (备注包含“公众号”)
+2026-11-18 03:32:40,868 INFO Processing source: Informationsdienst Wissenschaft-idw <https://nachrichten.idw-online.de/groups/technologie>
+2026-11-18 03:34:30,536 INFO Source complete: Informationsdienst Wissenschaft-idw, new articles=10, refreshed=0, usable=10, status=healthy
+2026-11-18 03:34:30,536 INFO Processing source: ESS News <https://www.ess-news.com/category/projects-applications/>
+2026-11-18 03:34:30,537 INFO Using configured RSS for ESS News: https://www.ess-news.com/category/projects-applications/feed/
+2026-11-18 03:34:46,717 INFO Skip non-target-date article: https://www.ess-news.com/2026/11/16/frontier-energy-starts-building-81-5-mw-battery-in-australia/ (2026-11-16)
+2026-11-18 03:34:46,717 INFO Skip non-target-date RSS entry: https://www.ess-news.com/2026/11/16/elements-green-receives-grid-connection-commitment-from-tennet-for-1-6-gwh-bess-in-germany/ (Mon, 16 Nov 2026 15:26:55 +0000)
+2026-11-18 03:34:46,718 INFO Skip non-target-date RSS entry: https://www.ess-news.com/2026/11/16/flower-plans-2-gwh-bess-in-germany-near-berlin/ (Mon, 16 Nov 2026 14:03:00 +0000)
+2026-11-18 03:34:46,718 INFO Skip non-target-date RSS entry: https://www.ess-news.com/2026/11/16/cyprus-batteries-installed-in-summer-still-await-grid-connection/ (Mon, 16 Nov 2026 13:00:00 +0000)
+2026-11-18 03:34:46,718 INFO Skip non-target-date RSS entry: https://www.ess-news.com/2026/11/16/ampeak-completes-battery-installation-at-240-mwh-uskmouth-project/ (Mon, 16 Nov 2026 11:00:00 +0000)
+2026-11-18 03:34:47,565 INFO Source complete: ESS News, new articles=5, refreshed=0, usable=5, status=healthy
+2026-11-18 03:34:47,565 INFO Processing source: Batteries International News <https://www.batteriesinternational.com/news-test/news/>
+2026-11-18 03:34:47,565 INFO Using configured RSS for Batteries International News: https://www.batteriesinternational.com/news-test/news/feed/
+2026-11-18 03:34:49,746 WARNING RSS unavailable or empty for Batteries International News; falling back to listing scraper
+2026-11-18 03:35:08,674 INFO Source complete: Batteries International News, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:35:08,675 INFO Processing source: pv magazine C&I PV <https://www.pv-magazine.com/latest-news/>
+2026-11-18 03:36:17,358 WARNING Source degraded: pv magazine C&I PV (1 articles were not verified as full text (truncated_ending))
+2026-11-18 03:36:17,359 INFO Source complete: pv magazine C&I PV, new articles=4, refreshed=0, usable=3, status=degraded
+2026-11-18 03:36:17,359 INFO Processing source: Ammonia Energy Association <https://ammoniaenergy.org/articles/>
+2026-11-18 03:36:17,359 INFO Using configured RSS for Ammonia Energy Association: https://ammoniaenergy.org/articles/feed/
+2026-11-18 03:36:19,698 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/ulsan-port-hosts-vlac-terra-clove-for-commercial-bunkering-demonstration/ (Mon, 09 Nov 2026 18:11:26 +0000)
+2026-11-18 03:36:19,698 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/three-next-generation-capesize-bulk-carriers-scheduled-for-delivery-in-early-2027/ (Mon, 09 Nov 2026 18:06:11 +0000)
+2026-11-18 03:36:19,698 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/cf-and-lsb-join-aea-ammonia-certification-system/ (Mon, 09 Nov 2026 06:00:54 +0000)
+2026-11-18 03:36:19,698 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/cmb-techs-mineral-europa-returning-to-china-on-ammonia-fuel-after-successful-bunker-operation-in-the-pilbara/ (Mon, 09 Nov 2026 03:54:12 +0000)
+2026-11-18 03:36:19,699 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/jera-secures-low-carbon-supply-for-new-ammonia-fueled-shipping-route-from-chubu-region/ (Tue, 03 Nov 2026 01:43:02 +0000)
+2026-11-18 03:36:19,699 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/seven-japanese-partners-to-establish-and-operate-ammonia-fueled-shipping-route-from-chubu-region/ (Tue, 03 Nov 2026 01:30:13 +0000)
+2026-11-18 03:36:19,699 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/kashiwazaki-lower-carbon-ammonia-project-now-delivering-to-customers-in-japan/ (Tue, 03 Nov 2026 00:11:58 +0000)
+2026-11-18 03:36:19,699 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/talusag-100-million-in-federal-funding-for-network-of-modular-fertilizer-plants-across-us-midwest/ (Mon, 02 Nov 2026 04:18:33 +0000)
+2026-11-18 03:36:19,699 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/faerder-tankers-the-green-ammonia-fueled-fleet/ (Wed, 28 Oct 2026 06:10:25 +0000)
+2026-11-18 03:36:19,699 INFO Skip non-target-date RSS entry: https://ammoniaenergy.org/articles/maersk-tankers-eu-funding-for-ammonia-engine-retrofit-project/ (Wed, 28 Oct 2026 06:00:28 +0000)
+2026-11-18 03:36:19,699 INFO Source complete: Ammonia Energy Association, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:36:19,700 INFO Processing source: H2 View <https://www.gasworld.com/h2-view/latest-news/>
+2026-11-18 03:36:21,385 WARNING Cloudflare challenge for https://www.gasworld.com/h2-view/latest-news/; retrying in 2s (1/3)
+2026-11-18 03:36:23,455 WARNING Cloudflare challenge for https://www.gasworld.com/h2-view/latest-news/; retrying in 5s (2/3)
+2026-11-18 03:36:28,514 WARNING Cloudflare challenge response: https://www.gasworld.com/h2-view/latest-news/
+2026-11-18 03:36:30,077 WARNING Cloudflare challenge for https://www.gasworld.com/h2-view/latest-news/; retrying in 2s (1/3)
+2026-11-18 03:36:32,128 WARNING Cloudflare challenge for https://www.gasworld.com/h2-view/latest-news/; retrying in 5s (2/3)
+2026-11-18 03:36:37,203 WARNING Cloudflare challenge response: https://www.gasworld.com/h2-view/latest-news/
+2026-11-18 03:36:37,203 WARNING TODO scraper needed for H2 View: unable to identify article links from listing page. Please provide article-list CSS selectors or API details.
+2026-11-18 03:36:37,204 WARNING Source degraded: H2 View (article fetch failures: Cloudflare access challenge (1))
+2026-11-18 03:36:37,204 INFO Source complete: H2 View, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:36:37,204 INFO Processing source: Hydrogen Tech World <https://hydrogentechworld.com/news-category/news>
+2026-11-18 03:36:37,204 INFO Using configured RSS for Hydrogen Tech World: https://hydrogentechworld.com/feed/
+2026-11-18 03:36:40,509 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/arcadia-efuels-selects-plug-power-for-danish-e-saf-project (Tue, 29 Sep 2026 14:12:22 +0000)
+2026-11-18 03:36:40,509 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/metacon-launches-20-mw-alkaline-electrolyzer-module (Tue, 29 Sep 2026 11:02:32 +0000)
+2026-11-18 03:36:40,509 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/nel-to-supply-pem-stacks-for-us-navy-submarines (Tue, 29 Sep 2026 07:32:10 +0000)
+2026-11-18 03:36:40,509 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/25000-hour-soec-stack-durability-results-published (Mon, 28 Sep 2026 06:58:26 +0000)
+2026-11-18 03:36:40,510 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/casale-to-engineer-and-supply-green-ammonia-plant-in-norway (Thu, 24 Sep 2026 07:47:03 +0000)
+2026-11-18 03:36:40,510 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/uniper-arcadia-sign-40000-ton-esaf-offtake-agreement (Wed, 23 Sep 2026 13:17:43 +0000)
+2026-11-18 03:36:40,510 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/siltrax-launches-2-6-kw-c2-fuel-cell-series (Wed, 23 Sep 2026 09:05:22 +0000)
+2026-11-18 03:36:40,510 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/ewe-awards-bilfinger-hydrogen-treatment-contract-for-huntorf (Tue, 22 Sep 2026 05:36:23 +0000)
+2026-11-18 03:36:40,510 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/velonix-supports-h%e2%82%82-pipeline-in-line-inspection-runs (Mon, 21 Sep 2026 11:52:54 +0000)
+2026-11-18 03:36:40,511 INFO Skip non-target-date RSS entry: https://hydrogentechworld.com/first-250-kw-aem-stacks-enter-commercial-operation (Mon, 21 Sep 2026 08:53:40 +0000)
+2026-11-18 03:36:40,511 INFO Source complete: Hydrogen Tech World, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:36:40,511 INFO Processing source: BloombergNEF Press <https://about.bnef.com/insights/type/press/>
+2026-11-18 03:36:40,511 INFO Using configured RSS for BloombergNEF Press: https://about.bnef.com/feed/?post_type=insights&type=press
+2026-11-18 03:36:43,443 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/data-centers/data-center-power-demand-is-set-to-surge-raising-new-climate-challenges-bloombergnef/ (Wed, 11 Nov 2026 01:00:58 +0000)
+2026-11-18 03:36:43,444 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-energy/southeast-asia-could-unleash-funds-for-infrastructure-and-boost-energy-security-by-lifting-barriers-to-clean-power-procurement-bloombergnef/ (Thu, 22 Oct 2026 02:01:10 +0000)
+2026-11-18 03:36:43,444 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/commodities/bloombergnefs-transition-metals-outlook-2026-global-metal-supply-shortages-set-to-ease-but-copper-faces-a-332-billion-investment-gap/ (Tue, 20 Oct 2026 02:01:28 +0000)
+2026-11-18 03:36:43,444 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-energy/japans-energy-transition-enters-new-phase-shaped-by-rising-electricity-demand-and-energy-security-needs-per-bloombergnefs-new-energy-outlook-2026-japan/ (Tue, 15 Sep 2026 17:30:54 +0000)
+2026-11-18 03:36:43,444 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-energy/bloombergnefs-south-africa-transition-factbook-power-market-reform-and-private-investments-drive-energy-transition/ (Mon, 07 Sep 2026 03:01:54 +0000)
+2026-11-18 03:36:43,444 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-energy/bloombergnef-turkey-transition-factbook-2026-clean-power-growth-positions-turkey-for-the-next-phase-of-its-energy-transition/ (Wed, 24 Jun 2026 03:01:12 +0000)
+2026-11-18 03:36:43,445 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-transport/bloombergnefs-electric-vehicle-outlook-2026-global-ev-sales-set-for-another-record-breaking-year-but-growth-in-some-major-markets-slows/ (Tue, 16 Jun 2026 03:01:15 +0000)
+2026-11-18 03:36:43,445 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-energy/global-clean-energy-trade-rebounds-to-479-billion-in-2025-despite-tariffs-and-geopolitical-turmoil-bloombergnef/ (Wed, 27 May 2026 04:00:30 +0000)
+2026-11-18 03:36:43,445 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-energy/bloombergnefs-new-energy-outlook-2026-transition-to-newer-technologies-expanded-electrification-to-strengthen-nations-energy-security/ (Tue, 19 May 2026 06:01:05 +0000)
+2026-11-18 03:36:43,445 INFO Skip non-target-date RSS entry: https://about.bnef.com/insights/clean-energy/bloomberg-appoints-albert-cheung-ceo-of-bloombergnef/ (Thu, 19 Mar 2026 10:01:50 +0000)
+2026-11-18 03:36:43,445 INFO Source complete: BloombergNEF Press, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:36:43,445 INFO Processing source: MIT Technology Review Climate <https://www.technologyreview.com/topic/climate-change/>
+2026-11-18 03:36:43,445 INFO Using configured RSS for MIT Technology Review Climate: https://www.technologyreview.com/topic/climate-change/feed/
+2026-11-18 03:36:45,054 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/17/1148742/hydropower-drought-colorado-river/ (Tue, 17 Nov 2026 17:52:10 +0000)
+2026-11-18 03:36:45,054 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/11/1148308/un-climate-talks/ (Wed, 11 Nov 2026 17:00:00 +0000)
+2026-11-18 03:36:45,054 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/09/1148166/the-climate-case-for-ai-has-not-been-made/ (Mon, 09 Nov 2026 10:00:00 +0000)
+2026-11-18 03:36:45,054 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/05/1148062/permitting-reform/ (Thu, 05 Nov 2026 10:00:00 +0000)
+2026-11-18 03:36:45,055 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/11/04/1148022/us-energy-midterm/ (Wed, 04 Nov 2026 17:08:00 +0000)
+2026-11-18 03:36:45,055 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/10/29/1147735/climate-models-blind-spot/ (Thu, 29 Oct 2026 10:00:00 +0000)
+2026-11-18 03:36:45,055 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/10/27/1147684/solid-state-transformers/ (Tue, 27 Oct 2026 09:00:00 +0000)
+2026-11-18 03:36:45,055 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/10/22/1147591/permafrost-primer/ (Thu, 22 Oct 2026 10:00:00 +0000)
+2026-11-18 03:36:45,055 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/10/21/1146128/cleaning-up-pfas-impossible-issue/ (Wed, 21 Oct 2026 09:00:00 +0000)
+2026-11-18 03:36:45,055 INFO Skip non-target-date RSS entry: https://www.technologyreview.com/2026/10/21/1146137/solid-state-batteries-impossible-issue/ (Wed, 21 Oct 2026 09:00:00 +0000)
+2026-11-18 03:36:45,056 INFO Source complete: MIT Technology Review Climate, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:36:45,056 INFO Processing source: 网易知光谷 <https://m.163.com/news/sub/T1632726077385.html>
+2026-11-18 03:36:52,469 WARNING Fetch failed: https://m.163.com/feed (404 Client Error: Not Found for url: https://m.163.com/feed)
+2026-11-18 03:36:54,326 WARNING Fetch failed: https://m.163.com/rss (404 Client Error: Not Found for url: https://m.163.com/rss)
+2026-11-18 03:36:56,240 WARNING Fetch failed: https://m.163.com/atom.xml (404 Client Error: Not Found for url: https://m.163.com/atom.xml)
+2026-11-18 03:36:58,106 WARNING Fetch failed: https://m.163.com/feed.xml (404 Client Error: Not Found for url: https://m.163.com/feed.xml)
+2026-11-18 03:36:59,948 WARNING Fetch failed: https://m.163.com/rss.xml (404 Client Error: Not Found for url: https://m.163.com/rss.xml)
+2026-11-18 03:37:01,879 WARNING Fetch failed: https://m.163.com/index.xml (404 Client Error: Not Found for url: https://m.163.com/index.xml)
+2026-11-18 03:37:03,708 WARNING Fetch failed: https://m.163.com/news/sub/T1632726077385.html/feed (404 Client Error: Not Found for url: https://m.163.com/news/sub/T1632726077385.html/feed)
+2026-11-18 03:37:05,563 WARNING Fetch failed: https://m.163.com/news/sub/T1632726077385.html/rss (404 Client Error: Not Found for url: https://m.163.com/news/sub/T1632726077385.html/rss)
+2026-11-18 03:37:07,424 WARNING Fetch failed: https://m.163.com/news/sub/T1632726077385.html/atom.xml (404 Client Error: Not Found for url: https://m.163.com/news/sub/T1632726077385.html/atom.xml)
+2026-11-18 03:37:09,223 WARNING Fetch failed: https://m.163.com/news/sub/T1632726077385.html/feed.xml (404 Client Error: Not Found for url: https://m.163.com/news/sub/T1632726077385.html/feed.xml)
+2026-11-18 03:37:11,067 WARNING Fetch failed: https://m.163.com/news/sub/T1632726077385.html/rss.xml (404 Client Error: Not Found for url: https://m.163.com/news/sub/T1632726077385.html/rss.xml)
+2026-11-18 03:37:12,924 WARNING Fetch failed: https://m.163.com/news/sub/T1632726077385.html/index.xml (404 Client Error: Not Found for url: https://m.163.com/news/sub/T1632726077385.html/index.xml)
+2026-11-18 03:37:12,924 INFO No RSS discovered for https://m.163.com/news/sub/T1632726077385.html
+2026-11-18 03:37:39,729 WARNING Fetch failed: https://m.163.com/news/article/KUL9URST0552LHQK.html?clickfrom=subscribe (404 Client Error: Not Found for url: https://m.163.com/dy/article/KUL9URST0552LHQK.html?clickfrom=subscribe)
+2026-11-18 03:37:44,800 INFO Source complete: 网易知光谷, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:37:44,801 INFO Processing source: 中国核电信息网-国内 <https://www.cnnpn.cn/channel/1.html?&page=1>
+2026-11-18 03:37:47,910 WARNING Fetch failed: https://www.cnnpn.cn/channel/1.html?&page=1 (404 Client Error: Not Found for url: https://www.cnnpn.cn/channel/1.html?&page=1)
+2026-11-18 03:37:50,208 WARNING Fetch failed: https://www.cnnpn.cn/feed (404 Client Error: Not Found for url: https://www.cnnpn.cn/feed)
+2026-11-18 03:37:52,653 WARNING Fetch failed: https://www.cnnpn.cn/rss (404 Client Error: Not Found for url: https://www.cnnpn.cn/rss)
+2026-11-18 03:37:55,056 WARNING Fetch failed: https://www.cnnpn.cn/atom.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/atom.xml)
+2026-11-18 03:37:57,468 WARNING Fetch failed: https://www.cnnpn.cn/feed.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/feed.xml)
+2026-11-18 03:37:59,656 WARNING Fetch failed: https://www.cnnpn.cn/rss.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/rss.xml)
+2026-11-18 03:38:01,816 WARNING Fetch failed: https://www.cnnpn.cn/index.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/index.xml)
+2026-11-18 03:38:01,816 INFO No RSS discovered for https://www.cnnpn.cn/channel/1.html?&page=1
+2026-11-18 03:38:04,242 WARNING Fetch failed: https://www.cnnpn.cn/channel/1.html?&page=1 (404 Client Error: Not Found for url: https://www.cnnpn.cn/channel/1.html?&page=1)
+2026-11-18 03:38:04,242 WARNING TODO scraper needed for 中国核电信息网-国内: unable to identify article links from listing page. Please provide article-list CSS selectors or API details.
+2026-11-18 03:38:04,242 WARNING Source degraded: 中国核电信息网-国内 (article fetch failures: HTTP 404 (1))
+2026-11-18 03:38:04,242 INFO Source complete: 中国核电信息网-国内, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:38:04,242 INFO Processing source: 中国核电信息网-国际 <https://www.cnnpn.cn/channel/4.html>
+2026-11-18 03:38:06,402 WARNING Fetch failed: https://www.cnnpn.cn/channel/4.html (404 Client Error: Not Found for url: https://www.cnnpn.cn/channel/4.html)
+2026-11-18 03:38:08,562 WARNING Fetch failed: https://www.cnnpn.cn/feed (404 Client Error: Not Found for url: https://www.cnnpn.cn/feed)
+2026-11-18 03:38:10,859 WARNING Fetch failed: https://www.cnnpn.cn/rss (404 Client Error: Not Found for url: https://www.cnnpn.cn/rss)
+2026-11-18 03:38:13,343 WARNING Fetch failed: https://www.cnnpn.cn/atom.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/atom.xml)
+2026-11-18 03:38:15,497 WARNING Fetch failed: https://www.cnnpn.cn/feed.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/feed.xml)
+2026-11-18 03:38:17,643 WARNING Fetch failed: https://www.cnnpn.cn/rss.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/rss.xml)
+2026-11-18 03:38:19,792 WARNING Fetch failed: https://www.cnnpn.cn/index.xml (404 Client Error: Not Found for url: https://www.cnnpn.cn/index.xml)
+2026-11-18 03:38:19,792 INFO No RSS discovered for https://www.cnnpn.cn/channel/4.html
+2026-11-18 03:38:21,950 WARNING Fetch failed: https://www.cnnpn.cn/channel/4.html (404 Client Error: Not Found for url: https://www.cnnpn.cn/channel/4.html)
+2026-11-18 03:38:21,950 WARNING TODO scraper needed for 中国核电信息网-国际: unable to identify article links from listing page. Please provide article-list CSS selectors or API details.
+2026-11-18 03:38:21,950 WARNING Source degraded: 中国核电信息网-国际 (article fetch failures: HTTP 404 (1))
+2026-11-18 03:38:21,950 INFO Source complete: 中国核电信息网-国际, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:38:21,950 INFO Processing source: 中国电力新闻网-新能源 <https://cpnn.com.cn/news/xny/>
+2026-11-18 03:38:27,518 WARNING Fetch failed: https://cpnn.com.cn/feed (404 Client Error: Not Found for url: https://cpnn.com.cn/feed)
+2026-11-18 03:38:29,223 WARNING Fetch failed: https://cpnn.com.cn/rss (404 Client Error: Not Found for url: https://cpnn.com.cn/rss)
+2026-11-18 03:38:30,918 WARNING Fetch failed: https://cpnn.com.cn/atom.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/atom.xml)
+2026-11-18 03:38:32,615 WARNING Fetch failed: https://cpnn.com.cn/feed.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/feed.xml)
+2026-11-18 03:38:34,311 WARNING Fetch failed: https://cpnn.com.cn/rss.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/rss.xml)
+2026-11-18 03:38:36,005 WARNING Fetch failed: https://cpnn.com.cn/index.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/index.xml)
+2026-11-18 03:38:37,720 WARNING Fetch failed: https://cpnn.com.cn/news/xny/feed (404 Client Error: Not Found for url: https://cpnn.com.cn/news/xny/feed)
+2026-11-18 03:38:39,415 WARNING Fetch failed: https://cpnn.com.cn/news/xny/rss (404 Client Error: Not Found for url: https://cpnn.com.cn/news/xny/rss)
+2026-11-18 03:38:41,109 WARNING Fetch failed: https://cpnn.com.cn/news/xny/atom.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/xny/atom.xml)
+2026-11-18 03:38:42,841 WARNING Fetch failed: https://cpnn.com.cn/news/xny/feed.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/xny/feed.xml)
+2026-11-18 03:38:44,547 WARNING Fetch failed: https://cpnn.com.cn/news/xny/rss.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/xny/rss.xml)
+2026-11-18 03:38:46,240 WARNING Fetch failed: https://cpnn.com.cn/news/xny/index.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/xny/index.xml)
+2026-11-18 03:38:46,240 INFO No RSS discovered for https://cpnn.com.cn/news/xny/
+2026-11-18 03:38:58,646 INFO Source complete: 中国电力新闻网-新能源, new articles=1, refreshed=0, usable=1, status=healthy
+2026-11-18 03:38:58,647 INFO Processing source: 中国电力新闻网-科技 <https://cpnn.com.cn/news/kj/>
+2026-11-18 03:39:02,053 WARNING Fetch failed: https://cpnn.com.cn/feed (404 Client Error: Not Found for url: https://cpnn.com.cn/feed)
+2026-11-18 03:39:03,747 WARNING Fetch failed: https://cpnn.com.cn/rss (404 Client Error: Not Found for url: https://cpnn.com.cn/rss)
+2026-11-18 03:39:05,441 WARNING Fetch failed: https://cpnn.com.cn/atom.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/atom.xml)
+2026-11-18 03:39:07,134 WARNING Fetch failed: https://cpnn.com.cn/feed.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/feed.xml)
+2026-11-18 03:39:08,829 WARNING Fetch failed: https://cpnn.com.cn/rss.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/rss.xml)
+2026-11-18 03:39:10,522 WARNING Fetch failed: https://cpnn.com.cn/index.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/index.xml)
+2026-11-18 03:39:12,229 WARNING Fetch failed: https://cpnn.com.cn/news/kj/feed (404 Client Error: Not Found for url: https://cpnn.com.cn/news/kj/feed)
+2026-11-18 03:39:13,927 WARNING Fetch failed: https://cpnn.com.cn/news/kj/rss (404 Client Error: Not Found for url: https://cpnn.com.cn/news/kj/rss)
+2026-11-18 03:39:15,621 WARNING Fetch failed: https://cpnn.com.cn/news/kj/atom.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/kj/atom.xml)
+2026-11-18 03:39:17,315 WARNING Fetch failed: https://cpnn.com.cn/news/kj/feed.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/kj/feed.xml)
+2026-11-18 03:39:19,009 WARNING Fetch failed: https://cpnn.com.cn/news/kj/rss.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/kj/rss.xml)
+2026-11-18 03:39:20,703 WARNING Fetch failed: https://cpnn.com.cn/news/kj/index.xml (404 Client Error: Not Found for url: https://cpnn.com.cn/news/kj/index.xml)
+2026-11-18 03:39:20,703 INFO No RSS discovered for https://cpnn.com.cn/news/kj/
+2026-11-18 03:39:45,068 INFO Source complete: 中国电力新闻网-科技, new articles=5, refreshed=0, usable=5, status=healthy
+2026-11-18 03:39:45,068 INFO Processing source: 科学网新闻 <https://news.sciencenet.cn/morenews-V-1.aspx>
+2026-11-18 03:39:45,068 INFO Using configured RSS for 科学网新闻: https://www.sciencenet.cn/xml/news-0.aspx?news=0
+2026-11-18 03:39:48,556 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574945.shtm (2026-11-18 11:28)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574944.shtm (2026-11-18 10:39)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574943.shtm (2026-11-18 10:39)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574942.shtm (2026-11-18 10:38)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574941.shtm (2026-11-18 10:38)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574940.shtm (2026-11-18 10:37)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574939.shtm (2026-11-18 10:34)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574938.shtm (2026-11-18 10:33)
+2026-11-18 03:39:48,557 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574937.shtm (2026-11-18 10:32)
+2026-11-18 03:39:48,558 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574936.shtm (2026-11-18 10:32)
+2026-11-18 03:39:48,558 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574935.shtm (2026-11-18 10:31)
+2026-11-18 03:39:48,558 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574934.shtm (2026-11-18 10:30)
+2026-11-18 03:39:48,558 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574933.shtm (2026-11-18 09:44)
+2026-11-18 03:39:48,558 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574932.shtm (2026-11-18 09:37)
+2026-11-18 03:39:48,558 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574930.shtm (2026-11-18 09:05)
+2026-11-18 03:39:48,558 INFO Skip non-target-date RSS entry: http://news.sciencenet.cn/htmlnews/2026/11/574929.shtm (2026-11-18 08:14)
+2026-11-18 03:39:50,904 WARNING robots.txt returned invalid content for http://news.sciencenet.cn
+2026-11-18 03:40:00,460 INFO Source complete: 科学网新闻, new articles=4, refreshed=0, usable=4, status=healthy
+2026-11-18 03:40:00,460 INFO Processing source: 新华网科技 <https://www.news.cn/tech/index.html>
+2026-11-18 03:40:10,250 INFO Source complete: 新华网科技, new articles=3, refreshed=0, usable=3, status=healthy
+2026-11-18 03:40:10,250 INFO Processing source: 国际太阳能光伏网 <https://solar.in-en.com/news/>
+2026-11-18 03:40:13,040 WARNING Fetch failed: https://solar.in-en.com/news/SolarPV/ (403 Client Error: Forbidden for url: https://solar.in-en.com/news/SolarPV/)
+2026-11-18 03:40:50,071 INFO Source complete: 国际太阳能光伏网, new articles=2, refreshed=0, usable=2, status=healthy
+2026-11-18 03:40:50,071 INFO Processing source: Renewables Now <https://renewablesnow.com/news/>
+2026-11-18 03:40:51,929 WARNING Cloudflare challenge for https://renewablesnow.com/news/; retrying in 2s (1/3)
+2026-11-18 03:40:54,017 WARNING Cloudflare challenge for https://renewablesnow.com/news/; retrying in 5s (2/3)
+2026-11-18 03:40:59,095 WARNING Cloudflare challenge response: https://renewablesnow.com/news/
+2026-11-18 03:41:03,483 WARNING Fetch failed: https://renewablesnow.com/rss (404 Client Error: Not Found for url: https://renewablesnow.com/rss/)
+2026-11-18 03:41:05,401 WARNING Fetch failed: https://renewablesnow.com/atom.xml (404 Client Error: Not Found for url: https://renewablesnow.com/atom.xml)
+2026-11-18 03:41:07,278 WARNING Fetch failed: https://renewablesnow.com/feed.xml (404 Client Error: Not Found for url: https://renewablesnow.com/feed.xml)
+2026-11-18 03:41:09,121 WARNING Fetch failed: https://renewablesnow.com/rss.xml (404 Client Error: Not Found for url: https://renewablesnow.com/rss.xml)
+2026-11-18 03:41:11,344 WARNING Fetch failed: https://renewablesnow.com/index.xml (404 Client Error: Not Found for url: https://renewablesnow.com/index.xml)
+2026-11-18 03:41:11,345 INFO No RSS discovered for https://renewablesnow.com/news/
+2026-11-18 03:41:12,880 WARNING Cloudflare challenge for https://renewablesnow.com/news/; retrying in 2s (1/3)
+2026-11-18 03:41:14,966 WARNING Cloudflare challenge for https://renewablesnow.com/news/; retrying in 5s (2/3)
+2026-11-18 03:41:20,024 WARNING Cloudflare challenge response: https://renewablesnow.com/news/
+2026-11-18 03:41:20,024 WARNING TODO scraper needed for Renewables Now: unable to identify article links from listing page. Please provide article-list CSS selectors or API details.
+2026-11-18 03:41:20,024 WARNING Source degraded: Renewables Now (article fetch failures: Cloudflare access challenge (1))
+2026-11-18 03:41:20,024 INFO Source complete: Renewables Now, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:41:20,024 INFO Processing source: 索比光伏-综合新闻 <https://news.solarbe.com/>
+2026-11-18 03:41:24,380 WARNING Fetch failed: https://news.solarbe.com/feed (404 Client Error: Not Found for url: https://news.solarbe.com/feed)
+2026-11-18 03:41:26,133 WARNING Fetch failed: https://news.solarbe.com/rss (404 Client Error: Not Found for url: https://news.solarbe.com/rss)
+2026-11-18 03:41:27,902 WARNING Fetch failed: https://news.solarbe.com/atom.xml (404 Client Error: Not Found for url: https://news.solarbe.com/atom.xml)
+2026-11-18 03:41:29,658 WARNING Fetch failed: https://news.solarbe.com/feed.xml (404 Client Error: Not Found for url: https://news.solarbe.com/feed.xml)
+2026-11-18 03:41:31,412 WARNING Fetch failed: https://news.solarbe.com/rss.xml (404 Client Error: Not Found for url: https://news.solarbe.com/rss.xml)
+2026-11-18 03:41:33,173 WARNING Fetch failed: https://news.solarbe.com/index.xml (404 Client Error: Not Found for url: https://news.solarbe.com/index.xml)
+2026-11-18 03:41:33,173 INFO No RSS discovered for https://news.solarbe.com/
+2026-11-18 03:41:58,563 INFO Source complete: 索比光伏-综合新闻, new articles=12, refreshed=0, usable=12, status=healthy
+2026-11-18 03:41:58,563 INFO Skip source: 中国新能源网-新闻 (备注包含“无法访问”)
+2026-11-18 03:41:58,563 INFO Processing source: IT之家 <https://discovery.ithome.com/>
+2026-11-18 03:42:23,531 WARNING Retrying (Retry(total=2, connect=3, read=2, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='discovery.ithome.com', port=443): Read timed out. (read timeout=20)")': /robots.txt
+2026-11-18 03:42:45,781 WARNING Retrying (Retry(total=1, connect=3, read=1, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='discovery.ithome.com', port=443): Read timed out. (read timeout=20)")': /robots.txt
+2026-11-18 03:43:12,813 WARNING Retrying (Retry(total=0, connect=3, read=0, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='discovery.ithome.com', port=443): Read timed out. (read timeout=20)")': /robots.txt
+2026-11-18 03:43:18,017 INFO IT之家科学探索主页提供 30 条候选
+2026-11-18 03:43:18,018 INFO Using configured RSS for IT之家: https://www.ithome.com/rss/
+2026-11-18 03:43:20,642 INFO IT之家原站 RSS 补充 58 条候选
+2026-11-18 03:43:24,812 WARNING Retrying (Retry(total=2, connect=3, read=2, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /robots.txt
+2026-11-18 03:43:28,732 WARNING Retrying (Retry(total=1, connect=3, read=1, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /robots.txt
+2026-11-18 03:43:33,897 WARNING Retrying (Retry(total=0, connect=3, read=0, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /robots.txt
+2026-11-18 03:43:36,013 WARNING robots.txt fetch failed for https://uiedtool.com: HTTPSConnectionPool(host='uiedtool.com', port=443): Max retries exceeded with url: /robots.txt (Caused by ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))
+2026-11-18 03:43:39,725 WARNING Retrying (Retry(total=2, connect=3, read=2, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /rss-proxy/rss
+2026-11-18 03:43:42,800 WARNING Retrying (Retry(total=1, connect=3, read=1, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /rss-proxy/rss
+2026-11-18 03:43:49,346 WARNING Retrying (Retry(total=0, connect=3, read=0, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /rss-proxy/rss
+2026-11-18 03:43:50,549 WARNING Fetch failed: https://uiedtool.com/rss-proxy/rss (HTTPSConnectionPool(host='uiedtool.com', port=443): Max retries exceeded with url: /rss-proxy/rss (Caused by ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))))
+2026-11-18 03:43:50,550 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/667.htm (2026-11-18T10:33:49.7000000+08:00)
+2026-11-18 03:43:50,550 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/689.htm (Wed, 18 Nov 2026 03:19:45 GMT)
+2026-11-18 03:43:50,550 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/628.htm (2026-11-18T09:46:24.6830000+08:00)
+2026-11-18 03:43:50,550 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/687.htm (Wed, 18 Nov 2026 03:16:35 GMT)
+2026-11-18 03:43:52,145 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/686.htm (Wed, 18 Nov 2026 03:16:21 GMT)
+2026-11-18 03:43:53,746 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/685.htm (Wed, 18 Nov 2026 03:14:22 GMT)
+2026-11-18 03:43:55,344 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/684.htm (Wed, 18 Nov 2026 03:11:18 GMT)
+2026-11-18 03:43:56,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/683.htm (Wed, 18 Nov 2026 03:04:38 GMT)
+2026-11-18 03:43:58,545 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/682.htm (Wed, 18 Nov 2026 03:02:34 GMT)
+2026-11-18 03:44:00,145 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/678.htm (Wed, 18 Nov 2026 02:56:14 GMT)
+2026-11-18 03:44:01,741 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/674.htm (Wed, 18 Nov 2026 02:50:46 GMT)
+2026-11-18 03:44:03,345 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/672.htm (Wed, 18 Nov 2026 02:48:19 GMT)
+2026-11-18 03:44:04,940 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/671.htm (Wed, 18 Nov 2026 02:46:04 GMT)
+2026-11-18 03:44:04,940 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/946.htm (2026-11-16T20:06:59.8030000+08:00)
+2026-11-18 03:44:04,940 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/669.htm (Wed, 18 Nov 2026 02:45:22 GMT)
+2026-11-18 03:44:04,940 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/773.htm (2026-11-16T16:00:12.7930000+08:00)
+2026-11-18 03:44:04,940 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/678.htm (2026-11-16T14:44:07.0400000+08:00)
+2026-11-18 03:44:04,940 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/666.htm (Wed, 18 Nov 2026 02:31:57 GMT)
+2026-11-18 03:44:04,941 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/670.htm (2026-11-16T14:37:03.3330000+08:00)
+2026-11-18 03:44:04,941 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/665.htm (Wed, 18 Nov 2026 02:30:35 GMT)
+2026-11-18 03:44:04,941 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/642.htm (2026-11-16T13:16:52.5300000+08:00)
+2026-11-18 03:44:04,941 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/664.htm (Wed, 18 Nov 2026 02:27:43 GMT)
+2026-11-18 03:44:04,941 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/609.htm (2026-11-16T12:42:03.4900000+08:00)
+2026-11-18 03:44:04,941 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/661.htm (Wed, 18 Nov 2026 02:19:40 GMT)
+2026-11-18 03:44:04,941 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/574.htm (2026-11-16T11:16:33.6330000+08:00)
+2026-11-18 03:44:04,942 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/660.htm (Wed, 18 Nov 2026 02:14:48 GMT)
+2026-11-18 03:44:04,942 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/546.htm (2026-11-16T10:43:18.5070000+08:00)
+2026-11-18 03:44:04,942 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/642.htm (Wed, 18 Nov 2026 02:06:52 GMT)
+2026-11-18 03:44:04,942 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/462.htm (2026-11-16T06:43:45.6100000+08:00)
+2026-11-18 03:44:04,942 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/640.htm (Wed, 18 Nov 2026 02:06:29 GMT)
+2026-11-18 03:44:04,942 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/457.htm (2026-11-15T22:37:13.6530000+08:00)
+2026-11-18 03:44:04,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/637.htm (Wed, 18 Nov 2026 02:05:41 GMT)
+2026-11-18 03:44:04,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/451.htm (2026-11-15T21:20:40.5230000+08:00)
+2026-11-18 03:44:04,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/633.htm (Wed, 18 Nov 2026 02:03:46 GMT)
+2026-11-18 03:44:04,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/438.htm (2026-11-15T20:00:39.6970000+08:00)
+2026-11-18 03:44:04,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/632.htm (Wed, 18 Nov 2026 02:00:15 GMT)
+2026-11-18 03:44:04,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/434.htm (2026-11-15T19:36:58.5870000+08:00)
+2026-11-18 03:44:04,943 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/630.htm (Wed, 18 Nov 2026 01:53:06 GMT)
+2026-11-18 03:44:04,944 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/430.htm (2026-11-15T18:53:47.3700000+08:00)
+2026-11-18 03:44:04,944 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/629.htm (Wed, 18 Nov 2026 01:49:00 GMT)
+2026-11-18 03:44:04,944 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/292.htm (2026-11-15T11:25:16.4600000+08:00)
+2026-11-18 03:44:04,944 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/287.htm (2026-11-15T11:03:39.8430000+08:00)
+2026-11-18 03:44:04,944 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/627.htm (Wed, 18 Nov 2026 01:44:05 GMT)
+2026-11-18 03:44:04,944 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/265.htm (2026-11-15T09:04:53.6430000+08:00)
+2026-11-18 03:44:04,944 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/626.htm (Wed, 18 Nov 2026 01:39:53 GMT)
+2026-11-18 03:44:04,945 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/259.htm (2026-11-15T08:17:35.4270000+08:00)
+2026-11-18 03:44:04,945 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/624.htm (Wed, 18 Nov 2026 01:38:31 GMT)
+2026-11-18 03:44:04,945 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/027/255.htm (2026-11-15T07:38:56.7030000+08:00)
+2026-11-18 03:44:04,945 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/622.htm (Wed, 18 Nov 2026 01:29:10 GMT)
+2026-11-18 03:44:04,945 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/621.htm (Wed, 18 Nov 2026 01:29:07 GMT)
+2026-11-18 03:44:04,945 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/620.htm (Wed, 18 Nov 2026 01:28:23 GMT)
+2026-11-18 03:44:04,945 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/619.htm (Wed, 18 Nov 2026 01:25:04 GMT)
+2026-11-18 03:44:04,946 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/618.htm (Wed, 18 Nov 2026 01:21:36 GMT)
+2026-11-18 03:44:04,946 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/617.htm (Wed, 18 Nov 2026 01:15:59 GMT)
+2026-11-18 03:44:04,946 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/616.htm (Wed, 18 Nov 2026 01:15:51 GMT)
+2026-11-18 03:44:04,946 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/614.htm (Wed, 18 Nov 2026 01:08:41 GMT)
+2026-11-18 03:44:04,946 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/613.htm (Wed, 18 Nov 2026 01:08:40 GMT)
+2026-11-18 03:44:04,946 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/612.htm (Wed, 18 Nov 2026 01:02:04 GMT)
+2026-11-18 03:44:04,946 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/611.htm (Wed, 18 Nov 2026 01:00:46 GMT)
+2026-11-18 03:44:04,947 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/610.htm (Wed, 18 Nov 2026 00:56:59 GMT)
+2026-11-18 03:44:04,947 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/609.htm (Wed, 18 Nov 2026 00:52:57 GMT)
+2026-11-18 03:44:04,947 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/608.htm (Wed, 18 Nov 2026 00:51:54 GMT)
+2026-11-18 03:44:04,947 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/606.htm (Wed, 18 Nov 2026 00:45:31 GMT)
+2026-11-18 03:44:04,947 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/605.htm (Wed, 18 Nov 2026 00:44:11 GMT)
+2026-11-18 03:44:04,947 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/604.htm (Wed, 18 Nov 2026 00:42:21 GMT)
+2026-11-18 03:44:04,947 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/603.htm (Wed, 18 Nov 2026 00:37:36 GMT)
+2026-11-18 03:44:04,948 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/601.htm (Wed, 18 Nov 2026 00:21:34 GMT)
+2026-11-18 03:44:04,948 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/600.htm (Wed, 18 Nov 2026 00:15:22 GMT)
+2026-11-18 03:44:04,948 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/599.htm (Wed, 18 Nov 2026 00:12:10 GMT)
+2026-11-18 03:44:04,948 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/598.htm (Wed, 18 Nov 2026 00:04:07 GMT)
+2026-11-18 03:44:04,948 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/597.htm (Tue, 17 Nov 2026 23:51:16 GMT)
+2026-11-18 03:44:04,948 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/596.htm (Tue, 17 Nov 2026 23:49:24 GMT)
+2026-11-18 03:44:04,948 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/595.htm (Tue, 17 Nov 2026 23:43:51 GMT)
+2026-11-18 03:44:04,949 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/594.htm (Tue, 17 Nov 2026 23:42:46 GMT)
+2026-11-18 03:44:04,949 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/593.htm (Tue, 17 Nov 2026 23:40:07 GMT)
+2026-11-18 03:44:04,949 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/592.htm (Tue, 17 Nov 2026 23:33:00 GMT)
+2026-11-18 03:44:04,949 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/591.htm (Tue, 17 Nov 2026 23:28:49 GMT)
+2026-11-18 03:44:04,949 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/590.htm (Tue, 17 Nov 2026 23:27:25 GMT)
+2026-11-18 03:44:04,949 INFO Skip non-target-date RSS entry: https://www.ithome.com/1/028/589.htm (Tue, 17 Nov 2026 23:22:05 GMT)
+2026-11-18 03:44:05,774 INFO Source complete: IT之家, new articles=9, refreshed=0, usable=9, status=healthy
+2026-11-18 03:44:05,774 INFO Processing source: 光伏测试网 <http://www.testpv.com/portal.php?mod=list&catid=20>
+2026-11-18 03:44:14,967 INFO Source complete: 光伏测试网, new articles=2, refreshed=0, usable=2, status=healthy
+2026-11-18 03:44:14,967 INFO Processing source: 国际能源网 <https://www.in-en.com/article/>
+2026-11-18 03:44:15,883 INFO Source complete: 国际能源网, new articles=10, refreshed=0, usable=10, status=healthy
+2026-11-18 03:44:15,883 INFO Processing source: 中国能源网 <https://www.china5e.com/news/>
+2026-11-18 03:44:16,821 INFO Source complete: 中国能源网, new articles=3, refreshed=0, usable=3, status=healthy
+2026-11-18 03:44:16,821 INFO Processing source: 我爱电车网 <https://www.xevcar.com/>
+2026-11-18 03:44:17,745 INFO Source complete: 我爱电车网, new articles=1, refreshed=0, usable=1, status=healthy
+2026-11-18 03:44:17,745 INFO Processing source: 北极星储能网 <https://chuneng.bjx.com.cn/>
+2026-11-18 03:44:17,848 WARNING Source degraded: 北极星储能网 (no target-date articles were collected)
+2026-11-18 03:44:17,848 INFO Source complete: 北极星储能网, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:44:17,848 INFO Processing source: INSIDEEVs <https://insideevs.com/news/>
+2026-11-18 03:44:17,848 INFO Using configured RSS for INSIDEEVs: https://insideevs.com/rss/news/all/
+2026-11-18 03:44:19,523 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815761/rivian-autonomy-beta-test-closed/ (Tue, 17 Nov 2026 22:03:05 +0000)
+2026-11-18 03:44:19,523 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815780/reo-runabout-slate-auto/ (Tue, 17 Nov 2026 18:43:59 +0000)
+2026-11-18 03:44:19,523 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815783/plug-charge-electrify-america-gm/ (Tue, 17 Nov 2026 18:04:11 +0000)
+2026-11-18 03:44:31,157 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815585/bmw-ev-factory-us-ix5-production-start/ (Mon, 16 Nov 2026 12:52:51 +0000)
+2026-11-18 03:44:31,157 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815570/bmw-ix5-highway-range-test/ (Mon, 16 Nov 2026 11:15:48 +0000)
+2026-11-18 03:44:31,157 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815562/tesla-model-y-rwd-range-boost-2027/ (Mon, 16 Nov 2026 10:16:34 +0000)
+2026-11-18 03:44:31,157 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815544/tesla-autocharge-ionna-app/ (Mon, 16 Nov 2026 08:57:44 +0000)
+2026-11-18 03:44:31,158 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815472/diesel-prices-electric-trucks-einride/ (Sat, 14 Nov 2026 13:00:00 +0000)
+2026-11-18 03:44:31,158 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815473/tesla-cybercab-pricing-sales-announced/ (Sat, 14 Nov 2026 00:06:29 +0000)
+2026-11-18 03:44:31,158 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815293/vw-volkswagen-id-buzz-robotaxi/ (Fri, 13 Nov 2026 17:37:00 +0000)
+2026-11-18 03:44:31,158 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815433/audi-a4-ev-delayed-report/ (Fri, 13 Nov 2026 15:05:25 +0000)
+2026-11-18 03:44:31,158 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815395/tesla-model-y-awd-discontinued/ (Fri, 13 Nov 2026 11:56:01 +0000)
+2026-11-18 03:44:31,158 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815368/uber-evs-record-miles-global-q3-2026/ (Fri, 13 Nov 2026 09:50:50 +0000)
+2026-11-18 03:44:31,159 INFO Skip non-target-date RSS entry: https://insideevs.com/news/815316/slate-truck-gps-screenless-just-map/ (Thu, 12 Nov 2026 22:00:44 +0000)
+2026-11-18 03:44:31,987 INFO Source complete: INSIDEEVs, new articles=6, refreshed=0, usable=6, status=healthy
+2026-11-18 03:44:31,987 INFO Processing source: EnergyTrend储能 <https://www.energytrend.cn/news/>
+2026-11-18 03:44:31,987 INFO Using configured RSS for EnergyTrend储能: https://www.energytrend.cn/rss.xml
+2026-11-18 03:44:47,758 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261116-149262.html (Mon, 16 Nov 2026 09:55:34 +0800)
+2026-11-18 03:44:47,759 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261116-149258.html (Mon, 16 Nov 2026 09:44:39 +0800)
+2026-11-18 03:44:47,759 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261116-149255.html (Mon, 16 Nov 2026 09:23:17 +0800)
+2026-11-18 03:44:47,759 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261116-149252.html (Mon, 16 Nov 2026 09:00:42 +0800)
+2026-11-18 03:44:47,759 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261116-149249.html (Mon, 16 Nov 2026 08:25:07 +0800)
+2026-11-18 03:44:47,759 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261113-149243.html (Fri, 13 Nov 2026 09:36:23 +0800)
+2026-11-18 03:44:47,760 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261113-149241.html (Fri, 13 Nov 2026 09:14:56 +0800)
+2026-11-18 03:44:47,760 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261113-149237.html (Fri, 13 Nov 2026 07:53:44 +0800)
+2026-11-18 03:44:47,760 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261113-149235.html (Fri, 13 Nov 2026 07:39:06 +0800)
+2026-11-18 03:44:47,760 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261113-149233.html (Fri, 13 Nov 2026 07:37:33 +0800)
+2026-11-18 03:44:47,760 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261113-149230.html (Fri, 13 Nov 2026 07:34:35 +0800)
+2026-11-18 03:44:47,760 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261112-149218.html (Thu, 12 Nov 2026 07:50:00 +0800)
+2026-11-18 03:44:47,760 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261112-149216.html (Thu, 12 Nov 2026 07:44:13 +0800)
+2026-11-18 03:44:47,761 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261112-149214.html (Thu, 12 Nov 2026 07:35:45 +0800)
+2026-11-18 03:44:47,761 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261111-149208.html (Wed, 11 Nov 2026 08:41:18 +0800)
+2026-11-18 03:44:47,761 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261111-149206.html (Wed, 11 Nov 2026 08:37:34 +0800)
+2026-11-18 03:44:47,761 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261111-149204.html (Wed, 11 Nov 2026 08:35:40 +0800)
+2026-11-18 03:44:47,761 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261111-149201.html (Wed, 11 Nov 2026 08:30:57 +0800)
+2026-11-18 03:44:47,761 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261111-149199.html (Wed, 11 Nov 2026 08:18:39 +0800)
+2026-11-18 03:44:47,762 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261111-149189.html (Wed, 11 Nov 2026 07:27:07 +0800)
+2026-11-18 03:44:47,762 INFO Skip non-target-date RSS entry: https://www.energytrend.cn/news/20261110-149186.html (Tue, 10 Nov 2026 06:16:42 +0800)
+2026-11-18 03:44:48,578 INFO Source complete: EnergyTrend储能, new articles=6, refreshed=0, usable=6, status=healthy
+2026-11-18 03:44:48,578 INFO Processing source: NE时代 <https://www.ne-time.cn/>
+2026-11-18 03:45:39,445 INFO Source complete: NE时代, new articles=3, refreshed=0, usable=3, status=healthy
+2026-11-18 03:45:39,445 INFO Processing source: 电池网 <https://www.itdcw.com/news/>
+2026-11-18 03:45:39,551 WARNING Source degraded: 电池网 (no target-date articles were collected)
+2026-11-18 03:45:39,551 INFO Source complete: 电池网, new articles=0, refreshed=0, usable=0, status=zero
+2026-11-18 03:45:39,551 INFO Skip source: X-MOL (备注包含“需账号登录”)
+2026-11-18 03:45:39,551 INFO Processing source: Data Center Knowledge <https://www.datacenterknowledge.com/latest-news>
+2026-11-18 03:45:50,102 INFO Source complete: Data Center Knowledge, new articles=3, refreshed=0, usable=3, status=healthy
+2026-11-18 03:45:50,102 INFO Processing source: 少数派 <https://sspai.com/>
+2026-11-18 03:45:50,102 INFO Using UIED discovery feed for original source 少数派: https://uiedtool.com/sspai-proxy/feed
+2026-11-18 03:45:52,999 WARNING Retrying (Retry(total=2, connect=3, read=2, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /sspai-proxy/feed
+2026-11-18 03:45:56,383 WARNING Retrying (Retry(total=1, connect=3, read=1, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /sspai-proxy/feed
+2026-11-18 03:46:01,371 WARNING Retrying (Retry(total=0, connect=3, read=0, redirect=None, status=None)) after connection broken by 'RemoteDisconnected('Remote end closed connection without response')': /sspai-proxy/feed
+2026-11-18 03:46:02,562 WARNING Fetch failed: https://uiedtool.com/sspai-proxy/feed (HTTPSConnectionPool(host='uiedtool.com', port=443): Max retries exceeded with url: /sspai-proxy/feed (Caused by ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))))
+2026-11-18 03:46:02,562 WARNING RSS unavailable or empty for 少数派; falling back to listing scraper
+2026-11-18 03:47:26,723 INFO Source complete: 少数派, new articles=3, refreshed=0, usable=3, status=healthy
+2026-11-18 03:47:26,723 INFO Processing source: 量子位 <https://www.qbitai.com/>
+2026-11-18 03:48:15,537 INFO Source complete: 量子位, new articles=6, refreshed=0, usable=6, status=healthy
+2026-11-18 03:48:15,537 INFO Processing source: 国家能源局—通知 <https://www.nea.gov.cn/policy/tz.htm>
+2026-11-18 03:48:18,282 INFO Source complete: 国家能源局—通知, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:48:18,282 INFO Processing source: 国家能源局—公告 <https://www.nea.gov.cn/policy/gg.htm>
+2026-11-18 03:48:20,139 INFO Source complete: 国家能源局—公告, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:48:20,139 INFO Processing source: 工业和信息化部—文件公示 <https://www.miit.gov.cn/zwgk/wjgs/index.html>
+2026-11-18 03:48:23,133 INFO Source complete: 工业和信息化部—文件公示, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:48:23,133 INFO Processing source: 科学技术部—通知通告 <https://www.most.gov.cn/tztg/>
+2026-11-18 03:48:26,299 INFO Source complete: 科学技术部—通知通告, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:48:26,299 INFO Processing source: 自然资源部—通知公告 <https://www.mnr.gov.cn/gk/tzgg/>
+2026-11-18 03:48:36,318 WARNING Retrying (Retry(total=2, connect=2, read=3, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7d5b6474ddd0>: Failed to resolve 'www.mnr.gov.cn' ([Errno -3] Temporary failure in name resolution)")': /robots.txt
+2026-11-18 03:48:45,852 WARNING Retrying (Retry(total=1, connect=1, read=3, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7d5b5c1359d0>: Failed to resolve 'www.mnr.gov.cn' ([Errno -3] Temporary failure in name resolution)")': /robots.txt
+2026-11-18 03:48:59,867 WARNING Retrying (Retry(total=0, connect=0, read=3, redirect=None, status=None)) after connection broken by 'NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7d5b5c137950>: Failed to resolve 'www.mnr.gov.cn' ([Errno -3] Temporary failure in name resolution)")': /robots.txt
+2026-11-18 03:49:09,878 WARNING robots.txt fetch failed for https://www.mnr.gov.cn: HTTPSConnectionPool(host='www.mnr.gov.cn', port=443): Max retries exceeded with url: /robots.txt (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7d5b5c137c50>: Failed to resolve 'www.mnr.gov.cn' ([Errno -3] Temporary failure in name resolution)"))
+2026-11-18 03:49:09,879 WARNING robots.txt unavailable (ConnectionError); strict check deferred: https://www.mnr.gov.cn/gk/tzgg/
+2026-11-18 03:49:09,879 WARNING MNR primary unavailable (robots.txt unavailable (ConnectionError); strict check deferred); partial official republications from https://www.cgs.gov.cn/zcwj/
+2026-11-18 03:49:22,925 INFO Source complete: 自然资源部—通知公告, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:22,925 INFO Processing source: 交通运输部—其他政策性文件 <https://xxgk.mot.gov.cn/2020/zhengce/qtwjlist.html>
+2026-11-18 03:49:27,276 INFO Source complete: 交通运输部—其他政策性文件, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:27,276 INFO Processing source: 商务部—政策发布 <https://www.mofcom.gov.cn/zcfb/index.html>
+2026-11-18 03:49:33,063 INFO Source complete: 商务部—政策发布, new articles=1, refreshed=0, usable=1, status=healthy
+2026-11-18 03:49:33,063 INFO Processing source: 应急管理部—通知公告 <https://www.mem.gov.cn/gk/tzgg/>
+2026-11-18 03:49:35,906 INFO Source complete: 应急管理部—通知公告, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:35,906 INFO Processing source: 国家数据局—政策发布 <https://www.nda.gov.cn/sjj/zwgk/zcfb/list/index_pc_1.html>
+2026-11-18 03:49:38,980 INFO Source complete: 国家数据局—政策发布, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:38,980 INFO Processing source: 市场监管总局—反垄断通知公告 <https://www.samr.gov.cn/jzxts/tzgg/index.html>
+2026-11-18 03:49:42,675 INFO Source complete: 市场监管总局—反垄断通知公告, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:42,676 INFO Processing source: 中国政府网—最新政策 <https://www.gov.cn/zhengce/zuixin/>
+2026-11-18 03:49:44,643 INFO Source complete: 中国政府网—最新政策, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:44,643 INFO Processing source: 中国政府网—政策解读 <https://www.gov.cn/zhengce/jiedu/index.htm>
+2026-11-18 03:49:46,651 INFO Source complete: 中国政府网—政策解读, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:46,651 INFO Processing source: 国家粮食和物资储备局—政策发布 <https://www.lswz.gov.cn/html/zcfb/index.shtml>
+2026-11-18 03:49:51,389 WARNING robots.txt returned invalid content for https://www.lswz.gov.cn
+2026-11-18 03:49:51,389 WARNING robots.txt unavailable (invalid response or access challenge); strict check deferred: https://www.lswz.gov.cn/html/zcfb/index.shtml
+2026-11-18 03:49:51,390 INFO Source complete: 国家粮食和物资储备局—政策发布, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:51,390 INFO Processing source: 国家林业和草原局—林草政策 <https://www.forestry.gov.cn/zcgg.jhtml>
+2026-11-18 03:49:57,270 INFO Source complete: 国家林业和草原局—林草政策, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:49:57,270 INFO Processing source: 中国石油新闻中心—炼化新材料 <https://news.cnpc.com.cn/cnpcnews/lyhg/index.shtml>
+2026-11-18 03:50:30,195 INFO Source complete: 中国石油新闻中心—炼化新材料, new articles=7, refreshed=0, usable=7, status=healthy
+2026-11-18 03:50:30,195 INFO Processing source: IEEE Spectrum <https://spectrum.ieee.org/type/news/>
+2026-11-18 03:50:30,195 INFO Using configured RSS for IEEE Spectrum: https://spectrum.ieee.org/feeds/feed.rss
+2026-11-18 03:50:32,160 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ieee-ethics-ai-systems (Tue, 17 Nov 2026 19:00:03 +0000)
+2026-11-18 03:50:34,085 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/telesurgery-stroke (Mon, 16 Nov 2026 14:00:02 +0000)
+2026-11-18 03:50:34,085 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/zero-day-robotics-vulnerabilities-vicone-security (Mon, 16 Nov 2026 10:00:01 +0000)
+2026-11-18 03:50:34,085 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/microcredentials-trustworthy-ai (Fri, 13 Nov 2026 19:00:03 +0000)
+2026-11-18 03:50:34,085 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/innomotics-electric-motors-drive-systems (Wed, 11 Nov 2026 11:00:02 +0000)
+2026-11-18 03:50:34,086 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/speech-processing-pioneer-in-memoriam (Tue, 10 Nov 2026 19:00:02 +0000)
+2026-11-18 03:50:34,086 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/zero-trust-agentic-ai-architecture (Mon, 09 Nov 2026 16:25:06 +0000)
+2026-11-18 03:50:34,086 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/mmx-mission-to-phobos (Fri, 06 Nov 2026 15:00:02 +0000)
+2026-11-18 03:50:34,086 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ieee-preuniversity (Thu, 05 Nov 2026 19:00:02 +0000)
+2026-11-18 03:50:34,086 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/how-to-get-a-promotion (Thu, 05 Nov 2026 16:08:03 +0000)
+2026-11-18 03:50:34,087 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/2026-solar-eclipse (Thu, 05 Nov 2026 14:00:02 +0000)
+2026-11-18 03:50:34,087 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ieee-industry-experts-webinar (Tue, 03 Nov 2026 19:00:02 +0000)
+2026-11-18 03:50:34,087 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ai-slop-trust-science (Sun, 01 Nov 2026 14:00:01 +0000)
+2026-11-18 03:50:34,087 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/early-electric-vehicles (Sat, 31 Oct 2026 13:00:02 +0000)
+2026-11-18 03:50:34,087 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ai-personal-assistant-intelligent-wearables (Thu, 29 Oct 2026 19:18:20 +0000)
+2026-11-18 03:50:34,087 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/systems-thinking-vital-in-ai (Wed, 28 Oct 2026 18:00:02 +0000)
+2026-11-18 03:50:34,088 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/beta-technologies-electric-aircraft (Wed, 28 Oct 2026 13:00:03 +0000)
+2026-11-18 03:50:34,088 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ai-robot-safety-cybersecurity-vicone (Tue, 27 Oct 2026 16:14:39 +0000)
+2026-11-18 03:50:34,088 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ai-generated-scientific-papers (Tue, 27 Oct 2026 13:00:03 +0000)
+2026-11-18 03:50:34,088 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ieee-xplore-digital-library-ai (Mon, 26 Oct 2026 18:00:03 +0000)
+2026-11-18 03:50:34,088 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/magnetic (Mon, 26 Oct 2026 13:00:02 +0000)
+2026-11-18 03:50:34,088 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/andrew-ng-data-centric-ai (Wed, 09 Feb 2022 15:31:12 +0000)
+2026-11-18 03:50:34,089 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/ai-chip-design-matlab (Tue, 08 Feb 2022 14:00:01 +0000)
+2026-11-18 03:50:34,089 INFO Skip non-target-date RSS entry: https://spectrum.ieee.org/2d-hbn-qubit (Mon, 07 Feb 2022 16:12:05 +0000)
+2026-11-18 03:50:34,934 INFO Source complete: IEEE Spectrum, new articles=1, refreshed=0, usable=1, status=healthy
+2026-11-18 03:50:34,934 INFO Processing source: 北京国际科技创新中心—人工智能热点 <https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/>
+2026-11-18 03:50:40,161 WARNING Fetch failed: https://www.ncsti.gov.cn/feed (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/feed)
+2026-11-18 03:50:41,885 WARNING Fetch failed: https://www.ncsti.gov.cn/rss (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/rss)
+2026-11-18 03:50:43,655 WARNING Fetch failed: https://www.ncsti.gov.cn/atom.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/atom.xml)
+2026-11-18 03:50:45,439 WARNING Fetch failed: https://www.ncsti.gov.cn/feed.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/feed.xml)
+2026-11-18 03:50:47,282 WARNING Fetch failed: https://www.ncsti.gov.cn/rss.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/rss.xml)
+2026-11-18 03:50:49,027 WARNING Fetch failed: https://www.ncsti.gov.cn/index.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/index.xml)
+2026-11-18 03:50:50,855 WARNING Fetch failed: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/feed (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/feed)
+2026-11-18 03:50:52,588 WARNING Fetch failed: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/rss (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/rss)
+2026-11-18 03:50:54,318 WARNING Fetch failed: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/atom.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/atom.xml)
+2026-11-18 03:50:56,035 WARNING Fetch failed: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/feed.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/feed.xml)
+2026-11-18 03:50:57,871 WARNING Fetch failed: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/rss.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/rss.xml)
+2026-11-18 03:50:59,720 WARNING Fetch failed: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/index.xml (404 Client Error: Not Found for url: https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/index.xml)
+2026-11-18 03:50:59,720 INFO No RSS discovered for https://www.ncsti.gov.cn/kjdt/kjrd/rgzn_kjrd/
+2026-11-18 03:51:12,933 INFO Source complete: 北京国际科技创新中心—人工智能热点, new articles=5, refreshed=0, usable=5, status=healthy
+2026-11-18 03:51:12,933 INFO Processing source: mtl.inew.cn—学术前沿 <https://mtl.inew.cn/academic-news/frontier?lang=zh>
+2026-11-18 03:51:17,100 INFO Source complete: mtl.inew.cn—学术前沿, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:51:17,100 INFO Processing source: 中国能源产业发展网—煤炭 <https://www.ccedia.com/news/10/>
+2026-11-18 03:53:08,468 INFO Source complete: 中国能源产业发展网—煤炭, new articles=20, refreshed=0, usable=20, status=healthy
+2026-11-18 03:53:08,468 INFO Processing source: 中国能源产业发展网—油气 <https://www.ccedia.com/news/7/>
+2026-11-18 03:54:59,465 INFO Source complete: 中国能源产业发展网—油气, new articles=20, refreshed=0, usable=20, status=healthy
+2026-11-18 03:54:59,465 INFO Processing source: 中国能源产业发展网—发电 <https://www.ccedia.com/news/5/>
+2026-11-18 03:56:38,117 INFO Source complete: 中国能源产业发展网—发电, new articles=17, refreshed=0, usable=17, status=healthy
+2026-11-18 03:56:38,118 INFO Processing source: 中国能源产业发展网—新能源 <https://www.ccedia.com/news/55/>
+2026-11-18 03:56:42,682 INFO Source complete: 中国能源产业发展网—新能源, new articles=0, refreshed=0, usable=0, status=idle
+2026-11-18 03:56:42,682 INFO Processing source: 中国能源产业发展网—电网 <https://www.ccedia.com/news/53/>
+2026-11-18 03:58:20,591 INFO Source complete: 中国能源产业发展网—电网, new articles=17, refreshed=0, usable=17, status=healthy
+2026-11-18 03:58:20,591 INFO Processing source: 中国能源产业发展网—科技装备 <https://www.ccedia.com/news/2/>
+2026-11-18 04:00:01,946 INFO Source complete: 中国能源产业发展网—科技装备, new articles=17, refreshed=0, usable=17, status=healthy
+2026-11-18 04:00:01,947 INFO Processing source: 中国能源产业发展网—储能 <https://www.ccedia.com/news/34.html>
+2026-11-18 04:01:55,703 INFO Source complete: 中国能源产业发展网—储能, new articles=19, refreshed=0, usable=19, status=healthy
+2026-11-18 04:01:55,703 INFO Processing source: 中国能源产业发展网—氢能 <https://www.ccedia.com/news/35.html>
+2026-11-18 04:02:34,960 INFO Source complete: 中国能源产业发展网—氢能, new articles=7, refreshed=0, usable=7, status=healthy
+2026-11-18 04:02:34,960 INFO Processing source: 中国能源产业发展网—新能源汽车 <https://www.ccedia.com/news/95/>
+2026-11-18 04:04:36,793 INFO Source complete: 中国能源产业发展网—新能源汽车, new articles=20, refreshed=0, usable=20, status=healthy
+2026-11-18 04:04:36,793 INFO Processing source: 中国能源产业发展网—能源头条 <https://www.ccedia.com/news/11/>
+2026-11-18 04:06:36,923 INFO Source complete: 中国能源产业发展网—能源头条, new articles=17, refreshed=0, usable=17, status=healthy
+2026-11-18 04:07:52,536 WARNING Industry classification batch invalid; retrying smaller batches: start=114 size=6 error=Z.AI JSON response has no results array
+2026-11-18 04:10:26,214 INFO Policy classification pass complete: selected=323 total=26521
+2026-11-18 04:11:16,126 WARNING Industry classification batch invalid; retrying smaller batches: start=42 size=6 error=Z.AI JSON response has no results array
+2026-11-18 04:11:47,298 WARNING Industry classification batch invalid; retrying smaller batches: start=66 size=6 error=Z.AI JSON response has no results array
+2026-11-18 04:17:28,655 INFO Industry classification pass complete: selected=285 total=26521 malformed=165
+2026-11-18 04:17:36,880 INFO Run complete. New articles: 323
+2026-11-18 04:17:36,881 INFO Run complete. Refreshed short articles: 0
+2026-11-18 04:17:36,881 INFO Channel health report: logs/channel-health.json
+2026-11-18 04:17:36,881 INFO Daily audit: status=warning, anomalies=29
+2026-11-18 04:17:36,881 WARNING Daily collection anomaly: 22/75 个活跃渠道当天为 0
+2026-11-18 04:17:36,881 INFO Skipped sources: [('Battery Council International', '备注包含“需邮箱订阅”'), ('中粉固态电池', '备注包含“公众号”'), ('起点钠电', '备注包含“公众号”'), ('能源学人', '备注包含“公众号”'), ('钙钛矿工厂', '备注包含“公众号”'), ('钙钛矿学习xx平台', '备注包含“公众号”'), ('风电世界', '链接为空'), ('全球风电网', '备注包含“无法访问”'), ('新能源网', '备注包含“无法访问”'), ('ESPLAZA长时储能网', '备注包含“公众号”'), ('地热能在线', '备注包含“公众号”'), ('中国新能源网-新闻', '备注包含“无法访问”'), ('X-MOL', '备注包含“需账号登录”')]
+2026-11-18 04:17:36,881 INFO Failed sources: []
+2026-11-18 04:17:36,881 INFO Degraded sources: [('Batteries News', 'no target-date articles were collected'), ('Supply Chain Digital', 'article fetch failures: Cloudflare access challenge (1)'), ('scitechdaily', '12 articles were not verified as full text (rss_excerpt_only)'), ('pv magazine C&I PV', '1 articles were not verified as full text (truncated_ending)'), ('H2 View', 'article fetch failures: Cloudflare access challenge (1)'), ('中国核电信息网-国内', 'article fetch failures: HTTP 404 (1)'), ('中国核电信息网-国际', 'article fetch failures: HTTP 404 (1)'), ('Renewables Now', 'article fetch failures: Cloudflare access challenge (1)'), ('北极星储能网', 'no target-date articles were collected'), ('电池网', 'no target-date articles were collected')]
