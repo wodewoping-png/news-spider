@@ -1,0 +1,20 @@
+name: Industry press channel tests
+on:
+  pull_request:
+    paths: ['sources.xlsx', 'src/scrapers/industry_press.py', 'src/scrapers/__init__.py', 'src/article_parser.py', 'src/http_client.py', 'tests/test_industry_press.py', '.github/workflows/industry-press-tests.yml']
+  push:
+    paths: ['sources.xlsx', 'src/scrapers/industry_press.py', 'src/scrapers/__init__.py', 'src/article_parser.py', 'src/http_client.py', 'tests/test_industry_press.py', '.github/workflows/industry-press-tests.yml']
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -p 'test_industry_press.py' -v
+      - run: python -m unittest discover -s tests -p 'test_crawler_core.py' -v
