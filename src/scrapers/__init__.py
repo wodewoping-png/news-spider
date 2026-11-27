@@ -30,6 +30,7 @@ from .government_announcements import (
     SamrAntitrustNoticesScraper,
 )
 from .insideevs import InsideEVsScraper
+from .industry_press import PESWindScraper, RecyclingInsideScraper
 from .inew_frontier import INEWFrontierScraper
 from .ieee_spectrum import IEEESpectrumScraper
 from .interesting_engineering import InterestingEngineeringScraper
@@ -64,6 +65,8 @@ from .tgs4c import TGS4COffshoreScraper
 
 
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
+    "pes—wind press releases": PESWindScraper,
+    "recyclinginside—recycling & waste news": RecyclingInsideScraper,
     **{f"中国能源产业发展网—{section}": CCEDIAScraper for section in (
         "煤炭", "油气", "发电", "新能源", "电网", "科技装备", "储能", "氢能", "新能源汽车", "能源头条",
     )},

@@ -42,6 +42,8 @@ ARTICLE_SELECTORS = (
 )
 
 STRICT_SOURCE_ARTICLE_SELECTORS = {
+    "pes—wind press releases": ("section.post-body article > div",),
+    "recyclinginside—recycling & waste news": (".elementor-widget-theme-post-content",),
     **{f"中国能源产业发展网—{section}": (".e_richText-7",) for section in (
         "煤炭", "油气", "发电", "新能源", "电网", "科技装备", "储能", "氢能", "新能源汽车", "能源头条",
     )},
